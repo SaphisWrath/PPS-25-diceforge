@@ -1,0 +1,4 @@
+package model
+
+trait Player:
+  ???
