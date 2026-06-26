@@ -1,8 +1,12 @@
 package model.dice
 
+import model.utils.RandomModule
+
+import scala.util.Random
+
 trait Die:
   def maxFaces: Int
-  def roll(): Face
+  def roll(using randomModule: RandomModule[Int]): Face
   def addFaces(addedFaces: Face*): Unit
 
 class BaseDie(numFaces: Int) extends Die:
@@ -16,4 +20,5 @@ class BaseDie(numFaces: Int) extends Die:
   override def addFaces(addedFaces: Face*): Unit =
     addedFaces.foreach(f => this.addFace(f))
 
-  override def roll(): Face = ???
+  override def roll(using randomModule: RandomModule[Int]): Face =
+    faces(randomModule.randomIndex(maxFaces))
