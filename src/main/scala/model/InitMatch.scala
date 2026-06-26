@@ -63,6 +63,25 @@ trait Match:
    */
   def gameOver: Boolean
 
+class MatchImpl(playerList: Iterable[Player]) extends Match:
+  private var playerOrder = Random.shuffle(playerList)
+  private var currentPlayer = playerOrder.head
+  private var turnCount = 0
+  var remainingRounds: Int = if playerOrder.size == 3 then 10 else 9
+
+  def passTurn(): Unit =
+    playerOrder = playerOrder.takeRight(playerOrder.size - 1)
+      .concat(Iterable(playerOrder.head))
+    currentPlayer = playerOrder.head
+    turnCount = turnCount + 1
+    if turnCount == playerOrder.size
+      then
+        turnCount = 0
+        remainingRounds = remainingRounds - 1
+
+  def getCurrentPlayer: Player = currentPlayer
+  def gameOver: Boolean = remainingRounds == 0
+
 /**
  * A builder that creates a match after receiving enough players to start the game
  */
@@ -99,4 +118,5 @@ class MatchBuilderImpl(playerAmount: Int) extends MatchBuilder:
   def ready: Boolean =
     playerList.size >= playerAmount
 
-  def build: Match = ???
+  def build: Match =
+    MatchImpl(playerList.take(playerAmount))
