@@ -1,4 +1,4 @@
-package model.dice.effects
+package model.dice
 
 enum Effect:
   case ResourceEffect(amount: Int)
