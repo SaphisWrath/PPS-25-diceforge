@@ -11,3 +11,6 @@ object Effects:
     val multiplier: Int = flatMultiplier - 1
     
     override def solve(): Int = multiplier
+    
+  class CopyEffect extends Effect[CopyEffect]:
+    override def solve(): CopyEffect = this

@@ -11,9 +11,13 @@ class EffectSuite extends AnyFunSuite {
     assert(new ResourceEffect(6).solve() == 6)
   }
   
-  test("Multiply effect returns correct multiplyer") {
+  test("Multiply effect returns correct multiplier") {
     assert(new MultiplierEffect(3).solve() == 2)
     assert(new MultiplierEffect(4).solve() == 3)
     assert(new MultiplierEffect(5).solve() == 4)
+  }
+  
+  test("Copy effect returns itself") {
+    assert(new CopyEffect().solve().isInstanceOf[CopyEffect])
   }
 }
