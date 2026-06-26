@@ -7,12 +7,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PanelInitMatch extends JPanel {
+    private static final int PLAYER_MIN = 2;
+    private static final int PLAYER_MAX = 4;
+
     public PanelInitMatch(ControllerMatchInit controller) {
         JPanel panelPlayerAmount = new JPanel(new GridLayout(1, 2));
         Choice amountChoice = new Choice();
-        amountChoice.addItem("2");
-        amountChoice.addItem("3");
-        amountChoice.addItem("4");
+        for (int i = PLAYER_MIN; i < PLAYER_MAX; i++) {
+            amountChoice.addItem(String.valueOf(i));
+        }
         panelPlayerAmount.add(new JLabel("How many players?"));
         panelPlayerAmount.add(amountChoice);
 

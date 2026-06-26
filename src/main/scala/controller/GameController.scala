@@ -2,11 +2,14 @@ package controller
 
 import model.*
 
+/**
+ * A controller to handle communication with view about match initialization
+ */
 trait ControllerMatchInit:
-  def isPlayerAmountSet: Boolean
-  def isLastPlayerValid: Boolean
   def setPlayerAmount(amount: Int): Unit
+  def isPlayerAmountSet: Boolean
   def updateMatchInfo(name: String, color: String): Unit
+  def isLastPlayerValid: Boolean
   def allPlayersSet: Boolean
 
 class ControllerMatchInitImpl(playerFactory: PlayerFactory) extends ControllerMatchInit:
