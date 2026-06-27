@@ -10,4 +10,4 @@ object RandomModules:
   given RandomModule[Int] with
     override def randomIndex(upperBound: Int): Int =
       val random = Random(Date().getTime)
-      random.between(1, upperBound)
+      random.between(0, upperBound)
