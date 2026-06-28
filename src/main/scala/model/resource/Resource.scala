@@ -14,16 +14,25 @@ trait Resource[A]:
 
 class ResourceImpl[A](private val initialAmount: Int, var capacity: Option[Int]) extends Resource[A]:
   var currentAmount: Int = initialAmount
+  capacity = capacity.filter(_ > 0)
+  amountCheck()
 
   override def updateMaxCapacity(maxCapacity: Int): Unit =
-    capacity = Some(maxCapacity)
+    if maxCapacity > 0
+    then
+      capacity = Some(maxCapacity)
+      amountCheck()
 
   override def increase(resource: Resource[A]): Unit =
-    val amount = resource.currentAmount
-    currentAmount = currentAmount + amount
-    if capacity.isDefined then currentAmount = math.min(currentAmount, capacity.get)
+    amountChange(resource.currentAmount)
 
   override def decrease(resource: Resource[A]): Unit =
-    val amount = resource.currentAmount
-    currentAmount = currentAmount - amount
+    amountChange(-resource.currentAmount)
+
+  private def amountChange(change: Int): Unit =
+    currentAmount = currentAmount + change
+    amountCheck()
+
+  private def amountCheck(): Unit =
     currentAmount = math.max(0, currentAmount)
+    if capacity.isDefined then currentAmount = math.min(currentAmount, capacity.get)

@@ -23,3 +23,27 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource.currentAmount should be(4)
     anyResource.increase(sameResourceIncrease)
     anyResource.currentAmount should be(6)
+
+  "A resource's max capacity" should "be bigger than 0, ignored otherwise" in:
+    val anyResource: Resource[ResourceType.MoonCrystal] = ResourceImpl[ResourceType.MoonCrystal](2, Some(-3))
+
+    anyResource.currentAmount should be(2)
+    anyResource.increase(anyResource)
+    anyResource.currentAmount should be(4)
+
+  "A resource's max capacity" can "be updated" in:
+    val anyResource: Resource[ResourceType.MoonCrystal] = ResourceImpl[ResourceType.MoonCrystal](4, Some(6))
+
+    anyResource.increase(anyResource)
+    anyResource.currentAmount should be(6)
+    anyResource.updateMaxCapacity(9)
+    anyResource.increase(anyResource)
+    anyResource.currentAmount should be(9)
+
+  "When updated, a resource's max capacity" should "still be bigger than 0, otherwise the update is ignored" in:
+    val anyResource: Resource[ResourceType.SunCrystal] = ResourceImpl[ResourceType.SunCrystal](4, Some(6))
+
+    anyResource.increase(anyResource)
+    anyResource.currentAmount should be(6)
+    anyResource.updateMaxCapacity(0)
+    anyResource.currentAmount should be(6)
