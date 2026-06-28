@@ -1,5 +1,7 @@
 package model.resource
 
+import model.resource.ResourceType.{Gold, MoonCrystal, SunCrystal, VictoryPoint}
+
 object ResourceType:
   type Gold
   type SunCrystal
@@ -36,3 +38,22 @@ class ResourceImpl[A](private val initialAmount: Int, var capacity: Option[Int])
   private def amountCheck(): Unit =
     currentAmount = math.max(0, currentAmount)
     if capacity.isDefined then currentAmount = math.min(currentAmount, capacity.get)
+
+trait ResourceFactory:
+  def gold(amount: Int, capacity: Option[Int]): Resource[ResourceType.Gold]
+  def sunCrystal(amount: Int, capacity: Option[Int]): Resource[ResourceType.SunCrystal]
+  def moonCrystal(amount: Int, capacity: Option[Int]): Resource[ResourceType.MoonCrystal]
+  def victoryPoint(amount: Int, capacity: Option[Int]): Resource[ResourceType.VictoryPoint]
+
+object ResourceFactoryImpl extends ResourceFactory:
+  override def gold(amount: Int, capacity: Option[Int]): Resource[Gold] =
+    ResourceImpl[Gold](amount, capacity)
+
+  override def sunCrystal(amount: Int, capacity: Option[Int]): Resource[SunCrystal] =
+    ResourceImpl[SunCrystal](amount, capacity)
+
+  override def moonCrystal(amount: Int, capacity: Option[Int]): Resource[MoonCrystal] =
+    ResourceImpl[MoonCrystal](amount, capacity)
+
+  override def victoryPoint(amount: Int, capacity: Option[Int]): Resource[VictoryPoint] =
+    ResourceImpl[VictoryPoint](amount, capacity)
