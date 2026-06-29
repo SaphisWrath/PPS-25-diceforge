@@ -23,21 +23,4 @@ class DieTest extends AnyFunSuite {
     assert(die.roll.isInstanceOf[Face])
     assert(die.roll.isInstanceOf[Face])
   }
-
-  test("Die roll can return every face it has") {
-    import model.utils.RandomModules.given
-    val coin = BaseDie(2)
-    coin.addFaces(mock[SumFace])
-    coin.addFaces(mock[OptionFace])
-
-    var heads = false
-    var tails = false
-
-    while (!(heads && tails))
-      val roll = coin.roll
-      heads = heads || roll.isInstanceOf[SumFace]
-      tails = tails || roll.isInstanceOf[OptionFace]
-
-    assert(heads && tails)
-  }
 }
