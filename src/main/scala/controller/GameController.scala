@@ -1,6 +1,7 @@
 package controller
 
 import model.*
+import model.Players.Color
 
 /**
  * A controller to handle communication with view about match initialization

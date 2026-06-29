@@ -1,16 +1,8 @@
 package model
 
+import model.Players.{Color, Player}
+
 import scala.util.Random
-
-enum Color:
-  case Orange, Blue, Green, Black
-  
-object Color:
-  val colorMap = Map(("Orange", Orange), ("Blue", Blue), ("Green", Green), ("Black", Black))
-  def stringToColor(color: String): Option[Color] = colorMap.get(color)
-
-type Name = String
-type Player = (Name, Color)
 
 /**
  * A factory that creates players and makes sure new players don't share
@@ -25,15 +17,15 @@ trait PlayerFactory:
    * @return an Option containing the player if the name and color assigned aren't already in use,
    *         an empty Option otherwise
    */
-  def create(name: Name, color: Color): Option[Player]
+  def create(name: String, color: Color): Option[Player]
 
 class PlayerFactoryImpl extends PlayerFactory:
   private var playerList: Seq[Player] = List.empty
 
-  def create(name: Name, color: Color): Option[Player] =
-    val newPlayer = (name, color)
-    if playerList.map((pName, pColor) => pName).contains(name) ||
-      playerList.map((pName, pColor) => pColor).contains(color)
+  def create(name: String, color: Color): Option[Player] =
+    val newPlayer = Player(name, color)
+    if playerList.map(player => player.getName).contains(name) ||
+      playerList.map(player => player.getColor).contains(color)
       then Option.empty
     else
       playerList = playerList.concat(List(newPlayer))

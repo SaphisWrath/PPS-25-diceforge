@@ -1,5 +1,6 @@
 package model
 
+import model.Players.Color
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

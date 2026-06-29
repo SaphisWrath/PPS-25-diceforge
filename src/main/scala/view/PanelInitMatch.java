@@ -1,7 +1,7 @@
 package view;
 
 import controller.ControllerMatchInit;
-import model.Color;
+import model.Players.Color;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +13,7 @@ public class PanelInitMatch extends JPanel {
     public PanelInitMatch(ControllerMatchInit controller) {
         JPanel panelPlayerAmount = new JPanel(new GridLayout(1, 2));
         Choice amountChoice = new Choice();
-        for (int i = PLAYER_MIN; i < PLAYER_MAX; i++) {
+        for (int i = PLAYER_MIN; i <= PLAYER_MAX; i++) {
             amountChoice.addItem(String.valueOf(i));
         }
         panelPlayerAmount.add(new JLabel("How many players?"));

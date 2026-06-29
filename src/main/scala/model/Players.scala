@@ -7,6 +7,10 @@ object Players:
     case Black
     case Blue
 
+  object Color:
+    val colorMap = Map(("Orange", Orange), ("Blue", Blue), ("Green", Green), ("Black", Black))
+    def stringToColor(color: String): Option[Color] = colorMap.get(color)
+
   trait Player:
 
     /**
