@@ -98,6 +98,16 @@ class PlayerResourcesImpl extends PlayerResources:
   val moonCrystals: MoonCrystal = ResourceFactoryImpl.moonCrystal(0)
   val victoryPoints: VictoryPoint = ResourceFactoryImpl.victoryPoint(0)
 
-  override def increaseResources(incResources: List[Resource]): Unit = ???
+  override def increaseResources(incResources: List[Resource]): Unit =
+    updateResources(incResources, (playerRes, newRes) => playerRes.increase(newRes))
 
-  override def decreaseResources(decResources: List[Resource]): Unit = ???
+  override def decreaseResources(decResources: List[Resource]): Unit =
+    updateResources(decResources, (playerRes, newRes) => playerRes.decrease(newRes))
+
+  private def updateResources(updates: List[Resource], fun: (Resource, Resource) => Unit): Unit =
+    updates.foreach {
+      case res if res.isInstanceOf[Gold] => fun(this.gold, res)
+      case res if res.isInstanceOf[SunCrystal] => fun(this.sunCrystals, res)
+      case res if res.isInstanceOf[MoonCrystal] => fun(this.moonCrystals, res)
+      case res if res.isInstanceOf[VictoryPoint] => fun(this.victoryPoints, res)
+    }
