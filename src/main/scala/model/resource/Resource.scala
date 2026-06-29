@@ -80,3 +80,22 @@ object ResourceFactoryImpl extends ResourceFactory:
 
   override def victoryPoint(amount: Int): Resource[VictoryPoint] =
     ResourceImpl[VictoryPoint](amount, Option.empty)
+
+trait PlayerResources:
+  def gold: Resource[Gold]
+  def sunCrystals: Resource[SunCrystal]
+  def moonCrystals: Resource[MoonCrystal]
+  def victoryPoints: Resource[VictoryPoint]
+
+  def increaseResources(incResources: List[Resource[?]]): Unit
+  def decreaseResources(decResources: List[Resource[?]]): Unit
+
+class PlayerResourcesImpl extends PlayerResources:
+  val gold: Resource[Gold] = ResourceFactoryImpl.gold(0)
+  val sunCrystals: Resource[SunCrystal] = ResourceFactoryImpl.sunCrystal(0)
+  val moonCrystals: Resource[MoonCrystal] = ResourceFactoryImpl.moonCrystal(0)
+  val victoryPoints: Resource[VictoryPoint] = ResourceFactoryImpl.victoryPoint(0)
+
+  override def increaseResources(incResources: List[Resource[?]]): Unit = ???
+
+  override def decreaseResources(decResources: List[Resource[?]]): Unit = ???
