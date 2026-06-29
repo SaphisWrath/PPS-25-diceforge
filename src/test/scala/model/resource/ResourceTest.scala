@@ -40,3 +40,27 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource.currentAmount should be(6)
     anyResource.updateMaxCapacity(0)
     anyResource.currentAmount should be(6)
+
+  "When created, a player's resources" should "have an amount of 0 each" in:
+    val playerResources = PlayerResourcesImpl()
+
+    playerResources.gold.currentAmount should be(0)
+    playerResources.sunCrystals.currentAmount should be(0)
+    playerResources.moonCrystals.currentAmount should be(0)
+    playerResources.victoryPoints.currentAmount should be(0)
+
+  "A player's resources" can "be updated all at once" in:
+    val playerResources = PlayerResourcesImpl()
+    val resourcesToAdd = List(
+        ResourceFactoryImpl.gold(4),
+        ResourceFactoryImpl.sunCrystal(2),
+        ResourceFactoryImpl.moonCrystal(3),
+        ResourceFactoryImpl.victoryPoint(1)
+    )
+
+    playerResources.increaseResources(resourcesToAdd)
+
+    playerResources.gold.currentAmount should be(4)
+    playerResources.sunCrystals.currentAmount should be(2)
+    playerResources.moonCrystals.currentAmount should be(3)
+    playerResources.victoryPoints.currentAmount should be(1)
