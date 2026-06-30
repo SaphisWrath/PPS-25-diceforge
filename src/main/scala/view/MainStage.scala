@@ -8,8 +8,8 @@ class MainStage(/* TODO controller */) {
     resizable = true
     minWidth = 800
     minHeight = 500
-    height = 500
     width = 800
+    height = 500
     scene = new MainMenuScene()
   }
 }

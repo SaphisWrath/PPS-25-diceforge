@@ -2,25 +2,35 @@ package view
 
 import javafx.event.EventHandler
 import scalafx.beans.property.IntegerProperty
+import scalafx.geometry.Insets
+import scalafx.geometry.Pos.Center
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, Label}
-import scalafx.scene.layout.VBox
+import scalafx.scene.layout.{Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, VBox}
+import scalafx.scene.paint.Color.{DarkRed, Red}
+import scalafx.scene.paint.{Color, LinearGradient, Paint, Stops}
+import scalafx.scene.text.Text
 
-class MainMenuScene extends Scene{
-  content = new VBox {
-    val counter = IntegerProperty(0)
-    val label: Label = new Label {
-      text = counter().toString
-    }
-    counter.onChange((_, _, newValue) => {
-      label.text = newValue.toString
-    })
+class MainMenuScene extends Scene {
+  root = new VBox {
+    fillWidth = true
+    spacing = 20
+    border = new Border(new BorderStroke(
+      Color.Black,
+      BorderStrokeStyle.Solid,
+      CornerRadii.Empty,
+      BorderWidths.Default)
+    )
+    alignment = Center
+    alignmentInParent = Center
     children = Seq(
-      label,
-      new Button ("COUNT"){
-        onAction = { _ => counter() = counter() + 1}
-        minWidth = 100
-        minHeight = 50
+      new Text {
+        text = "DICE FORGE"
+        style = "-fx-font: normal bold 50pt sans-serif"
+        padding = Insets(10)
+        fill = new LinearGradient(
+          endX = 0,
+          stops = Stops(Red, DarkRed))
       },
       new Button ("INIZIA") {
         minWidth = 100
