@@ -28,5 +28,9 @@ lazy val root = project
         "org.openjfx" % s"javafx-web" % "16" classifier osName,
         "org.scalafx" %% "scalafx" % "16.0.0-R24"
       )
-    }
+    },
+
+    scalacOptions ++= Seq(
+      "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
+    )
   )
