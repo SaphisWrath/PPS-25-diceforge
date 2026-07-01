@@ -57,6 +57,11 @@ Dice forge è un gioco dove i giocatori competono per ottenere il maggior numero
 	- Oro: Utile per acquistare facce dal negozio
 	- Cristalli solari: Utilizzati per Completare missioni e effettuare azioni extra
 	- Cristalli lunari: Utilizzati per Completare missioni
+- Ogni giocatore ha un limite massimo alle risorse che può possedere, questo limite può essere aumentato.
+  Il limite base per ogni risorsa è:
+    - Oro: 12 unità
+  	- Cristalli Solari: 6 unità
+  	- Cristalli Lunari: 6 unità
 - Ogni giocatore ha a disposizione due dadi iniziali costruiti nel seguente modo:
 	- Uno con 5 facce Oro da 1 e 1 faccia Cristallo solare da 1
 	- Uno con 4 facce Oro da 1, 1 faccia Cristallo lunare da 1 e 1 faccia Punti vittoria da 2
