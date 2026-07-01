@@ -16,16 +16,14 @@ lazy val root = project
         case n if n.startsWith("Windows") => "win"
         case _ => throw new Exception("Unknown platform!")
       }
+      Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
+        .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
+    },
+
+    libraryDependencies ++={
       Seq(
         "org.scalatest" %% "scalatest" % "3.2.19" % Test,
         "org.scalatestplus" %% "mockito-5-23" % "3.2.20.0" % "test",
-        "org.openjfx" % s"javafx-base" % "16" classifier osName,
-        "org.openjfx" % s"javafx-controls" % "16" classifier osName,
-        "org.openjfx" % s"javafx-fxml" % "16" classifier osName,
-        "org.openjfx" % s"javafx-graphics" % "16" classifier osName,
-        "org.openjfx" % s"javafx-media" % "16" classifier osName,
-        "org.openjfx" % s"javafx-swing" % "16" classifier osName,
-        "org.openjfx" % s"javafx-web" % "16" classifier osName,
         "org.scalafx" %% "scalafx" % "16.0.0-R24"
       )
     },

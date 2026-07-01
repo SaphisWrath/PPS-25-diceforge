@@ -1,7 +1,5 @@
 package view
 
-import javafx.event.EventHandler
-import scalafx.beans.property.IntegerProperty
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Scene
