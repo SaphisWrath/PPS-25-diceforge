@@ -13,7 +13,7 @@ object PlayerResource:
                                    var resource: Resource) 
   extends PlayerResource {
     override def setMaxAmount(newAmount: Int): Unit =
-      maximumCapacity = if newAmount >= 1 then newAmount else maximumCapacity
+      maximumCapacity = if newAmount >= 1 then newAmount else 1
 
     override def setResource(newResource: Resource): Unit = newResource match
       case Resource(n) if n >= 0 & n <= maximumCapacity => resource = newResource
