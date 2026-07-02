@@ -1,13 +1,17 @@
 package model.resource
 
-trait Resource(amount: Int)
+trait Resource(initAmount: Int):
+  def amount: Int = initAmount
 
-case class Gold(amount: Int) extends Resource(amount)
-case class SunCrystal(amount: Int) extends Resource(amount)
-case class MoonCrystal(amount: Int) extends Resource(amount)
-case class GloryPoint(amount: Int) extends Resource(amount)
-  
+case class Gold(initAmount: Int) extends Resource(initAmount)
+case class SunCrystal(initAmount: Int) extends Resource(initAmount)
+case class MoonCrystal(initAmount: Int) extends Resource(initAmount)
+case class GloryPoint(initAmount: Int) extends Resource(initAmount)
+
 object Resource:
+  def unapply(resource: Resource): Option[Int] =
+    Some(resource.amount)
+
   extension (r1: Resource)
     def +(r2: Resource): Resource = (r1, r2)match {
       case (Gold(amount1), Gold(amount2)) => Gold(amount1 + amount2)
@@ -16,19 +20,17 @@ object Resource:
       case (GloryPoint(amount1), GloryPoint(amount2)) => GloryPoint(amount1 + amount2)
       case _ => r1
     }
-    
+
     def -(r2: Resource): Resource =
-      def noNegativesHelper(v1: Int, v2: Int): Int =
-        if v1 - v2 >= 0 then v1 - v2 else 0
       (r1, r2) match {
-        case (Gold(amount1), Gold(amount2)) => Gold(noNegativesHelper(amount1, amount2))
-        case (SunCrystal(amount1), SunCrystal(amount2)) => SunCrystal(noNegativesHelper(amount1, amount2))
-        case (MoonCrystal(amount1), MoonCrystal(amount2)) => MoonCrystal(noNegativesHelper(amount1, amount2))
-        case (GloryPoint(amount1), GloryPoint(amount2)) => GloryPoint(noNegativesHelper(amount1, amount2))
+        case (Gold(amount1), Gold(amount2)) => Gold(amount1 - amount2)
+        case (SunCrystal(amount1), SunCrystal(amount2)) => SunCrystal(amount1 - amount2)
+        case (MoonCrystal(amount1), MoonCrystal(amount2)) => MoonCrystal(amount1 - amount2)
+        case (GloryPoint(amount1), GloryPoint(amount2)) => GloryPoint(amount1 - amount2)
         case _ => r1
       }
-  
-  
+
+
 
 /**
  * An empty trait used to create new resource types, as shown in the companion object

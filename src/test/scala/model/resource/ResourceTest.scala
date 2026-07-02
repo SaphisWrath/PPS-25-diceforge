@@ -1,25 +1,41 @@
 package model.resource
 
+import model.resource.Resource.*
 import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
 import scala.language.postfixOps
 
-class ResourceTest extends AnyFlatSpec with Matchers:
-  "A resource's amount" should "not go lower than 0" in :
-    var anyResource: Resource = Gold(3)
-    val sameResourceDecrease: Resource = Gold(4)
+class ResourceTestSuite extends AnyFunSuite {
+  test("Resource subtraction") {
+    assert(Gold(4) - Gold(3) == Gold(1))
+    assert(Gold(4) - Gold(5) == Gold(-1))
+    assert(Gold(4) - Gold(4) == Gold(0))
+  }
 
-    anyResource should be(Gold(3))
-    anyResource = anyResource - sameResourceDecrease
-    anyResource should be(Gold(0))
+  test("Resource addition") {
+    assert(Gold(4) + Gold(3) == Gold(7))
+    assert(Gold(-3) + Gold(5) == Gold(2))
+    assert(Gold(-4) + Gold(4) == Gold(0))
+  }
 
-    anyResource = sameResourceDecrease
-    anyResource = anyResource - sameResourceDecrease
+  test("Resource unapply") {
+    val goldRes: Resource = Gold(2)
+    val gpRes: Resource = GloryPoint(2)
+    val sunRes: Resource = SunCrystal(2)
+    val moonRes: Resource = MoonCrystal(2)
+    assert(unapply(goldRes).contains(2))
+    assert(unapply(gpRes).contains(2))
+    assert(unapply(sunRes).contains(2))
+    assert(unapply(moonRes).contains(2))
+  }
+}
 
+
+class ResourceTestSpec extends AnyFlatSpec with Matchers:
   "A resource subtraction" should "not work with a different subtype of Resource" in:
     var anyResource: Resource = Gold(3)
-
     anyResource = anyResource - SunCrystal(2)
     anyResource should be(Gold(3))
     anyResource = anyResource - MoonCrystal(5)
