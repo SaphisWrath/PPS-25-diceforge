@@ -26,10 +26,6 @@ public class PanelInitMatch extends JPanel {
 
         JPanel panelColor = new JPanel(new GridLayout(1, 2));
         Choice colorChoice = new Choice();
-        var iterator = Color.colorMap().keys().iterator();
-        while (iterator.hasNext()) {
-            colorChoice.addItem(iterator.next());
-        }
         panelColor.add(new JLabel("Player color:"));
         panelColor.add(colorChoice);
 

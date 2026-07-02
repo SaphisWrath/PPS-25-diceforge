@@ -1,9 +1,8 @@
 package view
 
-import controller.{ControllerMatchInitImpl}
-import model.{PlayerFactoryImpl}
+import controller.ControllerMatchInitImpl
 
 @main
 def main() = {
-  GUIMatchStart(ControllerMatchInitImpl(PlayerFactoryImpl()))
+  GUIMatchStart(ControllerMatchInitImpl())
 }

@@ -1,15 +1,11 @@
 package model
 
 object Players:
-  enum Color:
-    case Orange
-    case Green
-    case Black
-    case Blue
-
-  object Color:
-    val colorMap = Map(("Orange", Orange), ("Blue", Blue), ("Green", Green), ("Black", Black))
-    def stringToColor(color: String): Option[Color] = colorMap.get(color)
+  enum Color(string: String):
+    case Orange extends Color("Orange")
+    case Green extends Color("Green")
+    case Black extends Color("Black")
+    case Blue extends Color("Blue")
 
   trait Player:
 
