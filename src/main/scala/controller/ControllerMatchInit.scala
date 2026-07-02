@@ -9,7 +9,7 @@ import model.Players.*
 trait ControllerMatchInit:
   def setPlayerAmount(amount: Int): Unit
   def isPlayerAmountSet: Boolean
-  def updateMatchInfo(name: String, color: String): Unit
+  def updateMatchInfo(name: String, color: Color): Unit
   def isLastPlayerValid: Boolean
   def allPlayersSet: Boolean
 
@@ -29,8 +29,8 @@ class ControllerMatchInitImpl extends ControllerMatchInit:
       playerAmount = amount
       isPlayerAmountSet = true
 
-  override def updateMatchInfo(name: String, color: String): Unit =
-    val nextPlayer = Player(name, Color.valueOf(color))
+  override def updateMatchInfo(name: String, color: Color): Unit =
+    val nextPlayer = Player(name, color)
     isLastPlayerValid = accept(nextPlayer)
     if isLastPlayerValid then matchBuilder = matchBuilder.addPlayer(nextPlayer)
 
