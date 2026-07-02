@@ -1,31 +1,23 @@
 package model.dice
 
-import model.resource.PlayerResources
+import model.resource.ResourceBoard
 
-trait Effect:
-  def effectResources: PlayerResources
-  def applyResourceChange(playerResources: PlayerResources,
-    fun: (PlayerResources, PlayerResources) => PlayerResources = _ + _): PlayerResources
+trait Effect[A]:
+  def effect: A
 
-case class ResourceEffect(effectResources: PlayerResources) extends Effect:
-  override def applyResourceChange(playerResources: PlayerResources,
-                                  fun: (PlayerResources, PlayerResources) => PlayerResources): PlayerResources =
-    fun(playerResources, effectResources)
+case class ResourceEffect(effect: ResourceBoard) extends Effect[ResourceBoard]
 
-trait NonFixedEffect extends Effect:
-  def setCurrentEffect(effect: ResourceEffect): Unit
+trait NonFixedEffect[A] extends Effect[A]:
+  def setCurrentEffect(effect: Effect[A]): Unit
 
-case class MultiplierEffect(multiplier: Int) extends NonFixedEffect:
-  private var currentEffect: Effect = ResourceEffect(PlayerResources.setResources(0,0,0,0))
+class MultiplierEffect(multiplier: Int) extends NonFixedEffect[ResourceBoard]:
+  private var currentEffect: Effect[ResourceBoard] = ResourceEffect(ResourceBoard.board(0,0,0,0))
 
-  override def setCurrentEffect(effect: ResourceEffect): Unit =
-    currentEffect = ResourceEffect(effect.effectResources * multiplier)
+  override def setCurrentEffect(effect: Effect[ResourceBoard]): Unit =
+    currentEffect = ResourceEffect(effect.effect * multiplier)
 
-  override def effectResources: PlayerResources =
-    currentEffect.effectResources
-
-  override def applyResourceChange(playerResources: PlayerResources,
-                                   fun: (PlayerResources, PlayerResources) => PlayerResources): PlayerResources =
-    currentEffect.applyResourceChange(playerResources)
+  override def effect: ResourceBoard = currentEffect.effect
 
 class CopyEffect extends MultiplierEffect(1)
+
+case class GrantFaceEffect(effect: Face) extends Effect[Face]

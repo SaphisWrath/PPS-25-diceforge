@@ -46,45 +46,45 @@ object ResourceFactory:
   def victoryPoint(amount: Int, cap: Option[Int] = Option.empty): Resource[VictoryPoint] =
     ResourceImpl[VictoryPoint](amount, cap)
 
-case class PlayerResources(gold: Resource[Gold],
-                           sunCrystals: Resource[SunCrystal],
-                           moonCrystals: Resource[MoonCrystal],
-                           victoryPoints: Resource[VictoryPoint])
+case class ResourceBoard(gold: Resource[Gold],
+                         sunCrystals: Resource[SunCrystal],
+                         moonCrystals: Resource[MoonCrystal],
+                         victoryPoints: Resource[VictoryPoint])
 
-object PlayerResources:
-  extension [A <: ResourceType](first: PlayerResources)
-    private def applyFun(other: PlayerResources, fun: (Int, Int) => Int): PlayerResources =
+object ResourceBoard:
+  extension [A <: ResourceType](first: ResourceBoard)
+    private def applyFun(other: ResourceBoard, fun: (Int, Int) => Int): ResourceBoard =
       first match
-        case PlayerResources(g, s, m, v) => PlayerResources(
+        case ResourceBoard(g, s, m, v) => ResourceBoard(
           ResourceFactory.gold(fun(g.currentAmount, other.gold.currentAmount), g.maxCapacity),
           ResourceFactory.sunCrystal(fun(s.currentAmount, other.sunCrystals.currentAmount), s.maxCapacity),
           ResourceFactory.moonCrystal(fun(m.currentAmount, other.moonCrystals.currentAmount), m.maxCapacity),
           ResourceFactory.victoryPoint(fun(v.currentAmount, other.victoryPoints.currentAmount), v.maxCapacity)
         )
 
-    def +(other: PlayerResources): PlayerResources =
+    def +(other: ResourceBoard): ResourceBoard =
       first.applyFun(other, _ + _)
 
-    def -(other: PlayerResources): PlayerResources =
+    def -(other: ResourceBoard): ResourceBoard =
       first.applyFun(other, _ - _)
 
-    def *(multiplier: Int): PlayerResources =
+    def *(multiplier: Int): ResourceBoard =
       first match
-        case PlayerResources(g, s, m, v) => PlayerResources(
+        case ResourceBoard(g, s, m, v) => ResourceBoard(
           g * multiplier,
           s * multiplier,
           m * multiplier,
           v * multiplier
         )
   
-  def setResources(gold: Int,
-                   sunCrystals: Int,
-                   moonCrystals: Int,
-                   victoryPoints: Int): PlayerResources =
-    PlayerResources(ResourceFactory.gold(gold),
+  def board(gold: Int,
+            sunCrystals: Int,
+            moonCrystals: Int,
+            victoryPoints: Int): ResourceBoard =
+    ResourceBoard(ResourceFactory.gold(gold),
       ResourceFactory.sunCrystal(sunCrystals),
       ResourceFactory.moonCrystal(moonCrystals),
       ResourceFactory.victoryPoint(victoryPoints))
 
-  def emptyPlayerResources: PlayerResources =
-    setResources(0,0,0,0)
+  def emptyBoard: ResourceBoard =
+    board(0,0,0,0)
