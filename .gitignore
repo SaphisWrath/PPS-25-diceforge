@@ -11,7 +11,7 @@ project/local-plugins.sbt
 .ensime_cache/
 .sbt-scripted/
 local.sbt
-.bsp/*
+.bsp
 
 # IDEA
 .idea
