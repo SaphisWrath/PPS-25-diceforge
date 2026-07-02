@@ -1,113 +1,108 @@
 package model.resource
 
 /**
- * A resource that can be obtained and used in game by the player
+ * An empty trait used to create new resource types, as shown in the companion object
  */
-trait Resource:
-  def currentAmount: Int
+trait ResourceType
 
-  /**
-   * A method that updates the capacity of the resource,
-   * it should check the current amount after the change is applied
-   * @param maxCapacity the new max capacity for the resource
-   */
-  def updateMaxCapacity(maxCapacity: Int): Unit
+object ResourceType:
+  class Gold extends ResourceType
+  class SunCrystal extends ResourceType
+  class MoonCrystal extends ResourceType
+  class VictoryPoint extends ResourceType
 
-  /**
-   * A method that increases the amount of the resource
-   * @param resource the resource of matching type to be added
-   */
-  def increase(resource: Resource): Unit
-
-  /**
-   * A method that decreases the amount of the resource
-   * @param resource the resource of matching type to be subtracted
-   */
-  def decrease(resource: Resource): Unit
-
-class ResourceDecorator(plainResource: Resource) extends Resource:
-  override def currentAmount: Int = plainResource.currentAmount
-  override def updateMaxCapacity(maxCapacity: Int): Unit = plainResource.updateMaxCapacity(maxCapacity)
-  override def increase(resource: Resource): Unit = plainResource.increase(resource)
-  override def decrease(resource: Resource): Unit = plainResource.decrease(resource)
-
-class Gold(plainResource: Resource) extends ResourceDecorator(plainResource: Resource)
-class SunCrystal(plainResource: Resource) extends ResourceDecorator(plainResource: Resource)
-class MoonCrystal(plainResource: Resource) extends ResourceDecorator(plainResource: Resource)
-class VictoryPoint(plainResource: Resource) extends ResourceDecorator(plainResource: Resource)
+import model.resource.ResourceType.*
 
 /**
- * A factory that creates all types of resources, each one with its own capacity
+ * A record that keeps track of the current amount of a specific resource, as well as its max capacity
+ * @tparam A the type of the resource
  */
-trait ResourceFactory:
-  def gold(amount: Int): Gold
-  def sunCrystal(amount: Int): SunCrystal
-  def moonCrystal(amount: Int): MoonCrystal
-  def victoryPoint(amount: Int): VictoryPoint
+trait Resource[A <: ResourceType]:
+  def currentAmount: Int
+  def maxCapacity: Option[Int]
 
-object ResourceFactoryImpl extends ResourceFactory:
-  private class ResourceImpl(private val initialAmount: Int, var capacity: Option[Int]) extends Resource:
-    var currentAmount: Int = initialAmount
-    capacity = capacity.filter(_ > 0)
-    amountCheck()
+object Resource:
+  private case class ResourceImpl[A <: ResourceType](currentAmount: Int, maxCapacity: Option[Int]) extends Resource[A]
 
-    override def updateMaxCapacity(maxCapacity: Int): Unit =
-      if maxCapacity > 0
-      then
-        capacity = Some(maxCapacity)
-        amountCheck()
+  private def resourceCheck[A <: ResourceType](res: Resource[A]): Resource[A] =
+    var amount = res.currentAmount
+    if res.maxCapacity.isDefined
+    then amount = math.min(res.currentAmount, res.maxCapacity.get)
+    amount = math.max(amount, 0)
+    ResourceImpl[A](amount, res.maxCapacity)
 
-    override def increase(resource: Resource): Unit =
-      amountChange(resource.currentAmount)
+  extension [A <: ResourceType](first: Resource[A])
+    def +(other: Resource[A]): Resource[A] =
+      resourceCheck(ResourceImpl[A](first.currentAmount + other.currentAmount, first.maxCapacity))
 
-    override def decrease(resource: Resource): Unit =
-      amountChange(-resource.currentAmount)
+    def -(other: Resource[A]): Resource[A] =
+      resourceCheck(ResourceImpl[A](first.currentAmount - other.currentAmount, first.maxCapacity))
 
-    private def amountChange(change: Int): Unit =
-      currentAmount = currentAmount + change
-      amountCheck()
+    def *(multiplier: Int): Resource[A] =
+      resourceCheck(ResourceImpl[A](first.currentAmount * multiplier, first.maxCapacity))
 
-    private def amountCheck(): Unit =
-      currentAmount = math.max(0, currentAmount)
-      if capacity.isDefined then currentAmount = math.min(currentAmount, capacity.get)
+    def withUpdatedCapacity(newMaxCapacity: Int): Resource[A] =
+      if newMaxCapacity > 0
+      then resourceCheck(ResourceImpl[A](first.currentAmount, Some(newMaxCapacity)))
+      else first
 
-  override def gold(amount: Int): Gold =
-    Gold(ResourceImpl(amount, Some(12)))
+  /*
+   * Helper functions to make any type of resource
+   */
+  def gold(amount: Int, cap: Option[Int] = Some(12)): Resource[Gold] =
+    ResourceImpl[Gold](amount, cap)
+  def sunCrystal(amount: Int, cap: Option[Int] = Some(6)): Resource[SunCrystal] =
+    ResourceImpl[SunCrystal](amount, cap)
+  def moonCrystal(amount: Int, cap: Option[Int] = Some(6)): Resource[MoonCrystal] =
+    ResourceImpl[MoonCrystal](amount, cap)
+  def victoryPoint(amount: Int, cap: Option[Int] = Option.empty): Resource[VictoryPoint] =
+    ResourceImpl[VictoryPoint](amount, cap)
 
-  override def sunCrystal(amount: Int): SunCrystal =
-    SunCrystal(ResourceImpl(amount, Some(6)))
+/**
+ * A record that keeps track of every type of resource, usually held by the player
+ */
+case class ResourceBoard(gold: Resource[Gold],
+                         sunCrystals: Resource[SunCrystal],
+                         moonCrystals: Resource[MoonCrystal],
+                         victoryPoints: Resource[VictoryPoint])
 
-  override def moonCrystal(amount: Int): MoonCrystal =
-    MoonCrystal(ResourceImpl(amount, Some(6)))
+object ResourceBoard:
+  extension [A <: ResourceType](first: ResourceBoard)
+    private def applyFun(other: ResourceBoard, fun: (Int, Int) => Int): ResourceBoard =
+      first match
+        case ResourceBoard(g, s, m, v) => ResourceBoard(
+          Resource.gold(fun(g.currentAmount, other.gold.currentAmount), g.maxCapacity),
+          Resource.sunCrystal(fun(s.currentAmount, other.sunCrystals.currentAmount), s.maxCapacity),
+          Resource.moonCrystal(fun(m.currentAmount, other.moonCrystals.currentAmount), m.maxCapacity),
+          Resource.victoryPoint(fun(v.currentAmount, other.victoryPoints.currentAmount), v.maxCapacity)
+        )
 
-  override def victoryPoint(amount: Int): VictoryPoint =
-    VictoryPoint(ResourceImpl(amount, Option.empty))
+    def +(other: ResourceBoard): ResourceBoard =
+      first.applyFun(other, _ + _)
 
-trait PlayerResources:
-  def gold: Gold
-  def sunCrystals: SunCrystal
-  def moonCrystals: MoonCrystal
-  def victoryPoints: VictoryPoint
+    def -(other: ResourceBoard): ResourceBoard =
+      first.applyFun(other, _ - _)
 
-  def increaseResources(incResources: List[Resource]): Unit
-  def decreaseResources(decResources: List[Resource]): Unit
+    def *(multiplier: Int): ResourceBoard =
+      first match
+        case ResourceBoard(g, s, m, v) => ResourceBoard(
+          g * multiplier,
+          s * multiplier,
+          m * multiplier,
+          v * multiplier
+        )
 
-class PlayerResourcesImpl extends PlayerResources:
-  val gold: Gold = ResourceFactoryImpl.gold(0)
-  val sunCrystals: SunCrystal = ResourceFactoryImpl.sunCrystal(0)
-  val moonCrystals: MoonCrystal = ResourceFactoryImpl.moonCrystal(0)
-  val victoryPoints: VictoryPoint = ResourceFactoryImpl.victoryPoint(0)
+  /*
+   * Helper functions to make resource boards
+   */
+  def board(gold: Int,
+            sunCrystals: Int,
+            moonCrystals: Int,
+            victoryPoints: Int): ResourceBoard =
+    ResourceBoard(Resource.gold(gold),
+      Resource.sunCrystal(sunCrystals),
+      Resource.moonCrystal(moonCrystals),
+      Resource.victoryPoint(victoryPoints))
 
-  override def increaseResources(incResources: List[Resource]): Unit =
-    updateResources(incResources, (playerRes, newRes) => playerRes.increase(newRes))
-
-  override def decreaseResources(decResources: List[Resource]): Unit =
-    updateResources(decResources, (playerRes, newRes) => playerRes.decrease(newRes))
-
-  private def updateResources(updates: List[Resource], fun: (Resource, Resource) => Unit): Unit =
-    updates.foreach {
-      case res if res.isInstanceOf[Gold] => fun(this.gold, res)
-      case res if res.isInstanceOf[SunCrystal] => fun(this.sunCrystals, res)
-      case res if res.isInstanceOf[MoonCrystal] => fun(this.moonCrystals, res)
-      case res if res.isInstanceOf[VictoryPoint] => fun(this.victoryPoints, res)
-    }
+  def emptyBoard: ResourceBoard =
+    board(0,0,0,0)
