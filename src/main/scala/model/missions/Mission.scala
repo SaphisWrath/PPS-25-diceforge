@@ -10,3 +10,4 @@ trait Mission:
 object Mission:
   private class MissionImpl(var reward: List[Effect], var cost: List[ResourceEffect]) extends Mission
   def apply(rewards: List[Effect], cost: List[ResourceEffect]): Mission = MissionImpl(rewards, cost)
+  def makeEmpty(): Mission = MissionImpl(List.empty, List.empty)
