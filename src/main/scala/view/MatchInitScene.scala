@@ -12,6 +12,12 @@ import scalafx.scene.control.{Button, ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, Pane, VBox}
 
 class MatchInitScene(controller: ControllerMatchInit) extends Scene:
+  private val playerCountChoice = new ChoiceBox[Int](ObservableBuffer[Int](2, 3, 4))
+  private val playerNameField = new TextField()
+  private val playerColorChoice = new ChoiceBox[Color](ObservableBuffer[Color](Orange, Green, Blue, Black))
+  private val feedbackLabel = new Label()
+  private val addPlayerButton = new Button("Add player")
+  
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {
       spacing = 20
@@ -19,27 +25,6 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
       alignmentInParent = Center
       children = nodes
     }
-
-  private val playerCountChoice = new ChoiceBox[Int](ObservableBuffer[Int](2, 3, 4))
-  private val playerNameField = new TextField()
-  private val playerColorChoice = new ChoiceBox[Color](ObservableBuffer[Color](Orange, Green, Blue, Black))
-  private val feedbackLabel = new Label()
-  private val addPlayerButton = new Button("Add player") {
-    onAction = _ => {
-      if !controller.isPlayerAmountSet
-      then
-        controller.setPlayerAmount(playerCountChoice.getValue)
-        playerCountChoice.disable = true
-      
-      controller.updateMatchInfo(playerNameField.getText, playerColorChoice.getValue)
-      if controller.isLastPlayerValid
-      then feedbackLabel.text = "Player added!"
-      else feedbackLabel.text = "Name or color already picked"
-      
-      if controller.allPlayersSet
-      then feedbackLabel.text = "Ready to start the game!"
-    }
-  }
     
   root = new VBox {
     fillWidth = true
@@ -47,33 +32,25 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
     alignment = Center
     alignmentInParent = Center
     children = Seq(
-      makeRowWith(
-        Seq(
-          new Label("How many players?"),
-          playerCountChoice
-        )
-      ),
-      makeRowWith(
-        Seq(
-          new Label("Player name:"),
-          playerNameField
-        )
-      ),
-      makeRowWith(
-        Seq(
-          new Label("Player color:"),
-          playerColorChoice
-        )
-      ),
-      makeRowWith(
-        Seq(
-          addPlayerButton
-        )
-      ),
-      makeRowWith(
-        Seq(
-          feedbackLabel
-        )
-      )
+      makeRowWith(Seq(new Label("How many players?"), playerCountChoice)),
+      makeRowWith(Seq(new Label("Player name:"), playerNameField)),
+      makeRowWith(Seq(new Label("Player color:"), playerColorChoice)),
+      makeRowWith(Seq(addPlayerButton)),
+      makeRowWith(Seq(feedbackLabel))
     )
+  }
+
+  addPlayerButton.onAction = _ => {
+    if !controller.isPlayerAmountSet
+    then
+      controller.setPlayerAmount(playerCountChoice.getValue)
+      playerCountChoice.disable = true
+
+    controller.updateMatchInfo(playerNameField.getText, playerColorChoice.getValue)
+    if controller.isLastPlayerValid
+    then feedbackLabel.text = "Player added!"
+    else feedbackLabel.text = "Name or color already picked"
+
+    if controller.allPlayersSet
+    then feedbackLabel.text = "Ready to start the game!"
   }
