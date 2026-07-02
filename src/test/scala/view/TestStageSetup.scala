@@ -2,15 +2,16 @@ package view
 
 import controller.ControllerMatchInit
 import scalafx.application.JFXApp3.PrimaryStage
+import scalafx.scene.Scene
 
-class MatchInitStage(controller: ControllerMatchInit) {
+class TestStageSetup(displayScene: Scene) {
   def stage: PrimaryStage = new PrimaryStage {
-    title = "Dice Forge - Match Setup"
+    title = "Test Setup"
     resizable = true
     minWidth = 800
     minHeight = 500
     width = minWidth
     height = minHeight
-    scene = new MatchInitScene(controller)
+    scene = displayScene
   }
 }

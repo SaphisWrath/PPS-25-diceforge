@@ -4,12 +4,11 @@ import controller.ControllerMatchInit
 import model.Players.Color
 import model.Players.Color.*
 import scalafx.collections.ObservableBuffer
-import scalafx.event.{ActionEvent, EventHandler}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Node
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, ChoiceBox, Label, TextField}
-import scalafx.scene.layout.{HBox, Pane, VBox}
+import scalafx.scene.layout.{HBox, VBox}
 
 class MatchInitScene(controller: ControllerMatchInit) extends Scene:
   private val playerCountChoice = new ChoiceBox[Int](ObservableBuffer[Int](2, 3, 4))
