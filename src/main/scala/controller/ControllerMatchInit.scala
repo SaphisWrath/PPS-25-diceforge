@@ -23,13 +23,16 @@ class ControllerMatchInitImpl extends ControllerMatchInit:
     !matchBuilder.currentPlayers.exists(p => p.getName == newPlayer.getName || p.getColor == newPlayer.getColor)
 
   override def setPlayerAmount(amount: Int): Unit =
-    matchBuilder = MatchBuilderImpl(amount)
-    playerAmount = amount
-    isPlayerAmountSet = true
+    if !isPlayerAmountSet
+    then
+      matchBuilder = MatchBuilderImpl(amount)
+      playerAmount = amount
+      isPlayerAmountSet = true
 
   override def updateMatchInfo(name: String, color: String): Unit =
     val nextPlayer = Player(name, Color.valueOf(color))
-    if accept(nextPlayer) then matchBuilder = matchBuilder.addPlayer(nextPlayer)
+    isLastPlayerValid = accept(nextPlayer)
+    if isLastPlayerValid then matchBuilder = matchBuilder.addPlayer(nextPlayer)
 
   override def allPlayersSet: Boolean =
     matchBuilder.currentPlayers.size >= playerAmount
