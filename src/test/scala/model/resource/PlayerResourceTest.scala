@@ -26,4 +26,17 @@ class PlayerResourceSpec extends AnyFlatSpec with Matchers {
     assert(playerResource.maximumCapacity == 1)
     playerResource.setMaxAmount(-4)
     assert(playerResource.maximumCapacity == 1)
+
+  "Modification through setResource" should "not allow resource to be over maximum" in:
+    val maxAmount = 10
+    val playerResource = PlayerResource(maxAmount, Gold(30))
+    assert(playerResource.resource == Gold(0))
+    playerResource.setResource(Gold(11))
+    assert(playerResource.resource == Gold(maxAmount))
+
+  "Modification through setResource" should "not allow resource to dip below 0" in:
+    val playerResource = PlayerResource(10, Gold(-1))
+    assert(playerResource.resource == Gold(0))
+    playerResource.setResource(Gold(-5))
+    assert(playerResource.resource == Gold(0))
 }
