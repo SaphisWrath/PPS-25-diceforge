@@ -25,3 +25,15 @@ class EffectTest extends AnyFlatSpec with Matchers:
 
     multiplierEffect.setCurrentEffect(ResourceEffect(ResourceBoard.board(2,1,1,0)))
     playerResources + multiplierEffect.effect should be(ResourceBoard.board(10,5,5,8))
+
+  "Different types of effect" can "be distinguished through match case functions" in:
+    import org.scalatestplus.mockito.MockitoSugar.mock
+    import model.dice.Face.SumFace
+
+    val differentEffects: List[Effect[?]] = List(ResourceEffect(ResourceBoard.board(1,2,2,3)), GrantFaceEffect(mock[SumFace]))
+    var firstIsResourceEffect = false
+
+    differentEffects.head match
+      case ResourceEffect(_) => firstIsResourceEffect = true
+
+    firstIsResourceEffect should be(true)
