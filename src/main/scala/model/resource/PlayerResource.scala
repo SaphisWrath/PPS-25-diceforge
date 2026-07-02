@@ -11,7 +11,7 @@ trait PlayerResource:
 object PlayerResource:
   private class PlayerResourceImpl(var maximumCapacity: Int,
                                    var resource: Resource) 
-  extends PlayerResource {
+  extends PlayerResource:
     resource = resource match
       case Gold(_) => Gold(0)
       case SunCrystal(_) => SunCrystal(0)
@@ -23,19 +23,16 @@ object PlayerResource:
 
     override def setResource(newResource: Resource): Unit = newResource match
       case Resource(n) if n >= 0 & n <= maximumCapacity => resource = newResource
-      case Resource(n) if n > maximumCapacity => resource match {
+      case Resource(n) if n > maximumCapacity => resource match 
         case Gold(_) => resource = Gold(maximumCapacity)
         case SunCrystal(_) => resource = SunCrystal(maximumCapacity)
         case MoonCrystal(_) => resource = MoonCrystal(maximumCapacity)
         case GloryPoint(_) => resource = GloryPoint(maximumCapacity)
-      }
-      case _ => resource match {
+      case _ => resource match
         case Gold(_) => resource = Gold(0)
         case SunCrystal(_) => resource = SunCrystal(0)
         case MoonCrystal(_) => resource = MoonCrystal(0)
         case GloryPoint(_) => resource =  GloryPoint(0)
-      }
-  }
   
   def apply(maximumCapacity: Int, resource: Resource): PlayerResource = PlayerResourceImpl(maximumCapacity, resource)
   def unapply(playerResource: PlayerResource): Option[(Int, Resource)] =
