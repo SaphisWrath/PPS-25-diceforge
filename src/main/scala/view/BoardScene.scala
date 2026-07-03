@@ -5,7 +5,7 @@ import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox}
 import scalafx.scene.paint.Color
-import view.builders.{PlayerBoxBuilder, PlayerDirector}
+import view.builders.PlayerDirector
 
 class BoardScene extends Scene:
   private val director: PlayerDirector = PlayerDirector("name", Color.Green)
@@ -17,9 +17,7 @@ class BoardScene extends Scene:
   }
 
   private def activePlayerPane(): Node =
-    val playerBoxBuilder = PlayerBoxBuilder.standardPlayerBoxBuilder
-    director.createActivePlayerBox(playerBoxBuilder)
-    val playerBox = playerBoxBuilder.node
+    val playerBox = director.activePlayerBox.create
     val nextTurnButton = Button("Next Turn")
     val box: HBox = new HBox {
       children = Seq(playerBox, nextTurnButton)
@@ -36,12 +34,8 @@ class BoardScene extends Scene:
         ("Player3", Color.Orange),
         ("Player4", Color.Black)
       ).map(t => PlayerDirector(t._1, t._2))
-    val builder: PlayerBoxBuilder = PlayerBoxBuilder.fillInPlayerBoxBuilder
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
-        .map(director =>
-          director.createActivePlayerBox(builder)
-          builder.node
-      )
+        .map(_.activePlayerBox.create)
     val pane: HBox = new HBox {
       children = playerBoxes
       spacing = 5
