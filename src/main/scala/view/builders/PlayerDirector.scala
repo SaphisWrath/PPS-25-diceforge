@@ -7,6 +7,6 @@ class PlayerDirector(playerName: String, playerColor: Color):
     builder.reset()
     builder.buildName(playerName)
     builder.buildToken(playerColor)
-    Seq("Oro", "Cristalli Solari", "Cristalli Lunari")
+    Seq("Oro", "Cristalli Solari", "Cristalli Lunari") //TODO
       .foreach(builder.buildResource)
     builder.buildDiceTracker()

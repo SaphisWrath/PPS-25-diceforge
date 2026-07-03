@@ -10,6 +10,6 @@ class MainStage(/* TODO controller */) {
     minHeight = 500
     width = 800
     height = 500
-    scene = new MainMenuScene()
+    scene = new BoardScene()
   }
 }

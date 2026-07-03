@@ -5,7 +5,7 @@ import scalafx.scene.Node
 import scalafx.scene.control.Label
 import scalafx.scene.input.KeyCode.Insert
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, VBox}
+import scalafx.scene.layout.{Background, BackgroundFill, Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, FlowPane, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
 
@@ -30,7 +30,6 @@ trait PlayerBoxBuilder:
    */
   def buildToken(color: Color): Unit
 
-
   /**
    * @param name
    * Adds a resource with the given name
@@ -49,9 +48,17 @@ trait PlayerBoxBuilder:
   def node: Node
 
 object PlayerBoxBuilder:
-  private class PlayerBoxBuilderImpl extends PlayerBoxBuilder:
-    private var _node: BorderPane = baseNode
-    private var _resourceBox: VBox = VBox()
+
+  private class PlayerBoxBuilderBaseImpl extends PlayerBoxBuilder:
+    private[PlayerBoxBuilder] var _node: BorderPane = baseNode
+    private[PlayerBoxBuilder] var _resourceBox: VBox = VBox()
+
+    private[PlayerBoxBuilder] def cornerRadii = CornerRadii(10)
+    private[PlayerBoxBuilder] def boxBorder(
+                      color: Color = Color.Black,
+                      borderStyle: BorderStrokeStyle = BorderStrokeStyle.Solid,
+                      borderWidths: BorderWidths = BorderWidths(3)
+                      ): Border = Border(BorderStroke(color, borderStyle, cornerRadii, borderWidths))
 
     override def reset(): Unit =
       _resourceBox = VBox()
@@ -64,25 +71,28 @@ object PlayerBoxBuilder:
       _node.left = Circle(50, color)
 
     override def buildResource(name: String): Unit =
-      _resourceBox.children += Label(name)
+      _resourceBox.children += Label(name) //TODO
 
     override def buildDiceTracker(): Unit =
-      _node.bottom = Label("DiceTracker")
+      _node.bottom = Label("DiceTracker") //TODO
 
     override def node: Node =
       val completeNode = _node
       reset()
       completeNode
 
+
     private def baseNode: BorderPane = new BorderPane {
       center = _resourceBox
-      border = Border(BorderStroke(
-        Color.Black,
-        BorderStrokeStyle.Solid,
-        CornerRadii(10),
-        BorderWidths(3)
-      ))
+      border = boxBorder()
       padding = Insets(5, 10, 5, 10)
     }
 
-  def apply(): PlayerBoxBuilder = PlayerBoxBuilderImpl()
+  def standardPlayerBoxBuilder: PlayerBoxBuilder = PlayerBoxBuilderBaseImpl()
+
+  def fillInPlayerBoxBuilder: PlayerBoxBuilder = new PlayerBoxBuilderBaseImpl {
+    override def boxBorder(color:  Color, borderStyle:  BorderStrokeStyle, borderWidths:  BorderWidths): Border =
+      super.boxBorder(Color.Blue, borderStyle, borderWidths)
+    override def buildToken(color: Color): Unit =
+      _node.background = Background(Array(BackgroundFill(color, cornerRadii, Insets.Empty)))
+  }
