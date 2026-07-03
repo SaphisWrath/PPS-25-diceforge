@@ -1,5 +1,6 @@
 package view.scenes
 
+import controller.ControllerMainMenu
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Scene
 import scalafx.scene.layout.*
@@ -7,7 +8,7 @@ import scalafx.scene.paint.Color
 import view.buttons.ButtonFactory
 import view.text.TextFactory
 
-class MainMenuScene extends Scene {
+class MainMenuScene(controller: ControllerMainMenu) extends Scene {
   private val buttonFactory: ButtonFactory = ButtonFactory()
   private val textFactory: TextFactory = TextFactory()
   root = new VBox {
@@ -23,8 +24,8 @@ class MainMenuScene extends Scene {
     alignmentInParent = Center
     children = Seq(
       textFactory.makeMenuTitle,
-      buttonFactory.makeMenuButton("INIZIA"),
-      buttonFactory.makeMenuButton("REGOLE")
+      buttonFactory.makeMenuButton("INIZIA", controller.onStart),
+      buttonFactory.makeMenuButton("REGOLE", controller.onRules)
     )
   }
 }

@@ -1,7 +1,9 @@
 package controller
 
 import controller.ViewState.{MainMenu, MatchInit}
+import javafx.event.ActionEvent
 import scalafx.application.JFXApp3.PrimaryStage
+import scalafx.beans.property.ObjectProperty
 import scalafx.stage.Stage
 import view.MainStage
 import view.scenes.{MainMenuScene, MatchInitScene}
@@ -20,13 +22,17 @@ object ControllerStage:
     private var viewState: ViewState = MainMenu
     private val mainStage: PrimaryStage = MainStage(this).stage
     changeScene(viewState)
-    
+
     override def init(): PrimaryStage = mainStage
 
     override def changeScene(newState: ViewState): Unit = newState match
-      case MainMenu => 
+      case MainMenu =>
+        val tempController = ControllerMainMenu(
+          ObjectProperty(_ => this.changeScene(MatchInit)),
+          ObjectProperty(_ => this.changeScene(MainMenu))
+        )
         viewState = newState
-        mainStage.scene = MainMenuScene()
+        mainStage.scene = tempController.scene
       case MatchInit => 
         viewState = newState
         mainStage.scene = MatchInitScene(new ControllerMatchInitImpl())
