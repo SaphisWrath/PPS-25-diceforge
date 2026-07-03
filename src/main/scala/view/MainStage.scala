@@ -1,9 +1,10 @@
 package view
 
+import controller.ControllerStage
 import scalafx.application.JFXApp3.PrimaryStage
 import view.scenes.MainMenuScene
 
-class MainStage(/* TODO controller */) {
+class MainStage(controller: ControllerStage) {
   def stage: PrimaryStage = new PrimaryStage {
     title = "Dice Forge"
     resizable = true
@@ -11,6 +12,5 @@ class MainStage(/* TODO controller */) {
     minHeight = 500
     width = 800
     height = 500
-    scene = new MainMenuScene()
   }
 }
