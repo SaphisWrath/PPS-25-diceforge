@@ -1,6 +1,7 @@
 package view
 
 import scalafx.application.JFXApp3.PrimaryStage
+import view.scenes.MainMenuScene
 
 class MainStage(/* TODO controller */) {
   def stage: PrimaryStage = new PrimaryStage {
