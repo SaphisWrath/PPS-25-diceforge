@@ -1,5 +1,7 @@
 package view
 
+import controller.GameController
+import model.Players.{Color, Player}
 import scalafx.application.JFXApp3.PrimaryStage
 
 class MainStage(/* TODO controller */) {
@@ -10,6 +12,6 @@ class MainStage(/* TODO controller */) {
     minHeight = 500
     width = 800
     height = 500
-    scene = new BoardScene()
+    scene = MainMenuScene()
   }
 }

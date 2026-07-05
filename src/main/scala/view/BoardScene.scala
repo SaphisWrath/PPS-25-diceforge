@@ -1,14 +1,18 @@
 package view
 
+import controller.GameController
+import model.Players.Player
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox}
 import scalafx.scene.paint.Color
 import view.builders.{PlayerBoxBuilder, PlayerDirector}
+import view.utils.ColorConversion.*
 
 class BoardScene extends Scene:
-  private val director: PlayerDirector = PlayerDirector("name", Color.Green)
+  private val playerDirectors: Map[Player, PlayerDirector] = 
+    GameController.players.map(p => p -> PlayerDirector(p.getName, p.getColor.toScalaFX)).toMap
 
   root = new BorderPane {
     top = nonActivePlayersPane()
@@ -18,7 +22,8 @@ class BoardScene extends Scene:
 
   private def activePlayerPane(): Node =
     val playerBoxBuilder = PlayerBoxBuilder.standardPlayerBoxBuilder
-    director.createActivePlayerBox(playerBoxBuilder)
+    val activePlayer = GameController.activePlayer.get
+    playerDirectors(activePlayer).createActivePlayerBox(playerBoxBuilder)
     val playerBox = playerBoxBuilder.node
     val nextTurnButton = Button("Next Turn")
     val box: HBox = new HBox {
@@ -30,12 +35,7 @@ class BoardScene extends Scene:
     box
 
   private def nonActivePlayersPane(): Node =
-
-    val nonActivePlayerDirectors = Seq(
-        ("Player2", Color.Blue),
-        ("Player3", Color.Orange),
-        ("Player4", Color.Black)
-      ).map(t => PlayerDirector(t._1, t._2))
+    val nonActivePlayerDirectors = GameController.nonActivePlayerList.map(playerDirectors(_))
     val builder: PlayerBoxBuilder = PlayerBoxBuilder.fillInPlayerBoxBuilder
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
         .map(director =>

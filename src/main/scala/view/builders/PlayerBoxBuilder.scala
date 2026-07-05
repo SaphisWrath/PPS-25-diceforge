@@ -92,7 +92,7 @@ object PlayerBoxBuilder:
 
   def fillInPlayerBoxBuilder: PlayerBoxBuilder = new PlayerBoxBuilderBaseImpl {
     override def boxBorder(color:  Color, borderStyle:  BorderStrokeStyle, borderWidths:  BorderWidths): Border =
-      super.boxBorder(Color.Blue, borderStyle, borderWidths)
+      super.boxBorder(color, borderStyle, borderWidths)
     override def buildToken(color: Color): Unit =
       _node.background = Background(Array(BackgroundFill(color, cornerRadii, Insets.Empty)))
   }
