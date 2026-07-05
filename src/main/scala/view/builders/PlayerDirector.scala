@@ -12,8 +12,12 @@ case class PlayerDirector(playerName: String, playerColor: Color):
   )
 
   def activePlayerBox: PlayerBox =
-    new BasePlayerBox(playerName)
-      with RoundedCorners(10)
-      with SolidBorder(Color.Black, 3)
+    new BasePlayerBox(PlayerBoxStyle.Standard)
+      with StandardNameSection(playerName)
       with CircleTokenSection(25, playerColor)
+      with StandardResourceSection(resorceSeq) //TODO
+
+  def nonActivePlayerBox: PlayerBox =
+    new BasePlayerBox(PlayerBoxStyle.Small)
+      with StandardNameSection(playerName)
       with StandardResourceSection(resorceSeq) //TODO

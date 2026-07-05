@@ -28,14 +28,13 @@ class BoardScene extends Scene:
     box
 
   private def nonActivePlayersPane(): Node =
-
     val nonActivePlayerDirectors = Seq(
         ("Player2", Color.Blue),
         ("Player3", Color.Orange),
         ("Player4", Color.Black)
       ).map(t => PlayerDirector(t._1, t._2))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
-        .map(_.activePlayerBox.create)
+        .map(_.nonActivePlayerBox.create)
     val pane: HBox = new HBox {
       children = playerBoxes
       spacing = 5
