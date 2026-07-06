@@ -2,6 +2,7 @@ package view
 
 import controller.GameController
 import model.Players.Player
+import scalafx.event.EventType
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
@@ -25,7 +26,10 @@ class BoardScene extends Scene:
     val activePlayer = GameController.activePlayer.get
     playerDirectors(activePlayer).createActivePlayerBox(playerBoxBuilder)
     val playerBox = playerBoxBuilder.node
-    val nextTurnButton = Button("Next Turn")
+    val nextTurnButton = new Button{
+      text = "Prossimo Turno"
+      onMouseClicked = event => GameController.nextTurn()
+    }
     val box: HBox = new HBox {
       children = Seq(playerBox, nextTurnButton)
       spacing = 5
