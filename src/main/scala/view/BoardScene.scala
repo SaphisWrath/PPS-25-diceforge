@@ -8,11 +8,10 @@ import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox}
 import scalafx.scene.paint.Color
-import view.builders.{PlayerBoxBuilder, PlayerDirector}
-import view.utils.ColorConversion.*
+import view.builders.PlayerDirector
 
 class BoardScene extends Scene:
-  private val playerDirectors: Map[Player, PlayerDirector] = 
+  private val playerDirectors: Map[Player, PlayerDirector] =
     GameController.players.map(p => p -> PlayerDirector(p.getName, p.getColor.toScalaFX)).toMap
 
   root = new BorderPane {
@@ -22,10 +21,8 @@ class BoardScene extends Scene:
   }
 
   private def activePlayerPane(): Node =
-    val playerBoxBuilder = PlayerBoxBuilder.standardPlayerBoxBuilder
     val activePlayer = GameController.activePlayer.get
-    playerDirectors(activePlayer).createActivePlayerBox(playerBoxBuilder)
-    val playerBox = playerBoxBuilder.node
+    val playerBox = playerDirectors(activePlayer).activePlayerBox.create
     val nextTurnButton = new Button{
       text = "Prossimo Turno"
       onMouseClicked = event => GameController.nextTurn()
@@ -40,12 +37,8 @@ class BoardScene extends Scene:
 
   private def nonActivePlayersPane(): Node =
     val nonActivePlayerDirectors = GameController.nonActivePlayerList.map(playerDirectors(_))
-    val builder: PlayerBoxBuilder = PlayerBoxBuilder.fillInPlayerBoxBuilder
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
-        .map(director =>
-          director.createActivePlayerBox(builder)
-          builder.node
-      )
+        .map(_.nonActivePlayerBox.create)
     val pane: HBox = new HBox {
       children = playerBoxes
       spacing = 5
