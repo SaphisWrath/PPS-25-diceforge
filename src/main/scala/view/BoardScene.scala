@@ -2,17 +2,16 @@ package view
 
 import controller.GameController
 import model.Players.Player
-import scalafx.event.EventType
-import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{BorderPane, FlowPane, HBox}
-import scalafx.scene.paint.Color
-import view.builders.PlayerDirector
+import scalafx.scene.layout.{BorderPane, HBox}
+import scalafx.scene.{Node, Scene}
+import view.builders.PlayerGUIComponentFactory
+import view.utils.ColorConversion.*
 
 class BoardScene extends Scene:
-  private val playerDirectors: Map[Player, PlayerDirector] =
-    GameController.players.map(p => p -> PlayerDirector(p.getName, p.getColor.toScalaFX)).toMap
+  private val playerDirectors: Map[Player, PlayerGUIComponentFactory] =
+    GameController.players.map(p => p -> PlayerGUIComponentFactory(p.getName, p.getColor.toScalaFX)).toMap
 
   root = new BorderPane {
     top = nonActivePlayersPane()
@@ -43,5 +42,4 @@ class BoardScene extends Scene:
       children = playerBoxes
       spacing = 5
     }
-
     pane

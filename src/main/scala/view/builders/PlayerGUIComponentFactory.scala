@@ -3,7 +3,7 @@ package view.builders
 import scalafx.scene.paint.Color
 import view.builders.PlayerBoxes.*
 
-case class PlayerDirector(playerName: String, playerColor: Color):
+case class PlayerGUIComponentFactory(playerName: String, playerColor: Color):
   val resorceSeq: Seq[String] = Seq(
     "Oro",
     "Cristalli Solari",
