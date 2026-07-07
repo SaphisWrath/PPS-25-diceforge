@@ -1,5 +1,6 @@
 package view.builders
 
+import scalafx.scene.Node
 import scalafx.scene.paint.Color
 import view.builders.PlayerBoxes.*
 
@@ -11,13 +12,16 @@ case class PlayerGUIComponentFactory(playerName: String, playerColor: Color):
     "Punti Gloria"
   )
 
-  def activePlayerBox: PlayerBox =
-    new BasePlayerBox(PlayerBoxStyle.Standard)
-      with StandardNameSection(playerName)
-      with CircleTokenSection(25, playerColor)
-      with StandardResourceSection(resorceSeq) //TODO
+  def activePlayerBox: Node =
+    PlayerBoxBuilder(PlayerBoxStyle.Standard)
+      .withNameSection(playerName)
+      .withCircleTokenSection(playerColor, 25)
+      .withResourceSection(resorceSeq)
+      .build
 
-  def nonActivePlayerBox: PlayerBox =
-    new BasePlayerBox(PlayerBoxStyle.Small)
-      with StandardNameSection(playerName)
-      with StandardResourceSection(resorceSeq) //TODO
+  def nonActivePlayerBox: Node =
+    PlayerBoxBuilder(PlayerBoxStyle.Small)
+      .withNameSection(playerName)
+      .withCircleTokenSection(playerColor, 10)
+      .withResourceSection(resorceSeq)
+      .build

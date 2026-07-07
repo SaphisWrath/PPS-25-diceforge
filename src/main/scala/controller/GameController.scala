@@ -26,7 +26,7 @@ object GameController:
     else Option(_players(_activePlayerIndex))
 
   def nonActivePlayerList: Seq[Player] =
-    require(_players.nonEmpty && activePlayer.nonEmpty)
+    require(_players.nonEmpty)
     _players.filter(!_.equals(activePlayer.get))
 
   def nextTurn(): Unit =
