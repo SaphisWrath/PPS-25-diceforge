@@ -24,7 +24,7 @@ object ButtonFactory:
         new Border(new BorderStroke(
           Color.Black,
           BorderStrokeStyle.Solid,
-          CornerRadii(5),
+          CornerRadii.Empty,
           BorderWidths.Default)
         )
         onAction = onClick.value
