@@ -1,6 +1,7 @@
 package controller
 
 import model.Players.Player
+import model.resource.{PlayerBoard, Resource}
 
 import scala.util.Random
 
@@ -34,6 +35,12 @@ trait GameController:
   def nonActivePlayerList: Seq[Player]
 
   /**
+   * @param player
+   * @return the currentPlayerBoard of the given player
+   */
+  def playerBoard(player: Player): PlayerBoard
+
+  /**
    * Notify the game to go to the next turn
    */
   def nextTurn(): Unit
@@ -54,17 +61,20 @@ trait GameController:
   def maxNumberOfRounds: Int
 
 object GameController:
-  private var _players: Seq[Player] = Seq()
+  private var _players: Seq[Player] = Seq.empty
+  private var _playerBoards: Map[Player, PlayerBoard] = Map.empty
   private var _activePlayerIndex: Int = 0
   private var _currentRound: Int = 0
 
   def init(playerList: Seq[Player]): Unit =
     require(playerList.length >= 2)
+    reset()
     _players = Random.shuffle(playerList)
-    _activePlayerIndex = 0
+    _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
 
   def reset(): Unit =
-    _players = Seq()
+    _players = Seq.empty
+    _playerBoards = Map.empty
     _activePlayerIndex = 0
     _currentRound = 0
 
@@ -77,9 +87,13 @@ object GameController:
   def nonActivePlayerList: Seq[Player] =
     require(_players.nonEmpty)
     _players.filter(!_.equals(activePlayer.get))
+    
+  def playerBoard(player: Player): PlayerBoard =
+    require(_players.contains(player))
+    _playerBoards(player)
 
   def nextTurn(): Unit =
-    _activePlayerIndex = (_activePlayerIndex + 1) % _players.length //TODO
+    _activePlayerIndex = if _activePlayerIndex + 1 >= players.length then 0 else _activePlayerIndex + 1
     if _activePlayerIndex == 0 then _currentRound = _currentRound + 1
 
   def currentRound: Int = _currentRound + 1
