@@ -24,7 +24,7 @@ class BoardScene extends Scene:
 
   private val pane = new BorderPane {
     top = nonActivePlayersPane()
-    center = Label("center")
+    center = Label("center") //TODO
     bottom = activePlayerPane()
   }
 
@@ -50,8 +50,10 @@ class BoardScene extends Scene:
     }
     pane
 
+  private val NEXT_TURN_BUTTON_TEXT = "Prossimo Turno"
+
   private def nextTurnButton: Button = ButtonFactory().makeBoardButton(
-    "Prossimo Turno",
+    NEXT_TURN_BUTTON_TEXT,
     event =>
       GameController.nextTurn()
       activePlayer() = GameController.activePlayer.get

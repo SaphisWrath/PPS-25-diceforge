@@ -4,6 +4,55 @@ import model.Players.Player
 
 import scala.util.Random
 
+trait GameController:
+  /**
+   * Initialize a game with the given players
+   * @param playerList
+   */
+  def init(playerList: Seq[Player]): Unit
+
+  /**
+   *  Resets the game to an empty state
+   */
+  def reset(): Unit
+
+  /**
+   * @return the sequence of current players, if the game as not been initialized is empty
+   */
+  def players: Seq[Player]
+
+  /**
+   * @return an Option containing the current active player if the game as been initialized,
+   *         empty otherwise
+   */
+  def activePlayer: Option[Player]
+
+  /**
+   * @return the sequence of all players that are not the active player, if the game as not been initialized the
+   *         sequence is empty
+   */
+  def nonActivePlayerList: Seq[Player]
+
+  /**
+   * Notify the game to go to the next turn
+   */
+  def nextTurn(): Unit
+
+  /**
+   * @return the current round number
+   */
+  def currentRound: Int
+
+  /**
+   * @return true if the game ended
+   */
+  def isGameEnded: Boolean
+
+  /**
+   * @return the maximum number of rounds of the currently initialized game
+   */
+  def maxNumberOfRounds: Int
+
 object GameController:
   private var _players: Seq[Player] = Seq()
   private var _activePlayerIndex: Int = 0
