@@ -2,8 +2,7 @@ package view
 
 import controller.ControllerMatchEnd
 import model.Players.Player
-import model.resource.Resource
-import model.resource.ResourceType.VictoryPoint
+import model.resource.GloryPoint
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Node
@@ -25,14 +24,14 @@ class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
       children = nodes
     }
 
-  private def setupPlayerRanking(players: List[(Player, Resource[VictoryPoint])]): Seq[HBox] = {
+  private def setupPlayerRanking(players: List[(Player, GloryPoint)]): Seq[HBox] = {
     var labelSizeX = 200
     var labelSizeY = 100
     var fontSize = 20
 
     players.map((player, points) =>
       val nameLabel = new Label(player.getName)
-      val pointLabel = new Label(points.currentAmount + " Victory Points")
+      val pointLabel = new Label(points.amount + " Victory Points")
 
       nameLabel.setMinSize(labelSizeX, labelSizeY)
       pointLabel.setMinSize(labelSizeX, labelSizeY)

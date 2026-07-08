@@ -1,6 +1,6 @@
 package model.dice
 
-import model.resource.ResourceBoard
+import model.resource.*
 
 /**
  * A wrapper that represents an effect triggered by a die face, a mission, or something else
@@ -10,7 +10,7 @@ import model.resource.ResourceBoard
 trait Effect[A]:
   def effect: A
 
-case class ResourceEffect(effect: ResourceBoard) extends Effect[ResourceBoard]
+case class ResourceEffect(effect: List[Resource]) extends Effect[List[Resource]]
 case class GrantFaceEffect(effect: Face) extends Effect[Face]
 
 /**
@@ -27,12 +27,12 @@ trait NonFixedEffect[A] extends Effect[A]:
  *
  * @param multiplier the factor to multiply the inner effect by
  */
-class MultiplierEffect(multiplier: Int) extends NonFixedEffect[ResourceBoard]:
-  private var currentEffect: Effect[ResourceBoard] = ResourceEffect(ResourceBoard.board(0,0,0,0))
+class MultiplierEffect(multiplier: Int) extends NonFixedEffect[List[Resource]]:
+  private var currentEffect = ResourceEffect(List.empty)
 
-  override def setCurrentEffect(effect: Effect[ResourceBoard]): Unit =
-    currentEffect = ResourceEffect(effect.effect * multiplier)
+  override def setCurrentEffect(effect: Effect[List[Resource]]): Unit =
+    currentEffect = ResourceEffect(effect.effect.map(_ * multiplier))
 
-  override def effect: ResourceBoard = currentEffect.effect
+  override def effect: List[Resource] = currentEffect.effect
 
 class CopyEffect extends MultiplierEffect(1)
