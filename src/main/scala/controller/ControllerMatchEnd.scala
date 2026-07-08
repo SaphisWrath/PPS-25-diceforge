@@ -1,12 +1,11 @@
 package controller
 
 import model.Players.Player
-import model.resource.ResourceType.VictoryPoint
-import model.resource.Resource
+import model.resource.GloryPoint
 
 trait ControllerMatchEnd:
-  def getSortedPlayers: List[(Player, Resource[VictoryPoint])]
-  
-class ControllerMatchEndImpl(playersWithPoints: List[(Player, Resource[VictoryPoint])]) extends ControllerMatchEnd:
-  override def getSortedPlayers: List[(Player, Resource[VictoryPoint])] =
-    playersWithPoints.sortBy(pair => - pair._2.currentAmount)
+  def getSortedPlayers: List[(Player, GloryPoint)]
+
+class ControllerMatchEndImpl(playersWithPoints: List[(Player, GloryPoint)]) extends ControllerMatchEnd:
+  override def getSortedPlayers: List[(Player, GloryPoint)] =
+    playersWithPoints.sortBy(pair => - pair._2.amount)
