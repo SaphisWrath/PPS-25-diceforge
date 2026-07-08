@@ -1,4 +1,4 @@
-package view
+package view.scenes
 
 import controller.GameController
 import model.Players.Player
