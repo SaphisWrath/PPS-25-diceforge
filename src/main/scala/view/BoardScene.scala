@@ -8,6 +8,7 @@ import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
+import view.buttons.ButtonFactory
 import view.utils.ColorConversion.*
 
 class BoardScene extends Scene:
@@ -49,9 +50,9 @@ class BoardScene extends Scene:
     }
     pane
 
-  private def nextTurnButton: Button = new Button {
-    text = "Prossimo Turno"
-    onMouseClicked = event =>
+  private def nextTurnButton: Button = ButtonFactory().makeBoardButton(
+    "Prossimo Turno",
+    event =>
       GameController.nextTurn()
       activePlayer() = GameController.activePlayer.get
-  }
+  )
