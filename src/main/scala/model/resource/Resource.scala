@@ -1,108 +1,56 @@
 package model.resource
 
-/**
- * An empty trait used to create new resource types, as shown in the companion object
- */
-trait ResourceType
+trait Resource:
+  def amount: Int
 
-object ResourceType:
-  class Gold extends ResourceType
-  class SunCrystal extends ResourceType
-  class MoonCrystal extends ResourceType
-  class VictoryPoint extends ResourceType
-
-import model.resource.ResourceType.*
-
-/**
- * A record that keeps track of the current amount of a specific resource, as well as its max capacity
- * @tparam A the type of the resource
- */
-trait Resource[A <: ResourceType]:
-  def currentAmount: Int
-  def maxCapacity: Option[Int]
+case class Gold(amount: Int) extends Resource
+case class SunCrystal(amount: Int) extends Resource
+case class MoonCrystal(amount: Int) extends Resource
+case class GloryPoint(amount: Int) extends Resource
 
 object Resource:
-  private case class ResourceImpl[A <: ResourceType](currentAmount: Int, maxCapacity: Option[Int]) extends Resource[A]
+  def unapply(resource: Resource): Option[Int] =
+    Some(resource.amount)
 
-  private def resourceCheck[A <: ResourceType](res: Resource[A]): Resource[A] =
-    var amount = res.currentAmount
-    if res.maxCapacity.isDefined
-    then amount = math.min(res.currentAmount, res.maxCapacity.get)
-    amount = math.max(amount, 0)
-    ResourceImpl[A](amount, res.maxCapacity)
+  extension (r1: Resource)
+    private def applyFun(r2: Resource, fun: (Int, Int) => Int): Resource =
+      val positiveFun: (Int, Int) => Int = (first, second) => math.max(fun(first, second), 0)
 
-  extension [A <: ResourceType](first: Resource[A])
-    def +(other: Resource[A]): Resource[A] =
-      resourceCheck(ResourceImpl[A](first.currentAmount + other.currentAmount, first.maxCapacity))
+      (r1, r2) match
+        case (Gold(amount1), Gold(amount2)) => Gold(positiveFun(amount1, amount2))
+        case (SunCrystal(amount1), SunCrystal(amount2)) => SunCrystal(positiveFun(amount1, amount2))
+        case (MoonCrystal(amount1), MoonCrystal(amount2)) => MoonCrystal(positiveFun(amount1, amount2))
+        case (GloryPoint(amount1), GloryPoint(amount2)) => GloryPoint(positiveFun(amount1, amount2))
 
-    def -(other: Resource[A]): Resource[A] =
-      resourceCheck(ResourceImpl[A](first.currentAmount - other.currentAmount, first.maxCapacity))
+    def +(r2: Resource): Resource = r1.applyFun(r2, _ + _)
+    def -(r2: Resource): Resource = r1.applyFun(r2, _ - _)
+    def *(multiplier: Int): Resource =
+      if multiplier > 1 then r1 + (r1 * (multiplier - 1)) else r1
 
-    def *(multiplier: Int): Resource[A] =
-      resourceCheck(ResourceImpl[A](first.currentAmount * multiplier, first.maxCapacity))
+trait ResourceWithCap extends Resource:
+  def maxCapacity: Int
+  def maxCapacity_=(newCapacity: Int): Unit
+  def resource: Resource
 
-    def withUpdatedCapacity(newMaxCapacity: Int): Resource[A] =
-      if newMaxCapacity > 0
-      then resourceCheck(ResourceImpl[A](first.currentAmount, Some(newMaxCapacity)))
-      else first
+object ResourceWithCap:
+  private class ResourceWithCapImpl(var resource: Resource, initCapacity: Int) extends ResourceWithCap:
+    private var _maxCapacity = initCapacity
+    override def maxCapacity: Int = _maxCapacity
+    override def maxCapacity_=(newCapacity: Int): Unit =
+      if newCapacity > 0
+      then
+        resource = resource match
+          case Gold(_) => Gold(this.amount)
+          case SunCrystal(_) => SunCrystal(this.amount)
+          case MoonCrystal(_) => MoonCrystal(this.amount)
+          case GloryPoint(_) => GloryPoint(this.amount)
+        _maxCapacity = newCapacity
 
-  /*
-   * Helper functions to make any type of resource
-   */
-  def gold(amount: Int, cap: Option[Int] = Some(12)): Resource[Gold] =
-    ResourceImpl[Gold](amount, cap)
-  def sunCrystal(amount: Int, cap: Option[Int] = Some(6)): Resource[SunCrystal] =
-    ResourceImpl[SunCrystal](amount, cap)
-  def moonCrystal(amount: Int, cap: Option[Int] = Some(6)): Resource[MoonCrystal] =
-    ResourceImpl[MoonCrystal](amount, cap)
-  def victoryPoint(amount: Int, cap: Option[Int] = Option.empty): Resource[VictoryPoint] =
-    ResourceImpl[VictoryPoint](amount, cap)
+    override def amount: Int = math.min(resource.amount, _maxCapacity)
 
-/**
- * A record that keeps track of every type of resource, usually held by the player
- */
-case class ResourceBoard(gold: Resource[Gold],
-                         sunCrystals: Resource[SunCrystal],
-                         moonCrystals: Resource[MoonCrystal],
-                         victoryPoints: Resource[VictoryPoint])
+  def apply(resource: Resource, initCapacity: Int): ResourceWithCap =
+    ResourceWithCapImpl(resource, initCapacity)
 
-object ResourceBoard:
-  extension [A <: ResourceType](first: ResourceBoard)
-    private def applyFun(other: ResourceBoard, fun: (Int, Int) => Int): ResourceBoard =
-      first match
-        case ResourceBoard(g, s, m, v) => ResourceBoard(
-          Resource.gold(fun(g.currentAmount, other.gold.currentAmount), g.maxCapacity),
-          Resource.sunCrystal(fun(s.currentAmount, other.sunCrystals.currentAmount), s.maxCapacity),
-          Resource.moonCrystal(fun(m.currentAmount, other.moonCrystals.currentAmount), m.maxCapacity),
-          Resource.victoryPoint(fun(v.currentAmount, other.victoryPoints.currentAmount), v.maxCapacity)
-        )
-
-    def +(other: ResourceBoard): ResourceBoard =
-      first.applyFun(other, _ + _)
-
-    def -(other: ResourceBoard): ResourceBoard =
-      first.applyFun(other, _ - _)
-
-    def *(multiplier: Int): ResourceBoard =
-      first match
-        case ResourceBoard(g, s, m, v) => ResourceBoard(
-          g * multiplier,
-          s * multiplier,
-          m * multiplier,
-          v * multiplier
-        )
-
-  /*
-   * Helper functions to make resource boards
-   */
-  def board(gold: Int,
-            sunCrystals: Int,
-            moonCrystals: Int,
-            victoryPoints: Int): ResourceBoard =
-    ResourceBoard(Resource.gold(gold),
-      Resource.sunCrystal(sunCrystals),
-      Resource.moonCrystal(moonCrystals),
-      Resource.victoryPoint(victoryPoints))
-
-  def emptyBoard: ResourceBoard =
-    board(0,0,0,0)
+  extension (r1: ResourceWithCap)
+    def +(r2: Resource): ResourceWithCap = ResourceWithCap(r1.resource + r2, r1.maxCapacity)
+    def -(r2: Resource): ResourceWithCap = ResourceWithCap(r1.resource - r2, r1.maxCapacity)
