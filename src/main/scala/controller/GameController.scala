@@ -1,6 +1,6 @@
 package controller
 
-import controller.dto.PlayerDTO
+import controller.dto.{PlayerBoardDTO, PlayerDTO}
 import model.Players.Player
 import model.resource.{PlayerBoard, Resource}
 
@@ -89,9 +89,9 @@ object GameController:
     require(_players.nonEmpty)
     players.filter(!_.equals(activePlayer.get))
     
-  def playerBoard(player: Player): PlayerBoard =
+  def playerBoard(player: Player): PlayerBoardDTO =
     require(_players.contains(player))
-    _playerBoards(player)
+    PlayerBoardDTO(_playerBoards(player))
 
   def nextTurn(): Unit =
     _activePlayerIndex = if _activePlayerIndex + 1 >= players.length then 0 else _activePlayerIndex + 1
