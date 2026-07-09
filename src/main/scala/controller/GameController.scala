@@ -88,10 +88,12 @@ object GameController:
   def nonActivePlayerList: Seq[PlayerDTO] =
     require(_players.nonEmpty)
     players.filter(!_.equals(activePlayer.get))
+  
+  def playerBoard(playerName: String): PlayerBoardDTO =
+    require(_players.exists(_.getName == playerName))
+    PlayerBoardDTO(_playerBoards.map((p, b) => p.getName -> b)(playerName))
     
-  def playerBoard(player: Player): PlayerBoardDTO =
-    require(_players.contains(player))
-    PlayerBoardDTO(_playerBoards(player))
+  def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
   def nextTurn(): Unit =
     _activePlayerIndex = if _activePlayerIndex + 1 >= players.length then 0 else _activePlayerIndex + 1
