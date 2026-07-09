@@ -7,3 +7,5 @@ case class PlayerDTO(name: String, colorHex: String)
 
 object PlayerDTO:
   def apply(player: Player): PlayerDTO = PlayerDTO(player.getName, player.getColor.toHex)
+  
+  val empty: PlayerDTO = PlayerDTO("", "")

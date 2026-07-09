@@ -1,5 +1,6 @@
 package controller
 
+import controller.dto.PlayerDTO
 import model.Players.Player
 import model.resource.{PlayerBoard, Resource}
 
@@ -78,15 +79,15 @@ object GameController:
     _activePlayerIndex = 0
     _currentRound = 0
 
-  def players: Seq[Player] = _players
+  def players: Seq[PlayerDTO] = _players.map(PlayerDTO(_))
 
-  def activePlayer: Option[Player] =
+  def activePlayer: Option[PlayerDTO] =
     if _players.isEmpty then Option.empty
-    else Option(_players(_activePlayerIndex))
+    else Option(players(_activePlayerIndex))
 
-  def nonActivePlayerList: Seq[Player] =
+  def nonActivePlayerList: Seq[PlayerDTO] =
     require(_players.nonEmpty)
-    _players.filter(!_.equals(activePlayer.get))
+    players.filter(!_.equals(activePlayer.get))
     
   def playerBoard(player: Player): PlayerBoard =
     require(_players.contains(player))

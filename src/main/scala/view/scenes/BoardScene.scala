@@ -1,21 +1,22 @@
 package view.scenes
 
 import controller.GameController
-import model.Players.Player
+import controller.dto.PlayerDTO
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox}
+import scalafx.scene.paint.Color
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.utils.ColorConversion.*
 
 class BoardScene extends Scene:
-  private val playerDirectors: Map[Player, PlayerGUIComponentFactory] =
-    GameController.players.map(p => p -> PlayerGUIComponentFactory(p.getName, p.getColor.toScalaFX)).toMap
+  private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
+    GameController.players.map(p => p -> PlayerGUIComponentFactory(p.name, Color.valueOf(p.colorHex))).toMap
 
-  private val activePlayer: ObjectProperty[Player] = new ObjectProperty(this, "activePlayer", GameController.activePlayer.get) {
+  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, "activePlayer", GameController.activePlayer.get) {
     onChange((_, _, _) =>
       pane.top = nonActivePlayersPane()
       pane.bottom = activePlayerPane()
