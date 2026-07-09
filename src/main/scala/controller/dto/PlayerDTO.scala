@@ -1,7 +1,7 @@
 package controller.dto
 
 import model.Players.Player
-import controller.ColorConverter.*
+import controller.converters.ColorConverter.*
 
 case class PlayerDTO(name: String, colorHex: String)
 

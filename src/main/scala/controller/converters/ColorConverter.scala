@@ -1,4 +1,4 @@
-package controller
+package controller.converters
 
 import model.Players.Color
 
