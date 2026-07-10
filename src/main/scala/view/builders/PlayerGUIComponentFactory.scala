@@ -34,5 +34,5 @@ object PlayerGUIComponentFactory:
       player.name,
       player.colorHex,
       playerBoard.resourceMap.map((name,_) => (name, () => GameController.playerBoard(player).get(name))),
-      playerBoard.resourceMaxMap.map((name, _) => (name, () => GameController.playerBoard(player).getMax(name)))
+      playerBoard.resourceCapMap.map((name, _) => (name, () => GameController.playerBoard(player).getMax(name)))
     )

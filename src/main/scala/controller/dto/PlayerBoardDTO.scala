@@ -3,9 +3,9 @@ package controller.dto
 import model.resource.*
 import controller.converters.ResourceConverters.*
 
-case class PlayerBoardDTO(resourceMap: Map[String, Int], resourceMaxMap: Map[String, Int]):
+case class PlayerBoardDTO(resourceMap: Map[String, Int], resourceCapMap: Map[String, Int]):
   def get(resource: String): Int = resourceMap(resource)
-  def getMax(resource: String): Int = resourceMaxMap(resource)
+  def getMax(resource: String): Int = resourceCapMap(resource)
 
 object PlayerBoardDTO:
   def apply(board: PlayerBoard): PlayerBoardDTO =
