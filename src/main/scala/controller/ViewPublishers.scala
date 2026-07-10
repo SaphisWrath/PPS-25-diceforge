@@ -4,7 +4,7 @@ object ViewPublishers:
   enum Context:
     case ResourceContext
     case ResourceMaxContext
-  
+
   trait ViewSubscriber:
     /**
      * @param context
@@ -17,7 +17,7 @@ object ViewPublishers:
      * Subscribe to the given publisher
      */
     def setPublisher(publisher: ViewPublisher): Unit = publisher.subscribe(this)
-    
+
   trait ViewPublisher:
     /**
      * @param subscriber
@@ -34,15 +34,16 @@ object ViewPublishers:
      * notify current subscribe that there as been a ResourceCap change
      */
     def notifyResourceCapChange(): Unit
-    
+
   object ViewPublisher extends ViewPublisher:
     private var subscribers: Seq[ViewSubscriber] = Seq.empty
-    
+
     def subscribe(subscriber: ViewSubscriber): Unit = subscribers = subscribers.appended(subscriber)
-    
+
     private def notify(context: Context): Unit = subscribers.foreach(_.update(context))
-    
+
     def notifyResourceChange(): Unit = notify(Context.ResourceContext)
+
     def notifyResourceCapChange(): Unit = notify(Context.ResourceMaxContext)
-    
+
     def apply(): ViewPublisher = this

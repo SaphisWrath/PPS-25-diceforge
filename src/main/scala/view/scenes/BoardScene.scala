@@ -42,7 +42,7 @@ class BoardScene extends Scene:
   private def nonActivePlayersPane(): Node =
     val nonActivePlayerDirectors = GameController.nonActivePlayerList.map(playerDirectors(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
-        .map(_.nonActivePlayerBox)
+      .map(_.nonActivePlayerBox)
     val pane: HBox = new HBox {
       children = playerBoxes
       spacing = 5

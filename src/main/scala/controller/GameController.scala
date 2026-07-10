@@ -2,19 +2,20 @@ package controller
 
 import controller.dto.{PlayerBoardDTO, PlayerDTO}
 import model.Players.Player
-import model.resource.{PlayerBoard, Resource}
+import model.resource.PlayerBoard
 
 import scala.util.Random
 
 trait GameController:
   /**
    * Initialize a game with the given players
+   *
    * @param playerList list of players who will participate in the game
    */
   def init(playerList: Seq[Player]): Unit
 
   /**
-   *  Resets the game to an empty state
+   * Resets the game to an empty state
    */
   def reset(): Unit
 
@@ -88,11 +89,11 @@ object GameController:
   def nonActivePlayerList: Seq[PlayerDTO] =
     require(_players.nonEmpty)
     players.filter(!_.equals(activePlayer.get))
-  
+
   def playerBoard(playerName: String): PlayerBoardDTO =
     require(_players.exists(_.getName == playerName))
     PlayerBoardDTO(_playerBoards.map((p, b) => p.getName -> b)(playerName))
-    
+
   def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
   def nextTurn(): Unit =

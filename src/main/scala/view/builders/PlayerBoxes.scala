@@ -1,14 +1,12 @@
 package view.builders
 
+import controller.ViewPublishers.ViewPublisher
 import scalafx.geometry.Insets
-import scalafx.scene.{Group, Node}
 import scalafx.scene.control.Label
-import scalafx.scene.input.KeyCode.Insert
-import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{Background, BackgroundFill, Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, FlowPane, VBox}
+import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
-import controller.ViewPublishers.ViewPublisher
+import scalafx.scene.{Group, Node}
 import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
 
 import scala.language.postfixOps
@@ -16,12 +14,12 @@ import scala.language.postfixOps
 object PlayerBoxes:
   case class PlayerBoxStyle(
                              padding: Double,
-                              cornerRadius: Double,
-                              borderStyle: BorderStrokeStyle,
-                              borderColor: Color,
-                              borderWidth: Double,
-                              backgroundColor: Color
-                      ):
+                             cornerRadius: Double,
+                             borderStyle: BorderStrokeStyle,
+                             borderColor: Color,
+                             borderWidth: Double,
+                             backgroundColor: Color
+                           ):
     val fxPadding: Insets = Insets(padding)
     val fxCornerRadii: CornerRadii = CornerRadii(cornerRadius)
     val fxBorder: Border = Border(BorderStroke(borderColor, borderStyle, fxCornerRadii, BorderWidths(borderWidth)))
@@ -45,7 +43,7 @@ object PlayerBoxes:
       this.copy(tokenSection = Circle(radius, color))
 
     def withResourceSection(
-                             resourceProducers: Map[String,() => Int],
+                             resourceProducers: Map[String, () => Int],
                              resourceCapProducers: Map[String, () => Int]
                            ): PlayerBoxBuilder =
       this.copy(
@@ -55,14 +53,14 @@ object PlayerBoxes:
             val amountProducer = pair._2
             val resourceBox = if resourceCapProducers.exists(_._1 == resource) then
               ResourceWithCapBox(resource, amountProducer, resourceCapProducers(resource))
-            else 
+            else
               BaseResourceBox(resource, amountProducer)
             resourceBox.setPublisher(ViewPublisher())
             resourceBox.component
           )
         }
       )
-      
+
     def withDiceSection(): PlayerBoxBuilder = this //TODO
 
     def build: Node = new BorderPane {
