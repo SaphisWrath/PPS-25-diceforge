@@ -1,9 +1,8 @@
 package model.dice
 
-import model.dice.Effect
-import model.resource.Resource
+import model.effects.Effect
 
 enum Face:
-  case SumFace(effects: List[Effect[Resource]])
-  case OptionFace(effects: List[Effect[Resource]])
+  case SumFace(effects: List[Effect])
+  case OptionFace(effects: List[Effect])
 

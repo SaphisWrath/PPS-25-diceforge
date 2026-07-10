@@ -1,25 +1,28 @@
 package model.missions
 
-import model.dice.Effect.{MultiplyEffect, ResourceEffect}
-import model.resource.Gold
+import model.effects.ResourceEffect
+import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.funsuite.AnyFunSuite
 
 class MissionTestSuite extends AnyFunSuite {
-  test("makeEmpty") {
-    val mission = Mission.makeEmpty()
-    assert(mission.cost == List.empty)
-    assert(mission.reward == List.empty)
+  test("unapply") {
+
   }
 }
 
 class MissionTestSpec extends AnyFlatSpec{
-  "A mission reward" should "contain the list of effects from construction" in:
-    val rewards = List(
-      ResourceEffect(Gold(10)),
-      MultiplyEffect(2),
-      MultiplyEffect(3)
-    )
-    val mission = Mission(rewards, List(ResourceEffect(Gold(1))))
-    assert(mission.reward == rewards)
+  val board = PlayerBoard(0, 3, 3, 0)
+  val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(-3), board), ResourceEffect(MoonCrystal(-3), board)).toList
+  val reward: List[ResourceEffect] = List(ResourceEffect(Gold(3), board))
+
+  "Any mission" should "take its cost from player resources when activated" in:
+    val mission = BaseMission(reward, cost)
+    mission.get()
+    assert(board.sunCrystals.amount == 0)
+    assert(board.moonCrystals.amount == 0)
+
+  "InstantMission" should "grant its reward immediately upon aquisition" in:
+    InstantMission(reward, cost).get()
+    assert(board.gold.amount == 3)
 }
