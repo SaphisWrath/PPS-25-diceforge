@@ -1,11 +1,11 @@
-package view
+package controller
 
 object ViewPublishers:
   enum Context:
     case ResourceContext
     case ResourceMaxContext
   
-  trait Subscriber:
+  trait ViewSubscriber:
     /**
      * @param context
      * Updates itself based on his context
@@ -23,7 +23,7 @@ object ViewPublishers:
      * @param subscriber
      * Add given subscriber to the current subscribers
      */
-    def subscribe(subscriber: Subscriber): Unit
+    def subscribe(subscriber: ViewSubscriber): Unit
 
     /**
      * notify current subscribe that there as been a ResourceAmount change
@@ -36,9 +36,9 @@ object ViewPublishers:
     def notifyResourceCapChange(): Unit
     
   object ViewPublisher extends ViewPublisher:
-    private var subscribers: Seq[Subscriber] = Seq.empty
+    private var subscribers: Seq[ViewSubscriber] = Seq.empty
     
-    def subscribe(subscriber: Subscriber): Unit = subscribers = subscribers.appended(subscriber)
+    def subscribe(subscriber: ViewSubscriber): Unit = subscribers = subscribers.appended(subscriber)
     
     private def notify(context: Context): Unit = subscribers.foreach(_.update(context))
     

@@ -1,13 +1,12 @@
 package view.builders
 
-import controller.GameController
+import controller.{GameController, ViewPublishers}
 import scalafx.beans.property.IntegerProperty
 import scalafx.scene.Node
 import scalafx.scene.control.Label
 import scalafx.scene.layout.{HBox, Pane, VBox}
-import view.ViewPublishers
-import view.ViewPublishers.Context.{ResourceContext, ResourceMaxContext}
-import view.ViewPublishers.{Subscriber, ViewPublisher}
+import ViewPublishers.Context.{ResourceContext, ResourceMaxContext}
+import ViewPublishers.{ViewSubscriber, ViewPublisher}
 
 object ResourceBoxes:
 
@@ -15,7 +14,7 @@ object ResourceBoxes:
     def component: Pane
 
 
-  class BaseResourceBox(val resourceName: String, val amountProducer: ()=>Int ) extends ResourceBox with Subscriber:
+  class BaseResourceBox(val resourceName: String, val amountProducer: ()=>Int ) extends ResourceBox with ViewSubscriber:
     private val amount = IntegerProperty(amountProducer())
     private val amountLabel = Label(s"${amount()}")
     amount.onChange((_,_,_) => amountLabel.text = s"${amount()}")
@@ -25,7 +24,7 @@ object ResourceBoxes:
       case ResourceContext => amount() = amountProducer()
       case _ =>
 
-  class ResourceWithCapBox(val resourceName: String, val amountProducer: () => Int, val capProducer: () => Int) extends ResourceBox with Subscriber:
+  class ResourceWithCapBox(val resourceName: String, val amountProducer: () => Int, val capProducer: () => Int) extends ResourceBox with ViewSubscriber:
     private val baseResourceBox = BaseResourceBox(resourceName, amountProducer)
     private val cap = IntegerProperty(capProducer())
     private def labelContent: String = s"/${cap()}"

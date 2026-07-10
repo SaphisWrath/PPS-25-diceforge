@@ -8,7 +8,7 @@ import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{Background, BackgroundFill, Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, FlowPane, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
-import view.ViewPublishers.ViewPublisher
+import controller.ViewPublishers.ViewPublisher
 import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
 
 import scala.language.postfixOps
