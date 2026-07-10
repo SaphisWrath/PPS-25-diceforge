@@ -13,14 +13,14 @@ case class PlayerGUIComponentFactory(playerName: String, playerColorHex: String,
     PlayerBoxBuilder(PlayerBoxStyle.Standard)
       .withNameSection(playerName)
       .withCircleTokenSection(playerColor, 25)
-      .withResourceSection(playerName, resourceProducers.toSeq)
+      .withResourceSection(resourceProducers.toSeq)
       .build
 
   def nonActivePlayerBox: Node =
     PlayerBoxBuilder(PlayerBoxStyle.Small)
       .withNameSection(playerName)
       .withCircleTokenSection(playerColor, 10)
-      .withResourceSection(playerName, resourceProducers.toSeq)
+      .withResourceSection(resourceProducers.toSeq)
       .build
 
 object PlayerGUIComponentFactory:

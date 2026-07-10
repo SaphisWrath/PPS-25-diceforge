@@ -44,11 +44,11 @@ object PlayerBoxes:
     def withCircleTokenSection(color: Color, radius: Double): PlayerBoxBuilder =
       this.copy(tokenSection = Circle(radius, color))
 
-    def withResourceSection(playerName: String, resourceProducers: Seq[(String,() => Int)]): PlayerBoxBuilder =
+    def withResourceSection(resourceProducers: Seq[(String,() => Int)]): PlayerBoxBuilder =
       this.copy(
         resourceSection = new VBox {
           children = resourceProducers.map(pair => 
-            val resourceBox = BaseResourceBox(playerName, pair._1, pair._2)
+            val resourceBox = BaseResourceBox(pair._1, pair._2)
             resourceBox.setPublisher(ViewPublisher())
             resourceBox.component
           )
