@@ -5,6 +5,7 @@ import controller.converters.ResourceConverters.*
 
 case class PlayerBoardDTO(resourceMap: Map[String, Int], resourceMaxMap: Map[String, Int]):
   def get(resource: String): Int = resourceMap(resource)
+  def getMax(resource: String): Int = resourceMaxMap(resource)
 
 object PlayerBoardDTO:
   def apply(board: PlayerBoard): PlayerBoardDTO =

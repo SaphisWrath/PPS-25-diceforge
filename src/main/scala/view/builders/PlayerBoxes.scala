@@ -9,7 +9,7 @@ import scalafx.scene.layout.{Background, BackgroundFill, Border, BorderPane, Bor
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
 import view.ViewPublishers.ViewPublisher
-import view.builders.ResourceBoxes.BaseResourceBox
+import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
 
 import scala.language.postfixOps
 
@@ -44,11 +44,19 @@ object PlayerBoxes:
     def withCircleTokenSection(color: Color, radius: Double): PlayerBoxBuilder =
       this.copy(tokenSection = Circle(radius, color))
 
-    def withResourceSection(resourceProducers: Seq[(String,() => Int)]): PlayerBoxBuilder =
+    def withResourceSection(
+                             resourceProducers: Map[String,() => Int],
+                             resourceCapProducers: Map[String, () => Int]
+                           ): PlayerBoxBuilder =
       this.copy(
         resourceSection = new VBox {
-          children = resourceProducers.map(pair => 
-            val resourceBox = BaseResourceBox(pair._1, pair._2)
+          children = resourceProducers.map(pair =>
+            val resource = pair._1
+            val amountProducer = pair._2
+            val resourceBox = if resourceCapProducers.exists(_._1 == resource) then
+              ResourceWithCapBox(resource, amountProducer, resourceCapProducers(resource))
+            else 
+              BaseResourceBox(resource, amountProducer)
             resourceBox.setPublisher(ViewPublisher())
             resourceBox.component
           )
