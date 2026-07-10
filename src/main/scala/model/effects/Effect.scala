@@ -1,5 +1,6 @@
-package model.dice
+package model.effects
 
+import model.dice.*
 import model.resource.*
 
 /**
