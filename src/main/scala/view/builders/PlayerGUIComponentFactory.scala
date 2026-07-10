@@ -1,14 +1,13 @@
 package view.builders
 
-import controller.GameController
 import controller.dto.{PlayerBoardDTO, PlayerDTO}
 import scalafx.scene.Node
 import scalafx.scene.paint.Color
 import view.builders.PlayerBoxes.*
 
 case class PlayerGUIComponentFactory(
-                                      playerName: String, 
-                                      playerColorHex: String, 
+                                      playerName: String,
+                                      playerColorHex: String,
                                       resourceProducers: Map[String, () => Int],
                                       resourceCapProducers: Map[String, () => Int]
                                     ):
@@ -33,6 +32,9 @@ object PlayerGUIComponentFactory:
     PlayerGUIComponentFactory(
       player.name,
       player.colorHex,
-      playerBoard.resourceMap.map((name,_) => (name, () => GameController.playerBoard(player).get(name))),
-      playerBoard.resourceCapMap.map((name, _) => (name, () => GameController.playerBoard(player).getMax(name)))
+      playerBoard.resourceList.map(r => (r, () => playerBoard.amountOf(r))).toMap,
+      playerBoard.resourceList
+        .filter(r => playerBoard.capOf(r).nonEmpty)
+        .map(r => (r, () => playerBoard.capOf(r).get))
+        .toMap
     )
