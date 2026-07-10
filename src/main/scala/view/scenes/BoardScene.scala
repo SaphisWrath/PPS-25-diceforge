@@ -12,9 +12,7 @@ import view.buttons.ButtonFactory
 
 class BoardScene extends Scene:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
-    GameController.players.map(p => 
-      p -> PlayerGUIComponentFactory(p.name, p.colorHex, GameController.playerBoard(p).resourceMap)
-    ).toMap
+    GameController.players.map(p => p -> PlayerGUIComponentFactory(p, GameController.playerBoard(p))).toMap
 
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, "activePlayer", GameController.activePlayer.get) {
     onChange((_, _, _) =>

@@ -3,9 +3,11 @@ package view
 object ViewPublishers:
   enum Context:
     case ResourceContext
+    case ResourceMaxContext
   
   trait Subscriber:
     def update(context: Context): Unit
+    def setPublisher(publisher: ViewPublisher): Unit = publisher.subscribe(this)
     
   trait ViewPublisher:
     def subscribe(subscriber: Subscriber): Unit
