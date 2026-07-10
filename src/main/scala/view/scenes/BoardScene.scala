@@ -1,20 +1,20 @@
-package view
+package view.scenes
 
 import controller.GameController
-import model.Players.Player
+import controller.dto.PlayerDTO
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
-import view.utils.ColorConversion.*
+import view.buttons.ButtonFactory
 
 class BoardScene extends Scene:
-  private val playerDirectors: Map[Player, PlayerGUIComponentFactory] =
-    GameController.players.map(p => p -> PlayerGUIComponentFactory(p.getName, p.getColor.toScalaFX)).toMap
+  private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
+    GameController.players.map(p => p -> PlayerGUIComponentFactory(p, GameController.playerBoard(p))).toMap
 
-  private val activePlayer: ObjectProperty[Player] = new ObjectProperty(this, "activePlayer", GameController.activePlayer.get) {
+  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, "activePlayer", GameController.activePlayer.get) {
     onChange((_, _, _) =>
       pane.top = nonActivePlayersPane()
       pane.bottom = activePlayerPane()
@@ -23,7 +23,7 @@ class BoardScene extends Scene:
 
   private val pane = new BorderPane {
     top = nonActivePlayersPane()
-    center = Label("center")
+    center = Label("center") //TODO
     bottom = activePlayerPane()
   }
 
@@ -49,9 +49,11 @@ class BoardScene extends Scene:
     }
     pane
 
-  private def nextTurnButton: Button = new Button {
-    text = "Prossimo Turno"
-    onMouseClicked = event =>
+  private val NEXT_TURN_BUTTON_TEXT = "Prossimo Turno"
+
+  private def nextTurnButton: Button = ButtonFactory().makeBoardButton(
+    NEXT_TURN_BUTTON_TEXT,
+    event =>
       GameController.nextTurn()
       activePlayer() = GameController.activePlayer.get
-  }
+  )
