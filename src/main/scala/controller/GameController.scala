@@ -9,7 +9,7 @@ import scala.util.Random
 trait GameController:
   /**
    * Initialize a game with the given players
-   * @param playerList
+   * @param playerList list of players who will participate in the game
    */
   def init(playerList: Seq[Player]): Unit
 
@@ -36,7 +36,7 @@ trait GameController:
   def nonActivePlayerList: Seq[Player]
 
   /**
-   * @param player
+   * @param player the player proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
   def playerBoard(player: Player): PlayerBoard
