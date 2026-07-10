@@ -11,7 +11,7 @@ object ViewPublishers:
     def subscribe(subscriber: Subscriber): Unit
     def notifyResourceChange(): Unit
     
-  object ViewPublisher:
+  object ViewPublisher extends ViewPublisher:
     private var subscribers: Seq[Subscriber] = Seq.empty
     
     def subscribe(subscriber: Subscriber): Unit = subscribers = subscribers.appended(subscriber)
@@ -19,3 +19,5 @@ object ViewPublishers:
     private def notify(context: Context): Unit = subscribers.foreach(_.update(context))
     
     def notifyResourceChange(): Unit = notify(Context.ResourceContext)
+    
+    def apply(): ViewPublisher = this

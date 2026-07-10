@@ -32,4 +32,4 @@ object ResourceBoxes:
     override def update(context: ViewPublishers.Context): Unit = context match
       case ResourceContext => amountProperty.value = GameController.playerBoard(playerName).resourceMap(resourceName)
       case _ =>
-    override def component: Node = ???
+    override def component: Node = box

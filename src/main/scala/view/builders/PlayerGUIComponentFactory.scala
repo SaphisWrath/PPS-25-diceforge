@@ -17,12 +17,12 @@ case class PlayerGUIComponentFactory(playerName: String, playerColorHex: String)
     PlayerBoxBuilder(PlayerBoxStyle.Standard)
       .withNameSection(playerName)
       .withCircleTokenSection(playerColor, 25)
-      .withResourceSection(resorceSeq)
+      .withResourceSection(playerName, resorceSeq.map((_, 0)))
       .build
 
   def nonActivePlayerBox: Node =
     PlayerBoxBuilder(PlayerBoxStyle.Small)
       .withNameSection(playerName)
       .withCircleTokenSection(playerColor, 10)
-      .withResourceSection(resorceSeq)
+      .withResourceSection(playerName, resorceSeq.map((_, 0)))
       .build

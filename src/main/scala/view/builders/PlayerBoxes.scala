@@ -8,6 +8,8 @@ import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{Background, BackgroundFill, Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, FlowPane, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
+import view.ViewPublishers.ViewPublisher
+import view.builders.ResourceBoxes.BaseResourceBox
 
 import scala.language.postfixOps
 
@@ -42,10 +44,14 @@ object PlayerBoxes:
     def withCircleTokenSection(color: Color, radius: Double): PlayerBoxBuilder =
       this.copy(tokenSection = Circle(radius, color))
 
-    def withResourceSection(resources: Seq[String]): PlayerBoxBuilder =
+    def withResourceSection(playerName: String, resources: Seq[(String, Int)]): PlayerBoxBuilder =
       this.copy(
         resourceSection = new VBox {
-          children = resources.map(Label(_))
+          children = resources.map(pair => 
+            val resourceBox = BaseResourceBox(playerName, pair._1, pair._2)
+            resourceBox.setPublisher(ViewPublisher())
+            resourceBox.component
+          )
         }
       )
       
