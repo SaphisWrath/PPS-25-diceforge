@@ -15,7 +15,7 @@ object ResourceConverters:
     case GloryPoint(_) => GloryPointString
     case _ => throw IllegalArgumentException(s"$resource is not a recognized resource")
 
-  def stringToResourceBuilder(string: String)(amount: Int):Resource =string match
+  def stringToResourceBuilder(string: String)(amount: Int): Resource = string match
     case GoldString => Gold(amount)
     case SunCrystalString => SunCrystal(amount)
     case MoonCrystalString => MoonCrystal(amount)

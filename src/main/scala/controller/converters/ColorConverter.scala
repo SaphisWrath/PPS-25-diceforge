@@ -13,7 +13,7 @@ object ColorConverter:
       case Color.Black => ColorBlackHex
       case Color.Orange => ColorOrangeHex
       case Color.Blue => ColorBlueHex
-      
+
   extension (colorHex: String)
     def toColor: Color = colorHex match
       case ColorGreenHex => Color.Green
