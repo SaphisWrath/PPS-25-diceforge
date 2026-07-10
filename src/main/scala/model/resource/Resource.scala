@@ -2,6 +2,7 @@ package model.resource
 
 trait Resource:
   def amount: Int
+  def copy(amount: Int): Resource
 
 case class Gold(amount: Int) extends Resource
 case class SunCrystal(amount: Int) extends Resource
@@ -15,12 +16,9 @@ object Resource:
   extension (r1: Resource)
     private def applyFun(r2: Resource, fun: (Int, Int) => Int): Resource =
       val positiveFun: (Int, Int) => Int = (first, second) => math.max(fun(first, second), 0)
-
-      (r1, r2) match
-        case (Gold(amount1), Gold(amount2)) => Gold(positiveFun(amount1, amount2))
-        case (SunCrystal(amount1), SunCrystal(amount2)) => SunCrystal(positiveFun(amount1, amount2))
-        case (MoonCrystal(amount1), MoonCrystal(amount2)) => MoonCrystal(positiveFun(amount1, amount2))
-        case (GloryPoint(amount1), GloryPoint(amount2)) => GloryPoint(positiveFun(amount1, amount2))
+      if r1 == r2.copy(r1.amount)
+      then r1.copy(positiveFun(r1.amount, r2.amount))
+      else throw MatchError("Conflicting types of Resource when performing an operation")
 
     def +(r2: Resource): Resource = r1.applyFun(r2, _ + _)
     def -(r2: Resource): Resource = r1.applyFun(r2, _ - _)
@@ -39,14 +37,12 @@ object ResourceWithCap:
     override def maxCapacity_=(newCapacity: Int): Unit =
       if newCapacity > 0
       then
-        resource = resource match
-          case Gold(_) => Gold(this.amount)
-          case SunCrystal(_) => SunCrystal(this.amount)
-          case MoonCrystal(_) => MoonCrystal(this.amount)
-          case GloryPoint(_) => GloryPoint(this.amount)
+        resource = resource.copy(amount = this.amount)
         _maxCapacity = newCapacity
 
     override def amount: Int = math.min(resource.amount, _maxCapacity)
+
+    override def copy(amount: Int): Resource = ResourceWithCapImpl(this.resource, _maxCapacity)
 
   def apply(resource: Resource, initCapacity: Int): ResourceWithCap =
     ResourceWithCapImpl(resource, initCapacity)
