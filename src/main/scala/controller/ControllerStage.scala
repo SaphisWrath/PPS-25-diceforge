@@ -28,8 +28,8 @@ object ControllerStage:
     override def changeScene(newState: ViewState): Unit = newState match
       case MainMenu =>
         val tempController = ControllerMainMenu(
-          ObjectProperty(_ => this.changeScene(MatchInit)),
-          ObjectProperty(_ => this.changeScene(MainMenu))
+          ActionEvent => this.changeScene(MatchInit),
+          ActionEvent => this.changeScene(MainMenu)
         )
         viewState = newState
         mainStage.scene = tempController.scene

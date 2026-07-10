@@ -10,7 +10,7 @@ import scalafx.scene.paint.Color
 trait ButtonFactory:
   def makeMenuButton(
                       test: String,
-                      onClick: ObjectProperty[EventHandler[ActionEvent]]
+                      onClick: ActionEvent => Unit
                     ): Button
   def makeBoardButton(
                      buttonText: String,
@@ -21,7 +21,7 @@ object ButtonFactory:
   private class ButtonFactoryImpl extends ButtonFactory:
     override def makeMenuButton(
                                  text: String,
-                                 onClick: ObjectProperty[EventHandler[ActionEvent]]
+                                 onClick: ActionEvent => Unit
                                ): Button =
       new Button(text) {
         minWidth = 100
@@ -32,7 +32,7 @@ object ButtonFactory:
           CornerRadii.Empty,
           BorderWidths.Default)
         )
-        onAction = onClick.value
+        onAction = event => onClick(event)
       }
 
     override def makeBoardButton(buttonText: String, onClick: ActionEvent => Unit): Button =
