@@ -6,12 +6,33 @@ object ViewPublishers:
     case ResourceMaxContext
   
   trait Subscriber:
+    /**
+     * @param context
+     * Updates itself based on his context
+     */
     def update(context: Context): Unit
+
+    /**
+     * @param publisher
+     * Subscribe to the given publisher
+     */
     def setPublisher(publisher: ViewPublisher): Unit = publisher.subscribe(this)
     
   trait ViewPublisher:
+    /**
+     * @param subscriber
+     * Add given subscriber to the current subscribers
+     */
     def subscribe(subscriber: Subscriber): Unit
+
+    /**
+     * notify current subscribe that there as been a ResourceAmount change
+     */
     def notifyResourceChange(): Unit
+
+    /**
+     * notify current subscribe that there as been a ResourceCap change
+     */
     def notifyResourceCapChange(): Unit
     
   object ViewPublisher extends ViewPublisher:
