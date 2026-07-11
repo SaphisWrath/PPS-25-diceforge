@@ -5,29 +5,20 @@ import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.Button
 import scalafx.scene.layout.{Border, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii}
 import scalafx.scene.paint.Color
-
-trait ButtonFactory:
-  def makeMenuButton(
-                      test: String,
-                      onClick: ActionEvent => Unit
-                    ): Button
   
 object ButtonFactory:
-  private class ButtonFactoryImpl extends ButtonFactory:
-    override def makeMenuButton(
-                                 text: String,
-                                 onClick: ActionEvent => Unit
-                               ): Button =
-      new Button(text) {
-        minWidth = 100
-        minHeight = 50
-        new Border(new BorderStroke(
-          Color.Black,
-          BorderStrokeStyle.Solid,
-          CornerRadii.Empty,
-          BorderWidths.Default)
-        )
-        onAction = event => onClick(event)
-      }
-  
-  def apply(): ButtonFactory = new ButtonFactoryImpl;
+  def makeMenuButton(
+                               text: String,
+                               onClick: ActionEvent => Unit
+                             ): Button =
+    new Button(text) {
+      minWidth = 100
+      minHeight = 50
+      new Border(new BorderStroke(
+        Color.Black,
+        BorderStrokeStyle.Solid,
+        CornerRadii.Empty,
+        BorderWidths.Default)
+      )
+      onAction = event => onClick(event)
+    }
