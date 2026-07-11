@@ -7,6 +7,7 @@ object ResourceConverters:
   val SunCrystalString = "Cristalli Solari"
   val MoonCrystalString = "Cristalli Lunari"
   val GloryPointString = "Punti Gloria"
+  val separator = ":"
 
   def resourceToString(resource: Resource): String = resource match
     case Gold(_) => GoldString
@@ -15,6 +16,9 @@ object ResourceConverters:
     case GloryPoint(_) => GloryPointString
     case _ => throw IllegalArgumentException(s"$resource is not a recognized resource")
 
+  def resourceWithAmountToString(resource: Resource): String = resource match
+    case Resource(amount) => resourceToString(resource) + separator + amount.toString
+  
   def stringToResourceBuilder(string: String)(amount: Int): Resource = string match
     case GoldString => Gold(amount)
     case SunCrystalString => SunCrystal(amount)

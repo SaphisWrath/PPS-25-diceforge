@@ -7,7 +7,7 @@ class EffectTest extends AnyFlatSpec:
   "A ResourceEffect" should "increase the player's resources by the given amount" in:
     val playerBoard = PlayerBoard.emptyBoard
     val amount = 10
-    val resourceEffect = ResourceEffect(Gold(amount), playerBoard)
+    val resourceEffect = ResourceEffect(Gold(amount), Option(playerBoard))
     resourceEffect.resolve()
     assert(playerBoard.gold.amount == amount)
     resourceEffect.resolve()

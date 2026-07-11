@@ -5,5 +5,7 @@ import model.resource.*
 trait Effect:
   def resolve(): Unit
 
-class ResourceEffect(resource: Resource, receiver: PlayerBoard) extends Effect:
-  override def resolve(): Unit = receiver.addResource(resource)
+case class ResourceEffect(resource: Resource, receiver: Option[PlayerBoard]) extends Effect:
+  override def resolve(): Unit = receiver match
+    case Some(rec) => rec.addResource(resource)
+    case _ => 
