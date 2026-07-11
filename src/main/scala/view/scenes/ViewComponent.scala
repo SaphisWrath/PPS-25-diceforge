@@ -1,6 +1,6 @@
 package view.scenes
 
-import scalafx.scene.Parent
+import scalafx.scene.{Node, Parent}
 
 trait ViewComponent :
-  def component: Parent
+  def component: Node

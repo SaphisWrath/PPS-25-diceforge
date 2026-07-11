@@ -15,7 +15,7 @@ object ButtonFactory:
     new Button(text) {
       minWidth = 100
       minHeight = 50
-      new Border(new BorderStroke(
+      border = new Border(new BorderStroke(
         Color.Black,
         BorderStrokeStyle.Solid,
         CornerRadii.Empty,

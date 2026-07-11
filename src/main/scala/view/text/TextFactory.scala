@@ -6,12 +6,23 @@ import scalafx.scene.paint.{LinearGradient, Stops}
 import scalafx.scene.text.Text
 
 object TextFactory:
- def makeMenuTitle: Text =
-  new Text {
-    text = "DICE FORGE"
-    style = "-fx-font: normal bold 50pt sans-serif"
-    margin = Insets(10)
-    fill = new LinearGradient(
-      endX = 0,
-      stops = Stops(Red, DarkRed))
-  }
+  def makeMenuTitle: Text =
+    new Text {
+      text = "DICE FORGE"
+      style = "-fx-font: normal bold 50pt sans-serif"
+      margin = Insets(10)
+      fill = new LinearGradient(
+        endX = 0,
+        stops = Stops(Red, DarkRed))
+    }
+  
+  def makeMissionName(name: String): Text =
+    new Text {
+      text = name
+      style = "-fx-font: bold"
+    }
+    
+  def makeMissionLabel(label: String): Text = 
+    new Text {
+      text = label
+    }
