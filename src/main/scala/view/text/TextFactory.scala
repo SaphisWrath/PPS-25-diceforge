@@ -26,3 +26,9 @@ object TextFactory:
     new Text {
       text = label
     }
+    
+  def makeEffectText(label: String): Text =
+    new Text {
+      text = label
+      style = "-fx-font: bold"
+    }

@@ -4,7 +4,9 @@ import controller.converters.ResourceConverters.{GloryPointString, GoldString, M
 import model.effects.{Effect, ResourceEffect}
 import model.resource.{GloryPoint, Gold, Resource}
 
-case class EffectDTO(effectType: String, resource: Option[String])
+case class EffectDTO(effectType: String, resource: Option[String]):
+  override def toString: String =
+    effectType + resource.get
 
 object EffectDTO:
   private def extractResource(fromString: String): Resource = {
@@ -19,7 +21,7 @@ object EffectDTO:
         Option(resourceWithAmountToString(resource))
       )
       case _ => EffectDTO("Unknown", Option.empty)
-      
+
   def unapply(effectDTO: EffectDTO): Effect =
     effectDTO.effectType match
       case "+" => effectDTO.resource match
