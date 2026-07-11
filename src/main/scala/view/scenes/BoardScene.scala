@@ -51,7 +51,7 @@ class BoardScene extends Scene:
 
   private val NEXT_TURN_BUTTON_TEXT = "Prossimo Turno"
 
-  private def nextTurnButton: Button = ButtonFactory().makeBoardButton(
+  private def nextTurnButton: Button = ButtonFactory.makeBoardButton(
     NEXT_TURN_BUTTON_TEXT,
     event =>
       GameController.nextTurn()
