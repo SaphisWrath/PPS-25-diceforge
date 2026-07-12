@@ -22,7 +22,7 @@ object EffectDTO:
       )
       case _ => EffectDTO("Unknown", Option.empty)
 
-  def unapply(effectDTO: EffectDTO): Effect =
+  def toEffect(effectDTO: EffectDTO): Effect =
     effectDTO.effectType match
       case "+" => effectDTO.resource match
         case Some(s) => ResourceEffect(extractResource(s), None)
