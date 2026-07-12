@@ -13,11 +13,13 @@ object Mission:
 
 case class BaseMission(reward: List[Resource], cost: List[Resource]) extends Mission:
   override def get(receiver: PlayerBoard): Unit = cost.foreach(r => {
+    import model.utils.ResourceEffectModules.SubtractResource
     ResourceEffect(r, Option(receiver)).resolve()
   })
 
 trait InstantRewards extends Mission:
   abstract override def get(receiver: PlayerBoard): Unit =
+    import model.utils.ResourceEffectModules.AddResource
     reward.foreach(r => {
       ResourceEffect(r, Option(receiver)).resolve()
     })

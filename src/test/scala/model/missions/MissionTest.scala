@@ -13,7 +13,7 @@ class MissionTestSuite extends AnyFunSuite {
 
 class MissionTestSpec extends AnyFlatSpec{
   val board = PlayerBoard(0, 3, 3, 0)
-  val cost: List[Resource] = (SunCrystal(-3), MoonCrystal(-3)).toList
+  val cost: List[Resource] = (SunCrystal(3), MoonCrystal(3)).toList
   val reward: List[Resource] = List(Gold(3))
 
   "Any mission" should "take its cost from player resources when activated" in:
