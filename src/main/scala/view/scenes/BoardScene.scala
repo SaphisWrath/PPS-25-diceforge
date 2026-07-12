@@ -9,7 +9,7 @@ import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
-import view.panes.MissionPane
+import view.panes.{MissionBoardPane, MissionPane}
 
 class BoardScene extends Scene:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
@@ -24,7 +24,7 @@ class BoardScene extends Scene:
 
   private val pane = new BorderPane {
     top = nonActivePlayersPane()
-    center = MissionPane("Banana").component
+    center = MissionBoardPane(GameController.missions()).component
     bottom = activePlayerPane()
   }
 
