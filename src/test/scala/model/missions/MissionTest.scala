@@ -1,7 +1,7 @@
 package model.missions
 
 import model.effects.ResourceEffect
-import model.resource.{Gold, MoonCrystal, PlayerBoard, Resource, SunCrystal}
+import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,8 +13,8 @@ class MissionTestSuite extends AnyFunSuite {
 
 class MissionTestSpec extends AnyFlatSpec{
   val board = PlayerBoard(0, 3, 3, 0)
-  val cost: List[Resource] = (SunCrystal(3), MoonCrystal(3)).toList
-  val reward: List[Resource] = List(Gold(3))
+  val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(3)), ResourceEffect(MoonCrystal(3))).toList
+  val reward: List[ResourceEffect] = List(ResourceEffect(Gold(3)))
 
   "Any mission" should "take its cost from player resources when activated" in:
     val mission = BaseMission(reward, cost)

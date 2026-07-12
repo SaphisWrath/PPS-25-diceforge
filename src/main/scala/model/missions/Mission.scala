@@ -4,25 +4,27 @@ import model.effects.{Effect, ResourceEffect}
 import model.resource.{PlayerBoard, Resource}
 
 trait Mission:
-  def reward: List[Resource]
-  def cost: List[Resource]
+  def reward: List[Effect]
+  def cost: List[Effect]
   def get(receiver: PlayerBoard): Unit
 
 object Mission:
-  def unapply(mission: Mission): (List[Resource], List[Resource]) = (mission.reward, mission.cost)
+  def unapply(mission: Mission): (List[Effect], List[Effect]) = (mission.reward, mission.cost)
 
-case class BaseMission(reward: List[Resource], cost: List[Resource]) extends Mission:
+case class BaseMission(reward: List[Effect], cost: List[Effect]) extends Mission:
   override def get(receiver: PlayerBoard): Unit = cost.foreach(r => {
     import model.utils.ResourceEffectModules.SubtractResource
-    ResourceEffect(r, Option(receiver)).resolve()
+    r.setReceiver(receiver)
+    r.resolve()
   })
 
 trait InstantRewards extends Mission:
   abstract override def get(receiver: PlayerBoard): Unit =
     import model.utils.ResourceEffectModules.AddResource
-    reward.foreach(r => {
-      ResourceEffect(r, Option(receiver)).resolve()
-    })
+    reward.foreach(r => 
+      r.setReceiver(receiver)
+      r.resolve()
+    )
     super.get(receiver)
 
-class InstantMission(reward: List[Resource], cost: List[Resource]) extends BaseMission(reward, cost) with InstantRewards
+class InstantMission(reward: List[Effect], cost: List[Effect]) extends BaseMission(reward, cost) with InstantRewards

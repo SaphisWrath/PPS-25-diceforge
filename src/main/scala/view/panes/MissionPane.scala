@@ -1,7 +1,7 @@
 package view.panes
 
 import controller.converters.ResourceConverters
-import controller.dto.EffectDTO
+import controller.dto.{EffectDTO, MissionDTO}
 import scalafx.event.ActionEvent
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{Center, CenterLeft}
@@ -12,16 +12,15 @@ import view.buttons.ButtonFactory
 import view.scenes.ViewComponent
 import view.text.TextFactory
 
-class MissionPane(name: String) extends ViewComponent:
-  val placeholderEffect = EffectDTO("+", Option(ResourceConverters.GoldString + ResourceConverters.separator + 1.toInt))
+class MissionPane(missionDTO: MissionDTO) extends ViewComponent:
   override def component: Node =
     new VBox {
       alignment = Center
       padding = Insets(10)
       children = Seq(
-        TextFactory.makeMissionName(name),
-        new EffectWrapperPane("Costo", List(placeholderEffect, placeholderEffect, placeholderEffect)).component,
-        new EffectWrapperPane("Ricompensa", List(placeholderEffect, placeholderEffect, placeholderEffect)).component
+        TextFactory.makeMissionName(missionDTO.id),
+        new EffectWrapperPane("Costo", missionDTO.cost).component,
+        new EffectWrapperPane("Ricompensa", missionDTO.rewards).component
       )
     }
 
