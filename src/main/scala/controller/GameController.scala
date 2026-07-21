@@ -1,8 +1,10 @@
 package controller
 
-import controller.dto.{PlayerBoardDTO, PlayerDTO}
+import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.Players.Player
-import model.resource.PlayerBoard
+import model.effects.ResourceEffect
+import model.missions.BaseMission
+import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 
 import scala.util.Random
 
@@ -23,6 +25,11 @@ trait GameController:
    * @return the sequence of current players, if the game as not been initialized is empty
    */
   def players: Seq[Player]
+
+  /**
+   * @return the missions in play, already sorted into their respective cells
+   */
+  def missions: Map[Int, List[MissionDTO]]
 
   /**
    * @return an Option containing the current active player if the game as been initialized,
@@ -67,6 +74,7 @@ object GameController:
   private var _playerBoards: Map[Player, PlayerBoard] = Map.empty
   private var _activePlayerIndex: Int = 0
   private var _currentRound: Int = 0
+  var _missions: Map[Int, List[MissionDTO]] = Map.empty
 
   def init(playerList: Seq[Player]): Unit =
     require(playerList.length >= 2)
@@ -74,6 +82,8 @@ object GameController:
     _players = Random.shuffle(playerList)
     _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
 
+  def missions(): Map[Int, List[MissionDTO]] = _missions
+  
   def reset(): Unit =
     _players = Seq.empty
     _playerBoards = Map.empty

@@ -10,8 +10,6 @@ import view.buttons.ButtonFactory
 import view.text.TextFactory
 
 class MainMenuScene(onStart: ActionEvent => Unit, onRules: ActionEvent => Unit) extends Scene {
-  private val buttonFactory: ButtonFactory = ButtonFactory()
-  private val textFactory: TextFactory = TextFactory()
   root = new VBox {
     fillWidth = true
     spacing = 20
@@ -24,9 +22,9 @@ class MainMenuScene(onStart: ActionEvent => Unit, onRules: ActionEvent => Unit) 
     alignment = Center
     alignmentInParent = Center
     children = Seq(
-      textFactory.makeMenuTitle,
-      buttonFactory.makeMenuButton("INIZIA", onStart),
-      buttonFactory.makeMenuButton("REGOLE", onRules)
+      TextFactory.makeMenuTitle,
+      ButtonFactory.makeMenuButton("INIZIA", onStart),
+      ButtonFactory.makeMenuButton("REGOLE", onRules)
     )
   }
 }

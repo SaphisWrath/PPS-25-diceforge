@@ -9,6 +9,7 @@ import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
+import view.panes.{MissionBoardPane, MissionPane}
 
 class BoardScene extends Scene:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
@@ -23,7 +24,7 @@ class BoardScene extends Scene:
 
   private val pane = new BorderPane {
     top = nonActivePlayersPane()
-    center = Label("center") //TODO
+    center = MissionBoardPane(GameController.missions()).component
     bottom = activePlayerPane()
   }
 
@@ -51,7 +52,7 @@ class BoardScene extends Scene:
 
   private val NEXT_TURN_BUTTON_TEXT = "Prossimo Turno"
 
-  private def nextTurnButton: Button = ButtonFactory().makeBoardButton(
+  private def nextTurnButton: Button = ButtonFactory.makeBoardButton(
     NEXT_TURN_BUTTON_TEXT,
     event =>
       GameController.nextTurn()
