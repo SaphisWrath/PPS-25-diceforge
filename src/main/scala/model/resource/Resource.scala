@@ -18,7 +18,7 @@ object Resource:
       val positiveFun: (Int, Int) => Int = (first, second) => math.max(fun(first, second), 0)
       if r1 == r2.copy(r1.amount)
       then r1.copy(positiveFun(r1.amount, r2.amount))
-      else throw MatchError("Conflicting types of Resource when performing an operation")
+      else r1
 
     def +(r2: Resource): Resource = r1.applyFun(r2, _ + _)
     def -(r2: Resource): Resource = r1.applyFun(r2, _ - _)
@@ -37,7 +37,7 @@ object ResourceWithCap:
     override def maxCapacity_=(newCapacity: Int): Unit =
       if newCapacity > 0
       then
-        resource = resource.copy(amount = this.amount)
+        resource = resource.copy(this.amount)
         _maxCapacity = newCapacity
 
     override def amount: Int = math.min(resource.amount, _maxCapacity)

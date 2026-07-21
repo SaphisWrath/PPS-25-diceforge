@@ -14,6 +14,12 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource = anyResource - sameResourceDecrease
     anyResource.amount should be(0)
 
+  "Performing operations between resources of different types" should "yield the unchanged first resource" in:
+    val anyResource: Resource = Gold(3)
+    val differentResourceDecrease = SunCrystal(4)
+
+    anyResource + differentResourceDecrease should be(anyResource)
+
   "A resource's current amount" should "not be bigger than the max capacity" in:
     var anyResource = ResourceWithCap(SunCrystal(0), 6)
     val sameResourceIncrease = SunCrystal(4)
