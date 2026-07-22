@@ -1,8 +1,9 @@
 package controller.dto
 
-import controller.converters.ResourceConverters.{GloryPointString, GoldString, MoonCrystalString, SunCrystalString, resourceToString, resourceWithAmountToString, separator, stringToResourceBuilder}
+import controller.converters.ResourceConverters.{resourceWithAmountToString, stringToResourceBuilder}
 import model.effects.{Effect, ResourceEffect}
 import model.resource.{GloryPoint, Gold, Resource}
+import view.LanguageStrings
 
 case class EffectDTO(effectType: String, resource: Option[String]):
   override def toString: String =
@@ -10,7 +11,7 @@ case class EffectDTO(effectType: String, resource: Option[String]):
 
 object EffectDTO:
   private def extractResource(fromString: String): Resource = {
-    val strings = fromString.split(separator)
+    val strings = fromString.split(LanguageStrings.separator)
     stringToResourceBuilder(strings(0))(strings(1).toInt)
   }
 
