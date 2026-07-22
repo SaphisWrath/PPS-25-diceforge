@@ -1,16 +1,16 @@
 package view.scenes
 
 import controller.ControllerMainMenu
+import javafx.event.ActionEvent
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Scene
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.buttons.ButtonFactory
 import view.text.TextFactory
+import view.LanguageStrings.TitleScreenStrings as TSStrings
 
-class MainMenuScene(controller: ControllerMainMenu) extends Scene {
-  private val buttonFactory: ButtonFactory = ButtonFactory()
-  private val textFactory: TextFactory = TextFactory()
+class MainMenuScene(onStart: ActionEvent => Unit, onRules: ActionEvent => Unit) extends Scene {
   root = new VBox {
     fillWidth = true
     spacing = 20
@@ -23,9 +23,9 @@ class MainMenuScene(controller: ControllerMainMenu) extends Scene {
     alignment = Center
     alignmentInParent = Center
     children = Seq(
-      textFactory.makeMenuTitle,
-      buttonFactory.makeMenuButton("INIZIA", controller.onStart),
-      buttonFactory.makeMenuButton("REGOLE", controller.onRules)
+      TextFactory.makeMenuTitle,
+      ButtonFactory.makeMenuButton(TSStrings.startButtonText, onStart),
+      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, onRules)
     )
   }
 }

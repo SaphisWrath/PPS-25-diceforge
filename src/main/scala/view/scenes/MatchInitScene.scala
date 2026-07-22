@@ -8,13 +8,14 @@ import scalafx.geometry.Pos.Center
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, VBox}
+import view.LanguageStrings.{separator, GameInitScreenStrings as GISStrings}
 
 class MatchInitScene(controller: ControllerMatchInit) extends Scene:
   private val playerCountChoice = new ChoiceBox[Int](ObservableBuffer[Int](2, 3, 4))
   private val playerNameField = new TextField()
   private val playerColorChoice = new ChoiceBox[Color](ObservableBuffer[Color](Orange, Green, Blue, Black))
   private val feedbackLabel = new Label()
-  private val addPlayerButton = new Button("Add player")
+  private val addPlayerButton = new Button(GISStrings.addPlayerButtonText)
   
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {
@@ -30,9 +31,9 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
     alignment = Center
     alignmentInParent = Center
     children = Seq(
-      makeRowWith(Seq(new Label("How many players?"), playerCountChoice)),
-      makeRowWith(Seq(new Label("Player name:"), playerNameField)),
-      makeRowWith(Seq(new Label("Player color:"), playerColorChoice)),
+      makeRowWith(Seq(new Label(GISStrings.howManyPlayersText), playerCountChoice)),
+      makeRowWith(Seq(new Label(GISStrings.playerNameLabelText + separator), playerNameField)),
+      makeRowWith(Seq(new Label(GISStrings.playerColorLabelText + separator), playerColorChoice)),
       makeRowWith(Seq(addPlayerButton)),
       makeRowWith(Seq(feedbackLabel))
     )
@@ -46,9 +47,9 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
 
     controller.updateMatchInfo(playerNameField.getText, playerColorChoice.getValue)
     if controller.isLastPlayerValid
-    then feedbackLabel.text = "Player added!"
-    else feedbackLabel.text = "Name or color already picked"
+    then feedbackLabel.text = GISStrings.playerAddedConfirmationText
+    else feedbackLabel.text = GISStrings.playerAddingErrorText
 
     if controller.allPlayersSet
-    then feedbackLabel.text = "Ready to start the game!"
+    then feedbackLabel.text = GISStrings.gameReadyConfirmationText
   }

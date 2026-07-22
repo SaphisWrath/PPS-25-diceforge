@@ -24,9 +24,6 @@ object Players:
 
       override def getName: String = name
 
-      /**
-       * @return The assigned color
-       */
       override def getColor: Color = color
 
     def apply(name: String, color: Color): Player = new PlayerImpl(name, color)
