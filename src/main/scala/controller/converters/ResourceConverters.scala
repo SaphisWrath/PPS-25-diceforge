@@ -1,28 +1,24 @@
 package controller.converters
 
 import model.resource.*
+import view.LanguageStrings.{separator, ResourceStrings as Strings}
 
 object ResourceConverters:
-  val GoldString = "Oro"
-  val SunCrystalString = "Cristalli Solari"
-  val MoonCrystalString = "Cristalli Lunari"
-  val GloryPointString = "Punti Gloria"
-  val separator = ":"
 
   def resourceToString(resource: Resource): String = resource match
-    case Gold(_) => GoldString
-    case SunCrystal(_) => SunCrystalString
-    case MoonCrystal(_) => MoonCrystalString
-    case GloryPoint(_) => GloryPointString
+    case Gold(_) => Strings.gold
+    case SunCrystal(_) => Strings.sunCrystal
+    case MoonCrystal(_) => Strings.moonCrystal
+    case GloryPoint(_) => Strings.gloryPoint
     case _ => throw IllegalArgumentException(s"$resource is not a recognized resource")
 
   def resourceWithAmountToString(resource: Resource): String = resource match
     case Resource(amount) => resourceToString(resource) + separator + amount.toString
   
   def stringToResourceBuilder(string: String)(amount: Int): Resource = string match
-    case GoldString => Gold(amount)
-    case SunCrystalString => SunCrystal(amount)
-    case MoonCrystalString => MoonCrystal(amount)
-    case GloryPointString => GloryPoint(amount)
+    case Strings.gold => Gold(amount)
+    case Strings.sunCrystal => SunCrystal(amount)
+    case Strings.moonCrystal => MoonCrystal(amount)
+    case Strings.gloryPoint => GloryPoint(amount)
     case _ => throw IllegalArgumentException(s"`$string` doesn't correspond to any recognized resource")
 

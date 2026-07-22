@@ -10,12 +10,14 @@ import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.{MissionBoardPane, MissionPane}
+import view.LanguageStrings.BoardScreenStrings as BSStrings
 
 class BoardScene extends Scene:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
     GameController.players.map(p => p -> PlayerGUIComponentFactory(p, GameController.playerBoard(p))).toMap
 
-  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, "activePlayer", GameController.activePlayer.get) {
+  private val activePlayerPropertyName = "activePlayer"
+  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, GameController.activePlayer.get) {
     onChange((_, _, _) =>
       pane.top = nonActivePlayersPane()
       pane.bottom = activePlayerPane()
@@ -50,10 +52,8 @@ class BoardScene extends Scene:
     }
     pane
 
-  private val NEXT_TURN_BUTTON_TEXT = "Prossimo Turno"
-
   private def nextTurnButton: Button = ButtonFactory.makeBoardButton(
-    NEXT_TURN_BUTTON_TEXT,
+    BSStrings.nextTurnButtonText,
     event =>
       GameController.nextTurn()
       activePlayer() = GameController.activePlayer.get

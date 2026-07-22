@@ -10,4 +10,6 @@ object PlayerDTO:
 
   extension (playerDTO: PlayerDTO)
     def toPlayer: Player = Player(playerDTO.name, playerDTO.colorHex.toColor)
-  val empty: PlayerDTO = PlayerDTO("", "")
+  private val empty_name = ""
+  private val empty_color_hex = ""
+  val empty: PlayerDTO = PlayerDTO(empty_name, empty_color_hex)
