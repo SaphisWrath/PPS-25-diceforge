@@ -10,10 +10,11 @@ import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
+import view.LanguageStrings.{ResourceStrings as RStrings ,EndScreenStrings as ESStrings}
 
 class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
-  private val newMatchButton = new Button("Play again")
-  private val endGameButton = new Button("Quit")
+  private val newMatchButton = new Button(ESStrings.playAgainButtonText)
+  private val endGameButton = new Button(ESStrings.exitButtonText)
 
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {
@@ -30,7 +31,7 @@ class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
 
     players.map((player, points) =>
       val nameLabel = new Label(player.getName)
-      val pointLabel = new Label(points.amount + " Victory Points")
+      val pointLabel = new Label(s"${points.amount} ${RStrings.gloryPoint}")
 
       nameLabel.setMinSize(labelSizeX, labelSizeY)
       pointLabel.setMinSize(labelSizeX, labelSizeY)

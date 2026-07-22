@@ -4,11 +4,12 @@ import scalafx.geometry.Insets
 import scalafx.scene.paint.Color.{DarkRed, Red}
 import scalafx.scene.paint.{LinearGradient, Stops}
 import scalafx.scene.text.Text
+import view.LanguageStrings.TitleScreenStrings as TSStrings
 
 object TextFactory:
   def makeMenuTitle: Text =
     new Text {
-      text = "DICE FORGE"
+      text = TSStrings.title
       style = "-fx-font: normal bold 50pt sans-serif"
       margin = Insets(10)
       fill = new LinearGradient(

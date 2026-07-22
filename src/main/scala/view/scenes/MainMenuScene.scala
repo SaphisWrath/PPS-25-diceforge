@@ -8,6 +8,7 @@ import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.buttons.ButtonFactory
 import view.text.TextFactory
+import view.LanguageStrings.TitleScreenStrings as TSStrings
 
 class MainMenuScene(onStart: ActionEvent => Unit, onRules: ActionEvent => Unit) extends Scene {
   root = new VBox {
@@ -23,8 +24,8 @@ class MainMenuScene(onStart: ActionEvent => Unit, onRules: ActionEvent => Unit) 
     alignmentInParent = Center
     children = Seq(
       TextFactory.makeMenuTitle,
-      ButtonFactory.makeMenuButton("INIZIA", onStart),
-      ButtonFactory.makeMenuButton("REGOLE", onRules)
+      ButtonFactory.makeMenuButton(TSStrings.startButtonText, onStart),
+      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, onRules)
     )
   }
 }
