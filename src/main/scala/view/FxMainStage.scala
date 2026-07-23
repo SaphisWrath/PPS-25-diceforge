@@ -8,7 +8,7 @@ import scalafx.scene.layout.StackPane
 import view.scenes.MainMenuScene
 import view.ViewComponents.{MainStage, ViewScene}
 
-class FxMainStage(controller: ControllerStage) extends MainStage[Node]:
+class FxMainStage extends MainStage[Node]:
   private val paneContent: ObjectProperty[Node] = ObjectProperty[Node](new StackPane())
   private val mainPane = new StackPane {
     children = paneContent()

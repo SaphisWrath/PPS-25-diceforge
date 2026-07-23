@@ -1,5 +1,7 @@
 package view
 
+import controller.{ControllerMatchEnd, ControllerMatchInit}
+
 object ViewComponents:
   trait MainStage[T]:
     def setContent(scene: ViewScene[T]): Unit

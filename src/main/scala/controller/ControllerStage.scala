@@ -1,31 +1,34 @@
 package controller
 
-import controller.ViewState.{MainMenu, MatchInit}
-import javafx.event.ActionEvent
-import scalafx.application.JFXApp3.PrimaryStage
-import scalafx.beans.property.ObjectProperty
-import scalafx.stage.Stage
-import view.FxMainStage
-import view.scenes.{MainMenuScene, MatchInitScene}
+import controller.ViewState.*
 
 enum ViewState:
   case MainMenu
   case MatchInit
+  case Board
+  case MatchEnd
 
 trait ControllerStage:
-  def init(): PrimaryStage
+  def init(navigator: Navigator): Unit
   def changeScene(newState: ViewState): Unit
   def getViewState: ViewState
 
-object ControllerStage:
-  private class ControllerStageImpl extends ControllerStage:
-    private var viewState: ViewState = MainMenu
-    private val mainStage: PrimaryStage = ???
-    changeScene(viewState)
+object ControllerStage extends ControllerStage:
+  private var viewState: ViewState = MainMenu
+  private var _navigator: Option[Navigator] = Option.empty
+  private def navigator: Navigator = _navigator match
+    case Some(value) => value
+    case _ => throw IllegalStateException("Controller not Initialized")
 
-    override def init(): PrimaryStage = mainStage
+  override def init(navigator: Navigator): Unit =
+    _navigator = Option(navigator)
+    changeScene(MainMenu)
 
-    override def changeScene(newState: ViewState): Unit = ???
-      
-    override def getViewState: ViewState = viewState
-  def apply(): ControllerStage = new ControllerStageImpl
+  override def changeScene(newState: ViewState): Unit =
+    newState match
+      case MainMenu => navigator.navigateToMainMenu()
+      case MatchInit => navigator.navigateToMatchInit()
+      case Board => navigator.navigateToBoard()
+      case MatchEnd => navigator.navigateToMatchEnd()
+    viewState = newState
+  override def getViewState: ViewState = viewState
