@@ -34,7 +34,7 @@ object ControllerStage:
         )
       case MatchInit => 
         viewState = newState
-        mainStage.scene = MatchInitScene(new ControllerMatchInitImpl())
+        mainStage.scene = MatchInitScene(ControllerMatchInit)
       
     override def getViewState: ViewState = viewState
   def apply(): ControllerStage = new ControllerStageImpl
