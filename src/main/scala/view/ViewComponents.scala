@@ -6,6 +6,7 @@ object ViewComponents:
 
   trait ViewScene[T]:
     def scene: T
+    def apply(): T = this.scene
 
   trait ViewSceneFactory[T]:
     def createMainMenuScene(): ViewScene[T]

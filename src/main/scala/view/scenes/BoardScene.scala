@@ -11,8 +11,9 @@ import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.{MissionBoardPane, MissionPane}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
+import view.ViewComponents.ViewScene
 
-class BoardScene extends Scene:
+class BoardScene extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
     GameController.players.map(p => p -> PlayerGUIComponentFactory(p, GameController.playerBoard(p))).toMap
 
@@ -29,8 +30,6 @@ class BoardScene extends Scene:
     center = MissionBoardPane(GameController.missions()).component
     bottom = activePlayerPane()
   }
-
-  root = pane
 
   private def activePlayerPane(): Node =
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
@@ -58,3 +57,5 @@ class BoardScene extends Scene:
       GameController.nextTurn()
       activePlayer() = GameController.activePlayer.get
   )
+
+  override def scene: Node = pane
