@@ -24,7 +24,7 @@ trait GameController:
   /**
    * @return the sequence of current players, if the game as not been initialized is empty
    */
-  def players: Seq[Player]
+  def players: Seq[PlayerDTO]
 
   /**
    * @return the missions in play, already sorted into their respective cells
@@ -35,19 +35,25 @@ trait GameController:
    * @return an Option containing the current active player if the game as been initialized,
    *         empty otherwise
    */
-  def activePlayer: Option[Player]
+  def activePlayer: Option[PlayerDTO]
 
   /**
    * @return the sequence of all players that are not the active player, if the game as not been initialized the
    *         sequence is empty
    */
-  def nonActivePlayerList: Seq[Player]
+  def nonActivePlayerList: Seq[PlayerDTO]
 
   /**
    * @param player the player proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
-  def playerBoard(player: Player): PlayerBoard
+  def playerBoard(player: PlayerDTO): PlayerBoardDTO
+
+  /**
+   * @param playerName the name of the proprietary of the board
+   * @return the currentPlayerBoard of the given player
+   */
+  def playerBoard(playerName: String): PlayerBoardDTO
 
   /**
    * Notify the game to go to the next turn
@@ -69,51 +75,51 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-object GameController:
+object GameController extends GameController:
   private var _players: Seq[Player] = Seq.empty
   private var _playerBoards: Map[Player, PlayerBoard] = Map.empty
   private var _activePlayerIndex: Int = 0
   private var _currentRound: Int = 0
   var _missions: Map[Int, List[MissionDTO]] = Map.empty
 
-  def init(playerList: Seq[Player]): Unit =
+  override def init(playerList: Seq[Player]): Unit =
     require(playerList.length >= 2)
     reset()
     _players = Random.shuffle(playerList)
     _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
 
-  def missions(): Map[Int, List[MissionDTO]] = _missions
+  override def missions: Map[Int, List[MissionDTO]] = _missions
   
-  def reset(): Unit =
+  override def reset(): Unit =
     _players = Seq.empty
     _playerBoards = Map.empty
     _activePlayerIndex = 0
     _currentRound = 0
 
-  def players: Seq[PlayerDTO] = _players.map(PlayerDTO(_))
+  override def players: Seq[PlayerDTO] = _players.map(PlayerDTO(_))
 
-  def activePlayer: Option[PlayerDTO] =
+  override def activePlayer: Option[PlayerDTO] =
     if _players.isEmpty then Option.empty
     else Option(players(_activePlayerIndex))
 
-  def nonActivePlayerList: Seq[PlayerDTO] =
+  override def nonActivePlayerList: Seq[PlayerDTO] =
     require(_players.nonEmpty)
     players.filter(!_.equals(activePlayer.get))
 
-  def playerBoard(playerName: String): PlayerBoardDTO =
+  override def playerBoard(playerName: String): PlayerBoardDTO =
     require(_players.exists(_.getName == playerName))
     PlayerBoardDTO(_playerBoards.map((p, b) => p.getName -> b)(playerName))
 
-  def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
+  override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-  def nextTurn(): Unit =
+  override def nextTurn(): Unit =
     _activePlayerIndex = if _activePlayerIndex + 1 >= players.length then 0 else _activePlayerIndex + 1
     if _activePlayerIndex == 0 then _currentRound = _currentRound + 1
 
-  def currentRound: Int = _currentRound + 1
+  override def currentRound: Int = _currentRound + 1
 
-  def isGameEnded: Boolean = _currentRound >= maxNumberOfRounds
+  override def isGameEnded: Boolean = _currentRound >= maxNumberOfRounds
 
-  def maxNumberOfRounds: Int = if _players.length == 3 then 10 else 9
+  override def maxNumberOfRounds: Int = if _players.length == 3 then 10 else 9
 
 
