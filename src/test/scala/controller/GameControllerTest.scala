@@ -1,9 +1,11 @@
 package controller
 
+import controller.dto.{PlayerBoardDTO, PlayerDTO}
 import model.Players.Color.{Black, Blue, Green, Orange}
 import model.Players.{Color, Player}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
+import view.LanguageStrings.ResourceStrings.*
 
 class GameControllerTest extends AnyFlatSpec with should.Matchers:
   enum ExPlayers(private val _name: String, private val _color: Color) extends Player:
@@ -14,11 +16,11 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     override def getName: String = _name
     override def getColor: Color = _color
 
-  def initGame(playerNum: Int): Seq[Player] =
+  def initGame(playerNum: Int): Seq[PlayerDTO] =
     GameController.reset()
     val players = ExPlayers.values.take(playerNum).toSeq
     GameController.init(players)
-    players
+    players.map(PlayerDTO(_))
 
   "A Game" should "be empty after a reset" in:
     GameController.reset()
@@ -32,7 +34,7 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
 
   it should "let you check non active Players" in:
     val players = initGame(2)
-    val nonActivePlayers = players.filter(_.equals(GameController.activePlayer.get))
+    val nonActivePlayers = players.filter(!_.equals(GameController.activePlayer.get))
     nonActivePlayers should be (GameController.nonActivePlayerList)
 
   it should "let you go to the next turn" in:
@@ -53,3 +55,16 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
       players.foreach(_ => GameController.nextTurn())
     )
     GameController.isGameEnded should be (true)
+
+  it should "let you get a Player Board" in:
+    val players = initGame(2)
+    val playerBoard: PlayerBoardDTO = GameController.playerBoard(players.head)
+    playerBoard.amountOf(gold) should be (0)
+    playerBoard.amountOf(sunCrystal) should be(0)
+    playerBoard.amountOf(moonCrystal) should be(0)
+    playerBoard.amountOf(gloryPoint) should be(0)
+
+    playerBoard.capOf(gold) should be (Option(12))
+    playerBoard.capOf(sunCrystal) should be (Option(6))
+    playerBoard.capOf(moonCrystal) should be (Option(6))
+    playerBoard.capOf(gloryPoint) should be (Option.empty)
