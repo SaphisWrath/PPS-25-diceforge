@@ -1,5 +1,6 @@
 package controller
 
+import controller.dto.PlayerDTO
 import model.Players.Color.{Black, Blue, Green, Orange}
 import model.Players.{Color, Player}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -28,11 +29,13 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
   it should "be able to start" in:
     val players = initGame(2)
     GameController.activePlayer.nonEmpty should be (true)
-    players should contain (GameController.activePlayer.get)
+    players.map(PlayerDTO(_)) should contain (GameController.activePlayer.get)
 
   it should "let you check non active Players" in:
     val players = initGame(2)
-    val nonActivePlayers = players.filter(_.equals(GameController.activePlayer.get))
+    val nonActivePlayers = players
+      .map(PlayerDTO(_))
+      .filter(!_.equals(GameController.activePlayer.get))
     nonActivePlayers should be (GameController.nonActivePlayerList)
 
   it should "let you go to the next turn" in:
