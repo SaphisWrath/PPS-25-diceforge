@@ -16,49 +16,46 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     override def getName: String = _name
     override def getColor: Color = _color
 
+  var gameController = GameController(Seq.empty)
+
   def initGame(playerNum: Int): Seq[PlayerDTO] =
-    GameController.reset()
     val players = ExPlayers.values.take(playerNum).toSeq
-    GameController.init(players)
+    gameController = GameController(players)
     players.map(PlayerDTO(_))
 
-  "A Game" should "be empty after a reset" in:
-    GameController.reset()
-    GameController.activePlayer.isEmpty should be (true)
-    GameController.currentRound should be (1)
-
-  it should "be able to start" in:
+  "A Game" should "be initialized" in:
     val players = initGame(2)
-    GameController.activePlayer.nonEmpty should be (true)
-    players should contain (GameController.activePlayer.get)
+    gameController.players should not be empty
+    players should contain (gameController.activePlayer)
+    gameController.currentRound should be (1)
 
   it should "let you check non active Players" in:
     val players = initGame(2)
-    val nonActivePlayers = players.filter(!_.equals(GameController.activePlayer.get))
-    nonActivePlayers should be (GameController.nonActivePlayerList)
+    val nonActivePlayers = players.filter(!_.equals(gameController.activePlayer))
+    nonActivePlayers should be (gameController.nonActivePlayerList)
 
   it should "let you go to the next turn" in:
     val players = initGame(2)
-    val activePlayer = GameController.activePlayer
-    GameController.nextTurn()
-    GameController.activePlayer should not be activePlayer
+    val activePlayer = gameController.activePlayer
+    gameController.nextTurn()
+    gameController.activePlayer should not be activePlayer
 
   it should "go to the next round after everybody took a turn" in:
     val players = initGame(2)
-    val oldRound = GameController.currentRound
-    players.foreach(_ => GameController.nextTurn())
-    GameController.currentRound should not be oldRound
+    val oldRound = gameController.currentRound
+    players.foreach(_ => gameController.nextTurn())
+    gameController.currentRound should not be oldRound
 
   it should "end when the maximum number of rounds is reached" in:
     val players = initGame(2)
-    Range(0, GameController.maxNumberOfRounds).foreach(_ =>
-      players.foreach(_ => GameController.nextTurn())
+    Range(0, gameController.maxNumberOfRounds).foreach(_ =>
+      players.foreach(_ => gameController.nextTurn())
     )
-    GameController.isGameEnded should be (true)
+    gameController.isGameEnded should be (true)
 
-  it should "let you get a Player Board" in:
+  it should "set the Player Board" in:
     val players = initGame(2)
-    val playerBoard: PlayerBoardDTO = GameController.playerBoard(players.head)
+    val playerBoard: PlayerBoardDTO = gameController.playerBoard(players.head)
     playerBoard.amountOf(gold) should be (0)
     playerBoard.amountOf(sunCrystal) should be(0)
     playerBoard.amountOf(moonCrystal) should be(0)
