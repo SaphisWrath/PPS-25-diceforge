@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ControllerStage
+import controller.{ControllerStage, Navigator}
 import controller.ViewState.{MainMenu, MatchInit}
 import javafx.event.ActionEvent
 import scalafx.geometry.Pos.Center
@@ -12,7 +12,7 @@ import view.text.TextFactory
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.ViewComponents.ViewScene
 
-class MainMenuScene extends ViewScene[Node] {
+class MainMenuScene(navigator: Navigator) extends ViewScene[Node] {
   override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
@@ -26,8 +26,8 @@ class MainMenuScene extends ViewScene[Node] {
     alignmentInParent = Center
     children = Seq(
       TextFactory.makeMenuTitle,
-      ButtonFactory.makeMenuButton(TSStrings.startButtonText, _ => ControllerStage.changeScene(MatchInit)),
-      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _=> ControllerStage.changeScene(MainMenu))
+      ButtonFactory.makeMenuButton(TSStrings.startButtonText, _ => navigator.navigateToMatchInit()),
+      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _=> navigator.navigateToMainMenu())
     )
   }
 }

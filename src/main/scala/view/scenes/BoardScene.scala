@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.GameController
+import controller.{GameController, Navigator}
 import controller.dto.PlayerDTO
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
@@ -13,12 +13,12 @@ import view.panes.{MissionBoardPane, MissionPane}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 
-class BoardScene extends ViewScene[Node]:
+class BoardScene(controller: GameController, navigator: Navigator) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
-    GameController.players.map(p => p -> PlayerGUIComponentFactory(p, GameController.playerBoard(p))).toMap
+    GameController.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
 
   private val activePlayerPropertyName = "activePlayer"
-  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, GameController.activePlayer.get) {
+  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer.get) {
     onChange((_, _, _) =>
       pane.top = nonActivePlayersPane()
       pane.bottom = activePlayerPane()
@@ -27,7 +27,7 @@ class BoardScene extends ViewScene[Node]:
 
   private val pane = new BorderPane {
     top = nonActivePlayersPane()
-    center = MissionBoardPane(GameController.missions).component
+    center = MissionBoardPane(controller.missions).component
     bottom = activePlayerPane()
   }
 
@@ -42,7 +42,7 @@ class BoardScene extends ViewScene[Node]:
     playerPane
 
   private def nonActivePlayersPane(): Node =
-    val nonActivePlayerDirectors = GameController.nonActivePlayerList.map(playerDirectors(_))
+    val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerDirectors(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
       .map(_.nonActivePlayerBox)
     val pane: HBox = new HBox {
@@ -54,8 +54,8 @@ class BoardScene extends ViewScene[Node]:
   private def nextTurnButton: Button = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
     event =>
-      GameController.nextTurn()
-      activePlayer() = GameController.activePlayer.get
+      controller.nextTurn()
+      activePlayer() = controller.activePlayer.get
   )
 
   override def scene: Node = pane
