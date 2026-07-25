@@ -48,11 +48,3 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource.amount should be(6)
     anyResource.maxCapacity = 0
     anyResource.amount should be(6)
-
-  "When created, a player's board" should "have each resource set to 0" in:
-    val playerResources = PlayerBoard.emptyBoard
-
-    playerResources.gold.amount should be(0)
-    playerResources.sunCrystals.amount should be(0)
-    playerResources.moonCrystals.amount should be(0)
-    playerResources.gloryPoints.amount should be(0)

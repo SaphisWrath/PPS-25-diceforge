@@ -42,6 +42,14 @@ object PlayerBoard:
       case SunCrystal(_) => board.sunCrystals = ResourceWithCap(fun(board.sunCrystals.resource, resource), board.sunCrystals.maxCapacity)
       case MoonCrystal(_) => board.moonCrystals = ResourceWithCap(fun(board.moonCrystals.resource, resource), board.moonCrystals.maxCapacity)
       case GloryPoint(_) => board.gloryPoints = fun(board.gloryPoints, resource)
+      
+    private def checkBoard(resource: Resource, fun: (Resource, Resource) => Boolean): Boolean = resource match
+      case Gold(_) => fun(resource, board.gold)
+      case SunCrystal(_) => fun(resource, board.sunCrystals)
+      case MoonCrystal(_) => fun(resource, board.moonCrystals)
+      case GloryPoint(_) => fun(resource, board.gloryPoints)
+      case _ => false
 
     def addResource(resource: Resource): Unit = board.updateBoard(resource, _ + _)
     def takeResource(resource: Resource): Unit = board.updateBoard(resource, _ - _)
+    def canSpend(resource: Resource): Boolean = board.checkBoard(resource, (r, pr) => r.amount <= pr.amount)

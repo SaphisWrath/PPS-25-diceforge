@@ -5,12 +5,6 @@ import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.funsuite.AnyFunSuite
 
-class MissionTestSuite extends AnyFunSuite {
-  test("unapply") {
-
-  }
-}
-
 class MissionTestSpec extends AnyFlatSpec{
   val costAmount = 3
   val rewardAmount = 3
