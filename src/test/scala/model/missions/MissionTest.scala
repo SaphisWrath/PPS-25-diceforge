@@ -5,11 +5,20 @@ import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.funsuite.AnyFunSuite
 
-class MissionTestSpec extends AnyFlatSpec{
-  val costAmount = 3
-  val rewardAmount = 3
-  val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(costAmount)), ResourceEffect(MoonCrystal(costAmount))).toList
-  val reward: List[ResourceEffect] = List(ResourceEffect(Gold(rewardAmount)))
+val costAmount = 3
+val rewardAmount = 3
+val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(costAmount)), ResourceEffect(MoonCrystal(costAmount))).toList
+val reward: List[ResourceEffect] = List(ResourceEffect(Gold(rewardAmount)))
+
+class MissionTestSuite extends AnyFunSuite:
+  test("canGet"):
+    val mission = BaseMission(reward, cost)
+    val board = PlayerBoard.emptyBoard
+    assert(!mission.canGet(board))
+    board.addResource(SunCrystal(costAmount))
+    assert(!mission.canGet(board))
+
+class MissionTestSpec extends AnyFlatSpec:
 
   "Any mission" should "take its cost from player resources when activated" in:
     val board = PlayerBoard(0, costAmount, costAmount, 0)
@@ -30,10 +39,9 @@ class MissionTestSpec extends AnyFlatSpec{
     assert(board.moonCrystals.amount == 0)
     assert(board.gold.amount == rewardAmount)
 
-  "InstantMission" should "not affect playerboard if player does not have necessary resources" in:
+  "Any Mission" should "not affect playerboard if player does not have necessary resources" in:
     val board = PlayerBoard(0, costAmount, 0, 0)
     InstantMission(reward, cost).get(board)
     assert(board.sunCrystals.amount == costAmount)
     assert(board.moonCrystals.amount == 0)
     assert(board.gold.amount == 0)
-}
