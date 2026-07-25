@@ -10,6 +10,7 @@ object ScalaFXHelloWorld extends JFXApp3 {
         () => mainStage,
         controller => FxSceneFactory(controller)
       )
+    controllerManager.stageController.init()
     stage = mainStage.primaryStage
   }
 }

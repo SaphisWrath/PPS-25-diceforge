@@ -9,13 +9,15 @@ enum ViewState:
   case MatchEnd
 
 trait ControllerStage:
+  def init(): Unit
   def changeScene(newState: ViewState): Unit
   def getViewState: ViewState
 
 object ControllerStage:
   private class ControllerStageImpl(navigator: Navigator) extends ControllerStage:
     private var viewState: ViewState = MainMenu
-    changeScene(MainMenu)
+
+    override def init(): Unit = changeScene(MainMenu)
 
     override def changeScene(newState: ViewState): Unit =
       newState match

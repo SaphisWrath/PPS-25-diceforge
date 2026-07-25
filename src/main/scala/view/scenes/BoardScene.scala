@@ -15,7 +15,7 @@ import view.ViewComponents.ViewScene
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
-    GameController.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
+    controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
 
   private val activePlayerPropertyName = "activePlayer"
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer.get) {
