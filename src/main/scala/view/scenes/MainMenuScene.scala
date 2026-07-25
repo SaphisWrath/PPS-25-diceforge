@@ -12,7 +12,7 @@ import view.text.TextFactory
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.ViewComponents.ViewScene
 
-class MainMenuScene(navigator: Navigator) extends ViewScene[Node] {
+class MainMenuScene(controllerStage: ControllerStage) extends ViewScene[Node] {
   override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
@@ -26,8 +26,8 @@ class MainMenuScene(navigator: Navigator) extends ViewScene[Node] {
     alignmentInParent = Center
     children = Seq(
       TextFactory.makeMenuTitle,
-      ButtonFactory.makeMenuButton(TSStrings.startButtonText, _ => navigator.navigateToMatchInit()),
-      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _=> navigator.navigateToMainMenu())
+      ButtonFactory.makeMenuButton(TSStrings.startButtonText, _ => controllerStage.changeScene(MatchInit)),
+      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _=> controllerStage.changeScene(MainMenu))
     )
   }
 }

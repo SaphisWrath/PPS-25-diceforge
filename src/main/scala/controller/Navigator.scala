@@ -10,7 +10,7 @@ trait Navigator:
 
 object Navigator:
   private class NavigatorImpl[T](mainStage: MainStage[T], viewSceneFactory: ViewSceneFactory[T]) extends Navigator:
-    navigateToMainMenu()
+
     override def navigateToMainMenu(): Unit = mainStage.setContent(viewSceneFactory.createMainMenuScene())
 
     override def navigateToMatchInit(): Unit = mainStage.setContent(viewSceneFactory.createMatchInitScene())

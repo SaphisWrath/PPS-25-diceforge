@@ -4,8 +4,8 @@ import view.LanguageStrings
 import view.ViewComponents.{MainStage, ViewSceneFactory}
 
 trait ControllerManager():
-  def navigator: Navigator
   def gameController: GameController
+  def controllerStage: ControllerStage
   def controllerMatchInit: ControllerMatchInit
   def controllerMatchEnd: ControllerMatchEnd
 
@@ -14,7 +14,7 @@ object ControllerManager:
                                           mainStageProducer: () => MainStage[T],
                                           viewSceneFactoryProducer: ControllerManager => ViewSceneFactory[T]
                                         ) extends ControllerManager:
-    override val navigator: Navigator = Navigator(mainStageProducer(), viewSceneFactoryProducer(this))
+    override def controllerStage: ControllerStage = ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)))
     override def gameController: GameController = GameController
     override def controllerMatchInit: ControllerMatchInit = ControllerMatchInitImpl()
     override def controllerMatchEnd: ControllerMatchEnd = ControllerMatchEndImpl(???)

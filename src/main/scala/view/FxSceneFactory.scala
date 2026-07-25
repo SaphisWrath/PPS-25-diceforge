@@ -6,8 +6,8 @@ import view.ViewComponents.{ViewScene, ViewSceneFactory}
 import view.scenes.{BoardScene, MainMenuScene, MatchEndScene, MatchInitScene}
 
 class FxSceneFactory(controllerManager: ControllerManager) extends ViewSceneFactory[Node](controllerManager):
-  override def createMainMenuScene(): ViewScene[Node] = MainMenuScene(controllerManager.navigator)
+  override def createMainMenuScene(): ViewScene[Node] = MainMenuScene(controllerManager.controllerStage)
   override def createMatchInitScene(): ViewScene[Node] = MatchInitScene(controllerManager.controllerMatchInit)
   override def createBoardScene(): ViewScene[Node] = 
-    BoardScene(controllerManager.gameController, controllerManager.navigator)
+    BoardScene(controllerManager.gameController, controllerManager.controllerStage)
   override def createMatchEndScene(): ViewScene[Node] = MatchEndScene(controllerManager.controllerMatchEnd)

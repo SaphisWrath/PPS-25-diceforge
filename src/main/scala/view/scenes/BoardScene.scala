@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.{GameController, Navigator}
+import controller.{ControllerStage, GameController, Navigator}
 import controller.dto.PlayerDTO
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
@@ -13,7 +13,7 @@ import view.panes.{MissionBoardPane, MissionPane}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 
-class BoardScene(controller: GameController, navigator: Navigator) extends ViewScene[Node]:
+class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
     GameController.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
 
