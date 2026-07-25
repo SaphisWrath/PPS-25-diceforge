@@ -18,7 +18,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
 
   private val activePlayerPropertyName = "activePlayer"
-  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer.get) {
+  private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>
       pane.top = nonActivePlayersPane()
       pane.bottom = activePlayerPane()
@@ -55,7 +55,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     BSStrings.nextTurnButtonText,
     event =>
       controller.nextTurn()
-      activePlayer() = controller.activePlayer.get
+      activePlayer() = controller.activePlayer
   )
 
   override def scene: Node = pane

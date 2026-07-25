@@ -10,7 +10,7 @@ import scala.util.Random
 
 trait GameController:
   /**
-   * @return the sequence of current players, if the game as not been initialized is empty
+   * @return the sequence of current players
    */
   def players: Seq[PlayerDTO]
 
@@ -20,14 +20,12 @@ trait GameController:
   def missions: Map[Int, List[MissionDTO]]
 
   /**
-   * @return an Option containing the current active player if the game as been initialized,
-   *         empty otherwise
+   * @return the current active player
    */
-  def activePlayer: Option[PlayerDTO]
+  def activePlayer: PlayerDTO
 
   /**
-   * @return the sequence of all players that are not the active player, if the game as not been initialized the
-   *         sequence is empty
+   * @return the sequence of all players that are not the active player
    */
   def nonActivePlayerList: Seq[PlayerDTO]
 
@@ -62,27 +60,29 @@ trait GameController:
    * @return the maximum number of rounds of the currently initialized game
    */
   def maxNumberOfRounds: Int
+  
+  def missions_=(missions: Map[Int, List[MissionDTO]]): Unit
 
 object GameController:
   private class GameControllerImpl(playerList: Seq[Player]) extends GameController:
-    private var _players: Seq[Player] = Random.shuffle(playerList)
-    private var _playerBoards: Map[Player, PlayerBoard] = 
+    private val _players: Seq[Player] = Random.shuffle(playerList)
+    private val _playerBoards: Map[Player, PlayerBoard] = 
       _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
     private var _activePlayerIndex: Int = 0
     private var _currentRound: Int = 0
-    var _missions: Map[Int, List[MissionDTO]] = Map.empty
+    private var _missions: Map[Int, List[MissionDTO]] = Map.empty
+
+    override def missions_=(missions: Map[Int, List[MissionDTO]]): Unit = _missions = missions
 
     override def missions: Map[Int, List[MissionDTO]] = _missions
 
     override def players: Seq[PlayerDTO] = _players.map(PlayerDTO(_))
 
-    override def activePlayer: Option[PlayerDTO] =
-      if _players.isEmpty then Option.empty
-      else Option(players(_activePlayerIndex))
+    override def activePlayer: PlayerDTO =players(_activePlayerIndex)
 
     override def nonActivePlayerList: Seq[PlayerDTO] =
       require(_players.nonEmpty)
-      players.filter(!_.equals(activePlayer.get))
+      players.filter(!_.equals(activePlayer))
 
     override def playerBoard(playerName: String): PlayerBoardDTO =
       require(_players.exists(_.getName == playerName))
