@@ -80,7 +80,7 @@ object GameController:
     require(playerList.length >= 2)
     reset()
     _players = Random.shuffle(playerList)
-    _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
+    _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard(p))).toMap //TODO initial gold
 
   def missions(): Map[Int, List[MissionDTO]] = _missions
   
