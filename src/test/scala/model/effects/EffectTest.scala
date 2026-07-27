@@ -8,7 +8,6 @@ class EffectTest extends AnyFlatSpec:
     val playerBoard = PlayerBoard.emptyBoard
     val amount = 10
     val resourceEffect = ResourceEffect(Gold(amount), Option(playerBoard))
-    import model.utils.ResourceEffectModules.AddResource
     resourceEffect.resolve()
     assert(playerBoard.gold.amount == amount)
     resourceEffect.resolve()
@@ -16,3 +15,9 @@ class EffectTest extends AnyFlatSpec:
       if playerBoard.gold.maxCapacity > amount * 2 then amount * 2 else playerBoard.gold.maxCapacity
     })
 
+    resourceEffect.setModule(model.utils.ResourceEffectModules.SubtractResource)
+    val expected = playerBoard.gold.amount - resourceEffect.resource.amount
+    resourceEffect.resolve()
+    assert(playerBoard.gold.amount == {
+      if expected >= 0 then expected else 0
+    })

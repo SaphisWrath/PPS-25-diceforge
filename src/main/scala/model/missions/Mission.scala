@@ -13,11 +13,11 @@ trait Mission:
 object Mission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
-case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String) extends Mission:
+case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") extends Mission:
   override def get(receiver: PlayerBoard): Unit =
     if canGet(receiver) then
       cost.foreach(r => {
-        import model.utils.ResourceEffectModules.SubtractResource
+        r.setModule(model.utils.ResourceEffectModules.SubtractResource)
         r.setReceiver(receiver)
         r.resolve()
       })
@@ -27,12 +27,12 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
 trait InstantRewards extends Mission:
   abstract override def get(receiver: PlayerBoard): Unit =
     if canGet(receiver) then
-      import model.utils.ResourceEffectModules.AddResource
-      reward.foreach(r =>
-        r.setReceiver(receiver)
-        r.resolve()
-      )
+      reward.foreach {
+        case res@ResourceEffect(_, _) =>
+          res.setReceiver(receiver)
+          res.resolve()
+      }
       super.get(receiver)
 
-class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String) 
+class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") 
   extends BaseMission(reward, cost, id) with InstantRewards
