@@ -9,13 +9,12 @@ import view.TestStageSetup
 
 object MatchEndSceneTest extends JFXApp3:
   override def start(): Unit = {
-    val players = List(Player("Mario", Orange), Player("Luigi", Green), Player("Toad", Blue))
     val respectiveBoards = List(
-      PlayerBoard(0, 0, 0, 60),
-      PlayerBoard(0, 0, 0, 110),
-      PlayerBoard(0, 0, 0, 85)
+      PlayerBoard(Player("Mario", Orange), 0, 0, 0, 60),
+      PlayerBoard(Player("Luigi", Green), 0, 0, 0, 110),
+      PlayerBoard(Player("Toad", Blue), 0, 0, 0, 85)
     )
 
-    val controller = ControllerMatchEndImpl(players.zip(respectiveBoards.map(board => GloryPoint(board.gloryPoints.amount))))
+    val controller = ControllerMatchEndImpl(respectiveBoards.map(board => (board.player, GloryPoint(board.gloryPoints.amount))))
     stage = TestStageSetup(MatchEndScene(controller)).stage
   }
