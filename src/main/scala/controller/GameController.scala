@@ -60,13 +60,13 @@ trait GameController:
    * @return the maximum number of rounds of the currently initialized game
    */
   def maxNumberOfRounds: Int
-  
+
   def missions_=(missions: Map[Int, List[MissionDTO]]): Unit
 
 object GameController:
   private class GameControllerImpl(playerList: Seq[Player]) extends GameController:
     private val _players: Seq[Player] = Random.shuffle(playerList)
-    private val _playerBoards: Map[Player, PlayerBoard] = 
+    private val _playerBoards: Map[Player, PlayerBoard] =
       _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
     private var _activePlayerIndex: Int = 0
     private var _currentRound: Int = 0
