@@ -8,12 +8,15 @@ import model.Players.*
  */
 trait MatchBuilder:
   /**
+   * Reset the builder to his original state
+   */
+  def reset(): Unit
+  /**
    * A method that adds a player to the match
    *
    * @param player the player to be added to the game
-   * @return a MatchBuilder with the newly added player
    */
-  def addPlayer(player: Player): MatchBuilder
+  def addPlayer(player: Player): Unit
 
   /**
    * @return the currently added players
@@ -25,13 +28,14 @@ trait MatchBuilder:
    *
    * @return a new Match involving the previously added players
    */
-  def build(): Unit
+  def build(): GameMatch
 
-class MatchBuilderImpl(playerAmount: Int) extends MatchBuilder:
+class MatchBuilderImpl extends MatchBuilder:
   var currentPlayers: Seq[Player] = Seq.empty
 
-  override def addPlayer(player: Player): MatchBuilder =
+  override def addPlayer(player: Player): Unit =
     currentPlayers = currentPlayers.concat(Seq(player))
-    this
 
-  override def build(): Unit = GameMatch(currentPlayers)
+  override def build(): GameMatch = GameMatch(currentPlayers)
+
+  override def reset(): Unit = currentPlayers = Seq.empty

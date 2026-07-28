@@ -15,6 +15,7 @@ object LanguageStrings:
     val playerAddedConfirmationText = "Giocatore aggiunto con successo!"
     val playerAddingErrorText = "Il colore o il nome sono già stati selezionati"
     val gameReadyConfirmationText = "Pronti per iniziare!"
+    val startButtonText = "Iniziamo!"
 
   object BoardScreenStrings:
     val nextTurnButtonText = "Prossimo Turno"
