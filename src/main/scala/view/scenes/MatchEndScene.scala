@@ -12,7 +12,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
 import view.LanguageStrings.{ResourceStrings as RStrings ,EndScreenStrings as ESStrings}
 
-class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
+class MatchEndScene extends Scene:
   private val newMatchButton = new Button(ESStrings.playAgainButtonText)
   private val endGameButton = new Button(ESStrings.exitButtonText)
 
@@ -24,7 +24,7 @@ class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
       children = nodes
     }
 
-  private def setupPlayerRanking(players: List[(Player, GloryPoint)]): Seq[HBox] = {
+  private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
     var labelSizeX = 200
     var labelSizeY = 100
     var fontSize = 20
@@ -59,6 +59,6 @@ class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
     spacing = 20
     alignment = Center
     alignmentInParent = Center
-    val playerRanking: Seq[HBox] = setupPlayerRanking(controller.getSortedPlayers)
+    val playerRanking: Seq[HBox] = setupPlayerRanking(ControllerMatchEnd.getSortedPlayers)
     children = playerRanking.appended(makeRowWith(Seq(newMatchButton, endGameButton)))
   }

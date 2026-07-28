@@ -24,7 +24,7 @@ trait GameController:
   /**
    * @return the sequence of current players, if the game as not been initialized is empty
    */
-  def players: Seq[Player]
+  def players: Seq[PlayerDTO]
 
   /**
    * @return the missions in play, already sorted into their respective cells
@@ -35,19 +35,19 @@ trait GameController:
    * @return an Option containing the current active player if the game as been initialized,
    *         empty otherwise
    */
-  def activePlayer: Option[Player]
+  def activePlayer: Option[PlayerDTO]
 
   /**
    * @return the sequence of all players that are not the active player, if the game as not been initialized the
    *         sequence is empty
    */
-  def nonActivePlayerList: Seq[Player]
+  def nonActivePlayerList: Seq[PlayerDTO]
 
   /**
    * @param player the player proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
-  def playerBoard(player: Player): PlayerBoard
+  def playerBoard(player: PlayerDTO): PlayerBoardDTO
 
   /**
    * Notify the game to go to the next turn
@@ -69,7 +69,7 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-object GameController:
+object GameController extends GameController:
   private var _players: Seq[Player] = Seq.empty
   private var _playerBoards: Map[Player, PlayerBoard] = Map.empty
   private var _activePlayerIndex: Int = 0
@@ -82,7 +82,7 @@ object GameController:
     _players = Random.shuffle(playerList)
     _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard(p))).toMap //TODO initial gold
 
-  def missions(): Map[Int, List[MissionDTO]] = _missions
+  def missions: Map[Int, List[MissionDTO]] = _missions
   
   def reset(): Unit =
     _players = Seq.empty

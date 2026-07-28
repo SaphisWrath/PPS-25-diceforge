@@ -12,8 +12,9 @@ trait ControllerMatchInit:
   def updateMatchInfo(name: String, color: Color): Unit
   def isLastPlayerValid: Boolean
   def allPlayersSet: Boolean
+  def reset(): Unit
 
-class ControllerMatchInitImpl extends ControllerMatchInit:
+object ControllerMatchInit extends ControllerMatchInit:
   var isPlayerAmountSet = false
   var isLastPlayerValid = true
   private var matchBuilder: MatchBuilder = MatchBuilderImpl(2)
@@ -36,3 +37,8 @@ class ControllerMatchInitImpl extends ControllerMatchInit:
 
   override def allPlayersSet: Boolean =
     matchBuilder.currentPlayers.size >= playerAmount
+
+  override def reset(): Unit =
+    isPlayerAmountSet = false
+    isLastPlayerValid = true
+    playerAmount = 0
