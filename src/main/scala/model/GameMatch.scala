@@ -42,9 +42,6 @@ object GameMatch:
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
 
-    //TODO remove
-    playerBoardOf(activePlayer).addResource(Gold(10))
-
     def missions: Map[Int, Seq[Mission]] = _missions 
     
     def players: Seq[Player] = _players.map(_.player)
