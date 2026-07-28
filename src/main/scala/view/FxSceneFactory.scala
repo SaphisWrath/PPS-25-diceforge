@@ -1,6 +1,6 @@
 package view
 
-import controller.{ControllerMatchEnd, ControllerMatchEndImpl, ControllerMatchInit, ControllerMatchInitImpl, ControllerManager}
+import controller.ControllerManager
 import scalafx.scene.Node
 import view.ViewComponents.{ViewScene, ViewSceneFactory}
 import view.scenes.{BoardScene, MainMenuScene, MatchEndScene, MatchInitScene}

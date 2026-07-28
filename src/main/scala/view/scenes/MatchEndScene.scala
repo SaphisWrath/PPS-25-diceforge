@@ -25,7 +25,7 @@ class MatchEndScene(controller: ControllerMatchEnd) extends ViewScene[Node]:
       children = nodes
     }
 
-  private def setupPlayerRanking(players: List[(Player, GloryPoint)]): Seq[HBox] = {
+  private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
     var labelSizeX = 200
     var labelSizeY = 100
     var fontSize = 20

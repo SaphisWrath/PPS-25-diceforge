@@ -18,9 +18,9 @@ object ControllerManager:
                                         ) extends ControllerManager:
     override val stageController: ControllerStage =
       ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)))
-    override val matchInitController: ControllerMatchInit = ControllerMatchInitImpl()
+    override val matchInitController: ControllerMatchInit = ControllerMatchInit()
     override val gameController: GameController = GameController(Seq(Player("paopl", Black)))
-    override def matchEndController: ControllerMatchEnd = ControllerMatchEndImpl(???)//TODO Set as val
+    override def matchEndController: ControllerMatchEnd = ControllerMatchEnd(???)//TODO Set as val
     
   def apply[T](
              mainStageProducer: () => MainStage[T],
