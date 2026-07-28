@@ -14,31 +14,34 @@ trait ControllerMatchInit:
   def allPlayersSet: Boolean
   def reset(): Unit
 
-object ControllerMatchInit extends ControllerMatchInit:
-  var isPlayerAmountSet = false
-  var isLastPlayerValid = true
-  private var matchBuilder: MatchBuilder = MatchBuilderImpl(2)
-  private var playerAmount: Int = 0
+object ControllerMatchInit:
+  private class ControllerMatchInitImpl extends ControllerMatchInit:
+    var isPlayerAmountSet = false
+    var isLastPlayerValid = true
+    private var matchBuilder: MatchBuilder = MatchBuilderImpl(2)
+    private var playerAmount: Int = 0
+  
+    private def accept(newPlayer: Player): Boolean =
+      !matchBuilder.currentPlayers.exists(p => p.getName == newPlayer.getName || p.getColor == newPlayer.getColor)
+  
+    override def setPlayerAmount(amount: Int): Unit =
+      if !isPlayerAmountSet
+      then
+        matchBuilder = MatchBuilderImpl(amount)
+        playerAmount = amount
+        isPlayerAmountSet = true
+  
+    override def updateMatchInfo(name: String, color: Color): Unit =
+      val nextPlayer = Player(name, color)
+      isLastPlayerValid = accept(nextPlayer)
+      if isLastPlayerValid then matchBuilder = matchBuilder.addPlayer(nextPlayer)
+  
+    override def allPlayersSet: Boolean =
+      matchBuilder.currentPlayers.size >= playerAmount
+  
+    override def reset(): Unit =
+      isPlayerAmountSet = false
+      isLastPlayerValid = true
+      playerAmount = 0
 
-  private def accept(newPlayer: Player): Boolean =
-    !matchBuilder.currentPlayers.exists(p => p.getName == newPlayer.getName || p.getColor == newPlayer.getColor)
-
-  override def setPlayerAmount(amount: Int): Unit =
-    if !isPlayerAmountSet
-    then
-      matchBuilder = MatchBuilderImpl(amount)
-      playerAmount = amount
-      isPlayerAmountSet = true
-
-  override def updateMatchInfo(name: String, color: Color): Unit =
-    val nextPlayer = Player(name, color)
-    isLastPlayerValid = accept(nextPlayer)
-    if isLastPlayerValid then matchBuilder = matchBuilder.addPlayer(nextPlayer)
-
-  override def allPlayersSet: Boolean =
-    matchBuilder.currentPlayers.size >= playerAmount
-
-  override def reset(): Unit =
-    isPlayerAmountSet = false
-    isLastPlayerValid = true
-    playerAmount = 0
+  def apply(): ControllerMatchInit = ControllerMatchInitImpl()

@@ -7,5 +7,5 @@ import view.scenes.MatchInitScene
 
 object MatchInitSceneTest extends JFXApp3:
   override def start(): Unit = {
-    stage = TestStageSetup(MatchInitScene(ControllerMatchInit)).stage
+    stage = TestStageSetup(MatchInitScene(ControllerMatchInit())).stage
   }

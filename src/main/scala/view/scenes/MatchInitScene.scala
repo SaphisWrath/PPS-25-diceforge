@@ -9,8 +9,9 @@ import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, VBox}
 import view.LanguageStrings.{separator, GameInitScreenStrings as GISStrings}
+import view.ViewComponents.ViewScene
 
-class MatchInitScene(controller: ControllerMatchInit) extends Scene:
+class MatchInitScene(controller: ControllerMatchInit) extends ViewScene[Node]:
   private val playerCountChoice = new ChoiceBox[Int](ObservableBuffer[Int](2, 3, 4))
   private val playerNameField = new TextField()
   private val playerColorChoice = new ChoiceBox[Color](ObservableBuffer[Color](Orange, Green, Blue, Black))
@@ -24,8 +25,8 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
       alignmentInParent = Center
       children = nodes
     }
-    
-  root = new VBox {
+
+  override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
     alignment = Center

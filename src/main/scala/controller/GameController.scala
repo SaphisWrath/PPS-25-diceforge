@@ -10,19 +10,7 @@ import scala.util.Random
 
 trait GameController:
   /**
-   * Initialize a game with the given players
-   *
-   * @param playerList list of players who will participate in the game
-   */
-  def init(playerList: Seq[Player]): Unit
-
-  /**
-   * Resets the game to an empty state
-   */
-  def reset(): Unit
-
-  /**
-   * @return the sequence of current players, if the game as not been initialized is empty
+   * @return the sequence of current players
    */
   def players: Seq[PlayerDTO]
 
@@ -32,14 +20,12 @@ trait GameController:
   def missions: Map[Int, List[MissionDTO]]
 
   /**
-   * @return an Option containing the current active player if the game as been initialized,
-   *         empty otherwise
+   * @return the current active player
    */
-  def activePlayer: Option[PlayerDTO]
+  def activePlayer: PlayerDTO
 
   /**
-   * @return the sequence of all players that are not the active player, if the game as not been initialized the
-   *         sequence is empty
+   * @return the sequence of all players that are not the active player
    */
   def nonActivePlayerList: Seq[PlayerDTO]
 
@@ -48,6 +34,12 @@ trait GameController:
    * @return the currentPlayerBoard of the given player
    */
   def playerBoard(player: PlayerDTO): PlayerBoardDTO
+
+  /**
+   * @param playerName the name of the proprietary of the board
+   * @return the currentPlayerBoard of the given player
+   */
+  def playerBoard(playerName: String): PlayerBoardDTO
 
   /**
    * Notify the game to go to the next turn
@@ -69,51 +61,45 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-object GameController extends GameController:
-  private var _players: Seq[Player] = Seq.empty
-  private var _playerBoards: Map[Player, PlayerBoard] = Map.empty
-  private var _activePlayerIndex: Int = 0
-  private var _currentRound: Int = 0
-  var _missions: Map[Int, List[MissionDTO]] = Map.empty
+  def missions_=(missions: Map[Int, List[MissionDTO]]): Unit
 
-  def init(playerList: Seq[Player]): Unit =
-    require(playerList.length >= 2)
-    reset()
-    _players = Random.shuffle(playerList)
-    _playerBoards = _players.map(p => (p, PlayerBoard.emptyBoard(p))).toMap //TODO initial gold
+object GameController:
+  private class GameControllerImpl(playerList: Seq[Player]) extends GameController:
+    private val _players: Seq[Player] = Random.shuffle(playerList)
+    private val _playerBoards: Map[Player, PlayerBoard] =
+      _players.map(p => (p, PlayerBoard.emptyBoard(p))).toMap //TODO initial gold
+    private var _activePlayerIndex: Int = 0
+    private var _currentRound: Int = 0
+    private var _missions: Map[Int, List[MissionDTO]] = Map.empty
 
-  def missions: Map[Int, List[MissionDTO]] = _missions
-  
-  def reset(): Unit =
-    _players = Seq.empty
-    _playerBoards = Map.empty
-    _activePlayerIndex = 0
-    _currentRound = 0
+    override def missions_=(missions: Map[Int, List[MissionDTO]]): Unit = _missions = missions
 
-  def players: Seq[PlayerDTO] = _players.map(PlayerDTO(_))
+    override def missions: Map[Int, List[MissionDTO]] = _missions
 
-  def activePlayer: Option[PlayerDTO] =
-    if _players.isEmpty then Option.empty
-    else Option(players(_activePlayerIndex))
+    override def players: Seq[PlayerDTO] = _players.map(PlayerDTO(_))
 
-  def nonActivePlayerList: Seq[PlayerDTO] =
-    require(_players.nonEmpty)
-    players.filter(!_.equals(activePlayer.get))
+    override def activePlayer: PlayerDTO =players(_activePlayerIndex)
 
-  def playerBoard(playerName: String): PlayerBoardDTO =
-    require(_players.exists(_.getName == playerName))
-    PlayerBoardDTO(_playerBoards.map((p, b) => p.getName -> b)(playerName))
+    override def nonActivePlayerList: Seq[PlayerDTO] =
+      require(_players.nonEmpty)
+      players.filter(!_.equals(activePlayer))
 
-  def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
+    override def playerBoard(playerName: String): PlayerBoardDTO =
+      require(_players.exists(_.getName == playerName))
+      PlayerBoardDTO(_playerBoards.map((p, b) => p.getName -> b)(playerName))
 
-  def nextTurn(): Unit =
-    _activePlayerIndex = if _activePlayerIndex + 1 >= players.length then 0 else _activePlayerIndex + 1
-    if _activePlayerIndex == 0 then _currentRound = _currentRound + 1
+    override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-  def currentRound: Int = _currentRound + 1
+    override def nextTurn(): Unit =
+      _activePlayerIndex = if _activePlayerIndex + 1 >= players.length then 0 else _activePlayerIndex + 1
+      if _activePlayerIndex == 0 then _currentRound = _currentRound + 1
 
-  def isGameEnded: Boolean = _currentRound >= maxNumberOfRounds
+    override def currentRound: Int = _currentRound + 1
 
-  def maxNumberOfRounds: Int = if _players.length == 3 then 10 else 9
+    override def isGameEnded: Boolean = _currentRound >= maxNumberOfRounds
+
+    override def maxNumberOfRounds: Int = if _players.length == 3 then 10 else 9
+
+  def apply(playerList: Seq[Player]): GameController = GameControllerImpl(playerList)
 
 

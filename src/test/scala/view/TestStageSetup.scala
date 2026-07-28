@@ -2,9 +2,11 @@ package view
 
 import controller.ControllerMatchInit
 import scalafx.application.JFXApp3.PrimaryStage
-import scalafx.scene.Scene
+import scalafx.scene.layout.StackPane
+import scalafx.scene.{Node, Scene}
+import view.ViewComponents.ViewScene
 
-class TestStageSetup(displayScene: Scene) {
+class TestStageSetup(displayScene: ViewScene[Node]) {
   def stage: PrimaryStage = new PrimaryStage {
     title = "Test Setup"
     resizable = true
@@ -12,6 +14,10 @@ class TestStageSetup(displayScene: Scene) {
     minHeight = 500
     width = minWidth
     height = minHeight
-    scene = displayScene
+    scene = new Scene {
+      root = new StackPane {
+        children = displayScene.scene
+      }
+    }
   }
 }

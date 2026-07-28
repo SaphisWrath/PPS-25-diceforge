@@ -10,9 +10,10 @@ import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
-import view.LanguageStrings.{ResourceStrings as RStrings ,EndScreenStrings as ESStrings}
+import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
+import view.ViewComponents.ViewScene
 
-class MatchEndScene extends Scene:
+class MatchEndScene(controller: ControllerMatchEnd) extends ViewScene[Node]:
   private val newMatchButton = new Button(ESStrings.playAgainButtonText)
   private val endGameButton = new Button(ESStrings.exitButtonText)
 
@@ -54,11 +55,11 @@ class MatchEndScene extends Scene:
     )
   }
 
-  root = new VBox {
+  override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
     alignment = Center
     alignmentInParent = Center
-    val playerRanking: Seq[HBox] = setupPlayerRanking(ControllerMatchEnd.getSortedPlayers)
+    val playerRanking: Seq[HBox] = setupPlayerRanking(controller.getSortedPlayers)
     children = playerRanking.appended(makeRowWith(Seq(newMatchButton, endGameButton)))
   }

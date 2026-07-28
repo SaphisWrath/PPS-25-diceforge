@@ -7,7 +7,7 @@ import org.scalatest.matchers.should.Matchers
 import scala.language.postfixOps
 
 class ControllerMatchInitTest extends AnyFlatSpec with Matchers:
-  private val controller = ControllerMatchInit
+  private val controller = ControllerMatchInit()
 
   "The controller" should "only accept players with a unique Name" in :
     controller.reset()

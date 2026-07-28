@@ -33,5 +33,4 @@ class MatchBuilderImpl(playerAmount: Int) extends MatchBuilder:
     currentPlayers = currentPlayers.concat(List(player))
     this
 
-  override def build(): Unit =
-    GameController.init(currentPlayers.take(playerAmount))
+  override def build(): Unit = ???
