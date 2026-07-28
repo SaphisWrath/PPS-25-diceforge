@@ -27,7 +27,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private val pane = new BorderPane {
     top = nonActivePlayersPane()
-    center = MissionBoardPane(controller.missions).component
+    center = MissionBoardPane(controller.missions).pane
     bottom = activePlayerPane()
   }
 
