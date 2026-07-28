@@ -13,6 +13,7 @@ trait ControllerMatchInit:
   def isLastPlayerValid: Boolean
   def allPlayersSet: Boolean
   def reset(): Unit
+  def builder: MatchBuilder
 
 object ControllerMatchInit:
   private class ControllerMatchInitImpl extends ControllerMatchInit:
@@ -43,5 +44,7 @@ object ControllerMatchInit:
       isPlayerAmountSet = false
       isLastPlayerValid = true
       playerAmount = 0
+
+    override def builder: MatchBuilder = matchBuilder
 
   def apply(): ControllerMatchInit = ControllerMatchInitImpl()

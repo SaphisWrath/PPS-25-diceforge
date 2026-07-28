@@ -25,7 +25,7 @@ trait MatchBuilder:
    *
    * @return a new Match involving the previously added players
    */
-  def build(): Unit
+  def build(): GameMatch
 
 class MatchBuilderImpl(playerAmount: Int) extends MatchBuilder:
   var currentPlayers: Seq[Player] = Seq.empty
@@ -34,4 +34,4 @@ class MatchBuilderImpl(playerAmount: Int) extends MatchBuilder:
     currentPlayers = currentPlayers.concat(Seq(player))
     this
 
-  override def build(): Unit = GameMatch(currentPlayers)
+  override def build(): GameMatch = GameMatch(currentPlayers)

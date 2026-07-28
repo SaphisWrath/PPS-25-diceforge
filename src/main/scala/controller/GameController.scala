@@ -60,8 +60,7 @@ trait GameController:
   def missions_=(missions: Map[Int, List[MissionDTO]]): Unit
 
 object GameController:
-  private class GameControllerImpl(playerList: Seq[Player]) extends GameController:
-    private val gameMatch = GameMatch(playerList)
+  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
     private var _missions: Map[Int, List[MissionDTO]] = Map.empty
 
     override def missions_=(missions: Map[Int, List[MissionDTO]]): Unit = _missions = missions
@@ -86,6 +85,6 @@ object GameController:
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
-  def apply(playerList: Seq[Player]): GameController = GameControllerImpl(playerList)
+  def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
 
