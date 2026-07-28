@@ -16,10 +16,10 @@ trait ControllerMatchInit:
   def builder: MatchBuilder
 
 object ControllerMatchInit:
-  private class ControllerMatchInitImpl extends ControllerMatchInit:
+  private class ControllerMatchInitImpl(matchBuilder: MatchBuilder) extends ControllerMatchInit:
+    matchBuilder.reset()
     var isPlayerAmountSet = false
     var isLastPlayerValid = true
-    private var matchBuilder: MatchBuilder = MatchBuilderImpl(2)
     private var playerAmount: Int = 0
   
     private def accept(newPlayer: Player): Boolean =
@@ -28,23 +28,23 @@ object ControllerMatchInit:
     override def setPlayerAmount(amount: Int): Unit =
       if !isPlayerAmountSet
       then
-        matchBuilder = MatchBuilderImpl(amount)
         playerAmount = amount
         isPlayerAmountSet = true
   
     override def updateMatchInfo(name: String, color: Color): Unit =
       val nextPlayer = Player(name, color)
       isLastPlayerValid = accept(nextPlayer)
-      if isLastPlayerValid then matchBuilder = matchBuilder.addPlayer(nextPlayer)
+      if isLastPlayerValid then matchBuilder.addPlayer(nextPlayer)
   
     override def allPlayersSet: Boolean =
       matchBuilder.currentPlayers.size >= playerAmount
   
     override def reset(): Unit =
+      matchBuilder.reset()
       isPlayerAmountSet = false
       isLastPlayerValid = true
       playerAmount = 0
 
     override def builder: MatchBuilder = matchBuilder
 
-  def apply(): ControllerMatchInit = ControllerMatchInitImpl()
+  def apply(matchBuilder: MatchBuilder): ControllerMatchInit = ControllerMatchInitImpl(matchBuilder)

@@ -18,14 +18,12 @@ object ControllerManager:
                                           viewSceneFactoryProducer: ControllerManager => ViewSceneFactory[T]
                                         ) extends ControllerManager:
     private var gameMatch: Option[GameMatch] = Option.empty
+    private val matchBuilder: MatchBuilder = MatchBuilderImpl()
     override val stageController: ControllerStage =
       ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)))
-    private val _matchInitController: ControllerMatchInit = ControllerMatchInit()
-    override def matchInitController: ControllerMatchInit =
-      _matchInitController.reset()
-      _matchInitController
+    override def matchInitController: ControllerMatchInit = ControllerMatchInit(matchBuilder)
     override def gameController: GameController =
-      gameMatch = Option(_matchInitController.builder.build())
+      gameMatch = Option(matchBuilder.build())
       GameController(gameMatch.get)
     override def matchEndController: ControllerMatchEnd = ControllerMatchEnd(gameMatch.get)
     
