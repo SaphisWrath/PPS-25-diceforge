@@ -1,5 +1,6 @@
 package controller
 
+import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
@@ -62,7 +63,17 @@ object GameController:
     private val gameMatch = GameMatch(playerList)
 
     override def missions: Map[Int, Seq[MissionDTO]] =
-      gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(m))))
+      gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
+        m,
+        () => {
+
+          true
+        },
+        () => {
+          m.get(gameMatch.playerBoardOf(activePlayer.name))
+          ViewPublisher.notifyResourceChange()
+        }
+      ))))
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
 

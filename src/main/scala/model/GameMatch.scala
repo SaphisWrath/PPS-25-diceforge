@@ -2,7 +2,7 @@ package model
 
 import model.Players.Player
 import model.missions.{InstantMission, Mission, MissionMapBuilder}
-import model.resource.PlayerBoard
+import model.resource.{Gold, PlayerBoard}
 
 import scala.util.Random
 
@@ -41,6 +41,9 @@ object GameMatch:
     private var turn: Int = 0
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
+
+    //TODO remove
+    playerBoardOf(activePlayer).addResource(Gold(10))
 
     def missions: Map[Int, Seq[Mission]] = _missions 
     
