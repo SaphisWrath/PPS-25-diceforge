@@ -1,5 +1,7 @@
 package model.resource
 
+import model.Players.Color.Orange
+import model.Players.Player
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -50,7 +52,7 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource.amount should be(6)
 
   "When created, a player's board" should "have each resource set to 0" in:
-    val playerResources = PlayerBoard.emptyBoard
+    val playerResources = PlayerBoard.emptyBoard(Player("Mario", Orange))
 
     playerResources.gold.amount should be(0)
     playerResources.sunCrystals.amount should be(0)

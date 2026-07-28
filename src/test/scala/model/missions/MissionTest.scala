@@ -1,5 +1,7 @@
 package model.missions
 
+import model.Players.Color.Orange
+import model.Players.Player
 import model.effects.ResourceEffect
 import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -12,7 +14,7 @@ class MissionTestSuite extends AnyFunSuite {
 }
 
 class MissionTestSpec extends AnyFlatSpec{
-  val board = PlayerBoard(0, 3, 3, 0)
+  val board = PlayerBoard(Player("Mario", Orange), 0, 3, 3, 0)
   val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(3)), ResourceEffect(MoonCrystal(3))).toList
   val reward: List[ResourceEffect] = List(ResourceEffect(Gold(3)))
 
