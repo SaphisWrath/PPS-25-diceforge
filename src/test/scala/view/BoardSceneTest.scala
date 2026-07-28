@@ -1,7 +1,9 @@
 package view
 
+import controller.ViewState.{Board, MatchEnd}
 import controller.{ControllerStage, GameController, Navigator}
 import controller.dto.MissionDTO
+import model.GameMatch
 import model.Players.Color.{Blue, Orange}
 import model.Players.Player
 import model.effects.ResourceEffect
@@ -10,10 +12,10 @@ import model.resource.{Gold, MoonCrystal, SunCrystal}
 import scalafx.application.JFXApp3
 import view.scenes.BoardScene
 import org.mockito.Mockito.*
+import _root_.mock.MockControllerStage
 
 object BoardSceneTest extends JFXApp3:
-  private val controllerStage: ControllerStage = mock[ControllerStage]()
-  
+
   override def start(): Unit = {
     val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(3)), ResourceEffect(MoonCrystal(3))).toList
     val reward: List[ResourceEffect] = List(ResourceEffect(Gold(3)))
@@ -27,8 +29,8 @@ object BoardSceneTest extends JFXApp3:
       5 -> List(placeholderMission, placeholderMission),
       6 -> List(placeholderMission, placeholderMission, placeholderMission)
     ).toMap
-    val controller = GameController(Seq(Player("Paul", Orange), Player("Paulo", Blue)))
+    val controller = GameController(GameMatch(Seq(Player("Paul", Orange), Player("Paulo", Blue))))
     controller.missions = placeholderMissions
-    stage = TestStageSetup(BoardScene(controller, controllerStage)).stage
+    stage = TestStageSetup(BoardScene(controller, MockControllerStage(Board))).stage
   }
 

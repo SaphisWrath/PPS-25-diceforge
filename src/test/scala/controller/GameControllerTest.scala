@@ -1,6 +1,7 @@
 package controller
 
 import controller.dto.{PlayerBoardDTO, PlayerDTO}
+import model.GameMatch
 import model.Players.Color.{Black, Blue, Green, Orange}
 import model.Players.{Color, Player}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -16,11 +17,11 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     override def getName: String = _name
     override def getColor: Color = _color
 
-  var gameController = GameController(Seq.empty)
+  var gameController = GameController(GameMatch(Seq.empty))
 
   def initGame(playerNum: Int): Seq[PlayerDTO] =
     val players = ExPlayers.values.take(playerNum).toSeq
-    gameController = GameController(players)
+    gameController = GameController(GameMatch(players))
     players.map(PlayerDTO(_))
 
   "A Game" should "be initialized" in:
