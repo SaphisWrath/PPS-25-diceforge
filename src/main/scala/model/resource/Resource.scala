@@ -31,18 +31,18 @@ trait ResourceWithCap extends Resource:
   def resource: Resource
 
 object ResourceWithCap:
-  private class ResourceWithCapImpl(var resource: Resource, initCapacity: Int) extends ResourceWithCap:
+  private class ResourceWithCapImpl(var _resource: Resource, initCapacity: Int) extends ResourceWithCap:
     private var _maxCapacity = initCapacity
     override def maxCapacity: Int = _maxCapacity
     override def maxCapacity_=(newCapacity: Int): Unit =
       if newCapacity > 0
       then
-        resource = resource.copy(this.amount)
+        _resource = _resource.copy(this.amount)
         _maxCapacity = newCapacity
 
-    override def amount: Int = math.min(resource.amount, _maxCapacity)
-
-    override def copy(amount: Int): Resource = ResourceWithCapImpl(this.resource, _maxCapacity)
+    override def amount: Int = math.min(_resource.amount, _maxCapacity)
+    override def copy(amount: Int): Resource = ResourceWithCapImpl(_resource, _maxCapacity)
+    override def resource: Resource = _resource.copy(this.amount)
 
   def apply(resource: Resource, initCapacity: Int): ResourceWithCap =
     ResourceWithCapImpl(resource, initCapacity)
