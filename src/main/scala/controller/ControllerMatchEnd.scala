@@ -1,20 +1,19 @@
 package controller
 
-import controller.dto.PlayerDTO
+import model.GameMatch
 import model.Players.Player
 import model.resource.GloryPoint
-import view.LanguageStrings.ResourceStrings
 
 trait ControllerMatchEnd:
-  def gameController_=(controller: GameController): Unit
+  def gameMatch_=(controller: GameMatch): Unit
   def getSortedPlayers: Seq[(Player, GloryPoint)]
 
 object ControllerMatchEnd:
-  private class ControllerMatchEndImpl(var gameController: GameController) extends ControllerMatchEnd:
+  private class ControllerMatchEndImpl(var gameMatch: GameMatch) extends ControllerMatchEnd:
     override def getSortedPlayers: Seq[(Player, GloryPoint)] =
-      gameController.players
-        .map(player => (player.toPlayer, gameController.playerBoard(player).amountOf(ResourceStrings.gloryPoint)))
+      gameMatch.players
+        .map(player => (player, gameMatch.playerBoardOf(player).gloryPoints.amount))
         .sortBy(pair => - pair._2)
         .map(pair => (pair._1, GloryPoint(pair._2)))
         
-  def apply(gameController: GameController): ControllerMatchEnd = ControllerMatchEndImpl(gameController)
+  def apply(gameMatch: GameMatch): ControllerMatchEnd = ControllerMatchEndImpl(gameMatch)

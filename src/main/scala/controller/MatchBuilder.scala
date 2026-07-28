@@ -1,5 +1,6 @@
 package controller
 
+import model.GameMatch
 import model.Players.*
 
 /**
@@ -17,7 +18,7 @@ trait MatchBuilder:
   /**
    * @return the currently added players
    */
-  def currentPlayers: List[Player]
+  def currentPlayers: Seq[Player]
 
   /**
    * A method that takes the gathered info and builds the match accordingly
@@ -27,10 +28,10 @@ trait MatchBuilder:
   def build(): Unit
 
 class MatchBuilderImpl(playerAmount: Int) extends MatchBuilder:
-  var currentPlayers: List[Player] = List.empty
+  var currentPlayers: Seq[Player] = Seq.empty
 
   override def addPlayer(player: Player): MatchBuilder =
-    currentPlayers = currentPlayers.concat(List(player))
+    currentPlayers = currentPlayers.concat(Seq(player))
     this
 
-  override def build(): Unit = ???
+  override def build(): Unit = GameMatch(currentPlayers)
