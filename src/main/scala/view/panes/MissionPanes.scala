@@ -1,14 +1,13 @@
 package view.panes
 
-import controller.converters.ResourceConverters
-import controller.dto.{EffectDTO, MissionDTO}
-import scalafx.event.ActionEvent
+import controller.dto.MissionDTO
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.{Center, CenterLeft}
-import scalafx.scene.{Node, Parent}
-import scalafx.scene.layout.{Border, BorderPane, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, GridPane, HBox, Pane, VBox}
+import scalafx.geometry.Pos.Center
+import scalafx.scene.Node
+import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.buttons.ButtonFactory
+import view.panes.EffectPanes.EffectWrapperPane
 import view.scenes.ViewComponent
 import view.text.TextFactory
 

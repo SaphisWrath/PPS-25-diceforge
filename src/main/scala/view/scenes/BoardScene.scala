@@ -1,17 +1,17 @@
 package view.scenes
 
-import controller.{ControllerStage, GameController, Navigator}
 import controller.dto.PlayerDTO
+import controller.{ControllerStage, GameController}
 import scalafx.beans.property.ObjectProperty
-import scalafx.scene.control.{Button, Label}
+import scalafx.scene.Node
+import scalafx.scene.control.Button
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox}
-import scalafx.scene.{Node, Scene}
+import view.LanguageStrings.BoardScreenStrings as BSStrings
+import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.MissionPanes.MissionBoardPane
-import view.LanguageStrings.BoardScreenStrings as BSStrings
-import view.ViewComponents.ViewScene
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
