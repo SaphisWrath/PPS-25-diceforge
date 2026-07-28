@@ -1,6 +1,7 @@
 package view.scenes
 
-import controller.ControllerMatchEnd
+import controller.ViewState.{MainMenu, MatchInit}
+import controller.{ControllerMatchEnd, ControllerStage}
 import model.Players.Player
 import model.resource.GloryPoint
 import scalafx.geometry.Insets
@@ -13,9 +14,15 @@ import scalafx.scene.text.Font
 import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
 import view.ViewComponents.ViewScene
 
-class MatchEndScene(controller: ControllerMatchEnd) extends ViewScene[Node]:
-  private val newMatchButton = new Button(ESStrings.playAgainButtonText)
-  private val endGameButton = new Button(ESStrings.exitButtonText)
+class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage) extends ViewScene[Node]:
+  private val newMatchButton = new Button {
+    text = ESStrings.playAgainButtonText
+    onAction = _ => controllerStage.changeScene(MatchInit)
+  }
+  private val endGameButton = new Button {
+    text = ESStrings.exitButtonText
+    onAction = _=> controllerStage.changeScene(MainMenu)
+  }
 
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {

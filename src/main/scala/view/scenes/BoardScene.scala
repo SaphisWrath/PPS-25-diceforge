@@ -1,16 +1,17 @@
 package view.scenes
 
+import controller.ViewState.MatchEnd
+import controller.{ControllerStage, GameController, Navigator}
 import controller.dto.PlayerDTO
-import controller.{ControllerStage, GameController}
 import scalafx.beans.property.ObjectProperty
-import scalafx.scene.Node
-import scalafx.scene.control.Button
+import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox}
-import view.LanguageStrings.BoardScreenStrings as BSStrings
-import view.ViewComponents.ViewScene
+import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
+import view.LanguageStrings.BoardScreenStrings as BSStrings
+import view.ViewComponents.ViewScene
 import view.panes.MissionPanes.MissionBoardPane
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
@@ -20,15 +21,20 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private val activePlayerPropertyName = "activePlayer"
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>
-      pane.top = nonActivePlayersPane()
+      pane.top = topMainPane()
       pane.bottom = activePlayerPane()
     )
   }
 
   private val pane = new BorderPane {
-    top = nonActivePlayersPane()
+    top = topMainPane()
     center = MissionBoardPane(controller.missions).pane
     bottom = activePlayerPane()
+  }
+
+  private def topMainPane(): Node = new BorderPane {
+    left = nonActivePlayersPane()
+    right = roundCounter()
   }
 
   private def activePlayerPane(): Node =
@@ -55,7 +61,12 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     BSStrings.nextTurnButtonText,
     () =>
       controller.nextTurn()
-      activePlayer() = controller.activePlayer
+      if controller.isGameEnded then
+        controllerStage.changeScene(MatchEnd)
+      else
+        activePlayer() = controller.activePlayer
   )
+
+  private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
   override def scene: Node = pane
