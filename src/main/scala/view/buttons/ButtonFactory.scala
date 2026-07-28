@@ -24,8 +24,8 @@ object ButtonFactory:
       onAction = event => onClick(event)
     }
 
-  def makeBoardButton(buttonText: String, onClick: ActionEvent => Unit): Button =
+  def makeBoardButton(buttonText: String, onClick: () => Unit): Button =
     new Button {
       text = buttonText
-      onAction = event => onClick(event)
+      onAction = event => onClick()
     }

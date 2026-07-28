@@ -53,7 +53,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private def nextTurnButton: Button = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
-    event =>
+    () =>
       controller.nextTurn()
       activePlayer() = controller.activePlayer
   )
