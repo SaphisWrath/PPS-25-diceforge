@@ -9,7 +9,7 @@ import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
-import view.panes.{MissionBoardPane, MissionPane}
+import view.panes.MissionPanes.MissionBoardPane
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 
