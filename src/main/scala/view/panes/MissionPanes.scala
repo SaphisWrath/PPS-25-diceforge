@@ -20,7 +20,7 @@ object MissionPanes:
       TextFactory.makeMissionName(missionDTO.id),
       new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost).component,
       new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards).component,
-      ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick)
+      ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
     )
 
   private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false):

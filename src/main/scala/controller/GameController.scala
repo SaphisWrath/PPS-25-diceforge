@@ -1,5 +1,6 @@
 package controller
 
+import controller.ViewPublishers.Context.{MissionBoughtContext, TurnChangeContext}
 import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
@@ -65,13 +66,11 @@ object GameController:
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
-        () => {
-
-          true
-        },
+        () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)),
         () => {
           m.get(gameMatch.playerBoardOf(activePlayer.name))
           ViewPublisher.notifyResourceChange()
+          ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
 
@@ -85,7 +84,10 @@ object GameController:
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-    override def nextTurn(): Unit = gameMatch.nextTurn()
+    override def nextTurn(): Unit = {
+      gameMatch.nextTurn()
+      ViewPublisher.notify(TurnChangeContext)
+    }
 
     override def currentRound: Int = gameMatch.currentRound + 1
 

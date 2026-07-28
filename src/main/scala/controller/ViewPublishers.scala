@@ -4,6 +4,8 @@ object ViewPublishers:
   enum Context:
     case ResourceContext
     case ResourceMaxContext
+    case MissionBoughtContext
+    case TurnChangeContext
 
   trait ViewSubscriber:
     /**
@@ -26,6 +28,13 @@ object ViewPublishers:
     def subscribe(subscriber: ViewSubscriber): Unit
 
     /**
+     * Notifies every subscriber
+     * 
+     * @param context the context required for the notification
+     */
+    def notify(context: Context): Unit
+
+    /**
      * notify current subscribe that there as been a ResourceAmount change
      */
     def notifyResourceChange(): Unit
@@ -40,7 +49,7 @@ object ViewPublishers:
 
     def subscribe(subscriber: ViewSubscriber): Unit = subscribers = subscribers.appended(subscriber)
 
-    private def notify(context: Context): Unit = subscribers.foreach(_.update(context))
+    def notify(context: Context): Unit = subscribers.foreach(_.update(context))
 
     def notifyResourceChange(): Unit = notify(Context.ResourceContext)
 
