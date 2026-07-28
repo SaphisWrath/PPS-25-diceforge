@@ -13,7 +13,7 @@ trait GameController:
   /**
    * @return the missions in play, already sorted into their respective cells
    */
-  def missions: Map[Int, List[MissionDTO]]
+  def missions: Map[Int, Seq[MissionDTO]]
 
   /**
    * @return the current active player
@@ -57,16 +57,12 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-  def missions_=(missions: Map[Int, List[MissionDTO]]): Unit
-
 object GameController:
   private class GameControllerImpl(playerList: Seq[Player]) extends GameController:
     private val gameMatch = GameMatch(playerList)
-    private var _missions: Map[Int, List[MissionDTO]] = Map.empty
 
-    override def missions_=(missions: Map[Int, List[MissionDTO]]): Unit = _missions = missions
-
-    override def missions: Map[Int, List[MissionDTO]] = _missions
+    override def missions: Map[Int, Seq[MissionDTO]] =
+      gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(m))))
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
 

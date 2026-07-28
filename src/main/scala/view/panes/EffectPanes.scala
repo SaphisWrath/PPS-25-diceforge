@@ -23,7 +23,7 @@ object EffectPanes:
       children = TextFactory.makeEffectText(effectDTO.toString)
     }
   
-  class EffectWrapperPane(title: String, effectDTOs: List[EffectDTO]) extends ViewComponent:
+  class EffectWrapperPane(title: String, effectDTOs: Seq[EffectDTO]) extends ViewComponent:
     override def component: Node = new VBox {
       val gridPane = new GridPane()
       gridPane.maxWidth = 5

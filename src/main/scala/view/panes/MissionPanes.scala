@@ -26,7 +26,7 @@ object MissionPanes:
         )
       }
 
-  class MissionCell(missions: List[MissionDTO], vertical: Boolean = false) extends ViewComponent:
+  private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false) extends ViewComponent:
     private val gridPane = new GridPane()
     gridPane.border = new Border(new BorderStroke(
       Color.Green,
@@ -39,7 +39,7 @@ object MissionPanes:
     })
     override def component: Node = gridPane
 
-  class MissionBoardPane(missions: Map[Int, List[MissionDTO]]) extends ViewComponent:
+  class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]]) extends ViewComponent:
     private val borderPane = new BorderPane {
       padding = Insets(20)
       border = new Border(new BorderStroke(
