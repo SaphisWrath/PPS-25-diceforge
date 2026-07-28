@@ -66,8 +66,8 @@ trait GameController:
 object GameController:
   private class GameControllerImpl(playerList: Seq[Player]) extends GameController:
     private val _players: Seq[Player] = Random.shuffle(playerList)
-    private val _playerBoards: Map[Player, PlayerBoard] =
-      _players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
+    private val _playerBoards: Map[Player, PlayerBoard] = ???
+      //_players.map(p => (p, PlayerBoard.emptyBoard)).toMap //TODO initial gold
     private var _activePlayerIndex: Int = 0
     private var _currentRound: Int = 0
     private var _missions: Map[Int, List[MissionDTO]] = Map.empty
