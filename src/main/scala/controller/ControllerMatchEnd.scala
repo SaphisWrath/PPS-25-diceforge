@@ -1,11 +1,19 @@
 package controller
 
+import model.GameMatch
 import model.Players.Player
 import model.resource.GloryPoint
 
 trait ControllerMatchEnd:
-  def getSortedPlayers: List[(Player, GloryPoint)]
+  def gameMatch_=(controller: GameMatch): Unit
+  def getSortedPlayers: Seq[(Player, GloryPoint)]
 
-class ControllerMatchEndImpl(playersWithPoints: List[(Player, GloryPoint)]) extends ControllerMatchEnd:
-  override def getSortedPlayers: List[(Player, GloryPoint)] =
-    playersWithPoints.sortBy(pair => - pair._2.amount)
+object ControllerMatchEnd:
+  private class ControllerMatchEndImpl(var gameMatch: GameMatch) extends ControllerMatchEnd:
+    override def getSortedPlayers: Seq[(Player, GloryPoint)] =
+      gameMatch.players
+        .map(player => (player, gameMatch.playerBoardOf(player).gloryPoints.amount))
+        .sortBy(pair => - pair._2)
+        .map(pair => (pair._1, GloryPoint(pair._2)))
+        
+  def apply(gameMatch: GameMatch): ControllerMatchEnd = ControllerMatchEndImpl(gameMatch)
