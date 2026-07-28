@@ -27,3 +27,5 @@ object Players:
       override def getColor: Color = color
 
     def apply(name: String, color: Color): Player = new PlayerImpl(name, color)
+
+    def unapply(player: Player): (String, Color) = (player.getName, player.getColor)
