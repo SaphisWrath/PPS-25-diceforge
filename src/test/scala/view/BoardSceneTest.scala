@@ -6,13 +6,16 @@ import controller.ViewState.Board
 import model.GameMatch
 import model.Players.Color.{Blue, Orange}
 import model.Players.Player
+import model.resource.Gold
 import scalafx.application.JFXApp3
 import view.scenes.BoardScene
 
 object BoardSceneTest extends JFXApp3:
 
   override def start(): Unit = {
-    val controller = GameController(GameMatch(Seq(Player("Paul", Orange), Player("Paulo", Blue))))
+    val gameMatch = GameMatch(Seq(Player("Paul", Orange), Player("Paulo", Blue)))
+    val controller = GameController(gameMatch)
+    gameMatch.playerBoards.head.gold = gameMatch.playerBoards.head.gold + Gold(10)
     stage = TestStageSetup(BoardScene(controller, MockControllerStage(Board))).stage
   }
 

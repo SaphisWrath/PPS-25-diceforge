@@ -1,12 +1,14 @@
 package view.scenes
 
+import controller.ViewPublishers.Context.TurnChangeContext
+import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import controller.ViewState.MatchEnd
-import controller.{ControllerStage, GameController, Navigator}
+import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
 import controller.dto.PlayerDTO
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{BorderPane, HBox}
+import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.scene.{Node, Scene}
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
@@ -14,7 +16,8 @@ import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.panes.MissionPanes.MissionBoardPane
 
-class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
+class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
+  this.setPublisher(ViewPublisher)
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
     controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
 
@@ -40,7 +43,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private def activePlayerPane(): Node =
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
     val playerPane: HBox = new HBox {
-      children = Seq(playerBox, nextTurnButton)
+      children = Seq(playerBox, menuSection)
       spacing = 5
     }
     HBox.setHgrow(playerBox, Always)
@@ -57,16 +60,24 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     }
     pane
 
-  private def nextTurnButton: Button = ButtonFactory.makeBoardButton(
+  private def menuSection: Node = new VBox {
+    children = Seq(
+      turnPhaseSection,
+      nextTurnButton,
+    )
+  }
+
+  private def turnPhaseSection: Node = Label("Action not Taken")
+
+  private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
-    () =>
-      controller.nextTurn()
-      if controller.isGameEnded then
-        controllerStage.changeScene(MatchEnd)
-      else
-        activePlayer() = controller.activePlayer
+    () => controller.nextTurn()
   )
 
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
   override def scene: Node = pane
+
+  override def update(context: ViewPublishers.Context): Unit = context match
+    case TurnChangeContext => activePlayer() = controller.activePlayer
+    case _ =>

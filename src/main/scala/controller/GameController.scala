@@ -59,8 +59,15 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
+  /**
+   * @return true if the player already took his action, false otherwise
+   */
+  def hasTurnActionBeenTaken: Boolean
+
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
+    
+    private var _hasTurnActionBeenTaken: Boolean = false
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
@@ -68,6 +75,7 @@ object GameController:
         () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)),
         () => {
           m.get(gameMatch.playerBoardOf(activePlayer.name))
+          _hasTurnActionBeenTaken = true
           ViewPublisher.notify(ResourceContext)
           ViewPublisher.notify(MissionBoughtContext)
         }
@@ -83,16 +91,18 @@ object GameController:
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-    override def nextTurn(): Unit = {
+    override def nextTurn(): Unit =
       gameMatch.nextTurn()
+      _hasTurnActionBeenTaken = false
       ViewPublisher.notify(TurnChangeContext)
-    }
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
     override def isGameEnded: Boolean = gameMatch.isGameEnded
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
+
+    override def hasTurnActionBeenTaken: Boolean = _hasTurnActionBeenTaken
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
