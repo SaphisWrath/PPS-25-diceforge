@@ -1,6 +1,6 @@
 package controller
 
-import controller.ViewPublishers.Context.{MissionBoughtContext, TurnChangeContext}
+import controller.ViewPublishers.Context.{MissionBoughtContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
@@ -68,7 +68,7 @@ object GameController:
         () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)),
         () => {
           m.get(gameMatch.playerBoardOf(activePlayer.name))
-          ViewPublisher.notifyResourceChange()
+          ViewPublisher.notify(ResourceContext)
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
