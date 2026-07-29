@@ -19,6 +19,11 @@ object LanguageStrings:
 
   object BoardScreenStrings:
     val nextTurnButtonText = "Prossimo Turno"
+    
+  object MissionPaneStrings:
+    val cost = "Costo"
+    val reward = "Ricompensa"
+    val get = "Completa"
 
   object EndScreenStrings:
     val playAgainButtonText = "Gioca Ancora!"

@@ -17,7 +17,7 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     override def getName: String = _name
     override def getColor: Color = _color
 
-  var gameController = GameController(GameMatch(Seq.empty))
+  var gameController = GameController(GameMatch(ExPlayers.values.toSeq))
 
   def initGame(playerNum: Int): Seq[PlayerDTO] =
     val players = ExPlayers.values.take(playerNum).toSeq

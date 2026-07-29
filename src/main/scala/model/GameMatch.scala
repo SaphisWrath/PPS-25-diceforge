@@ -1,11 +1,14 @@
 package model
 
 import model.Players.Player
-import model.resource.PlayerBoard
+import model.missions.{InstantMission, Mission, MissionMapBuilder}
+import model.resource.{Gold, PlayerBoard}
 
 import scala.util.Random
 
 trait GameMatch:
+  def missions: Map[Int, Seq[Mission]]
+  
   def players: Seq[Player]
 
   def playerBoards: Seq[PlayerBoard]
@@ -37,7 +40,10 @@ object GameMatch:
       shuffleList.map(p => PlayerInformation(p, shuffleList.indexOf(p), PlayerBoard.emptyBoard(p)))
     private var turn: Int = 0
     private var round: Int = 0
+    private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
 
+    def missions: Map[Int, Seq[Mission]] = _missions 
+    
     def players: Seq[Player] = _players.map(_.player)
 
     def playerBoards: Seq[PlayerBoard] = _players.map(_.playerBoard)

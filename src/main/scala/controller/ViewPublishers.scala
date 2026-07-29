@@ -4,6 +4,8 @@ object ViewPublishers:
   enum Context:
     case ResourceContext
     case ResourceMaxContext
+    case MissionBoughtContext
+    case TurnChangeContext
 
   trait ViewSubscriber:
     /**
