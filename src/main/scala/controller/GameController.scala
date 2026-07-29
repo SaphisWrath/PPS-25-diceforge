@@ -88,7 +88,7 @@ object GameController:
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
-        () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)),
+        () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)) || _hasTurnActionBeenTaken.value,
         () => {
           m.get(gameMatch.playerBoardOf(activePlayer.name))
           _hasTurnActionBeenTaken.value = true
@@ -125,7 +125,7 @@ object GameController:
 
     override def buyExtraAction(): Unit =
       val board = gameMatch.activePlayerBoard
-      if board.sunCrystals.amount >= 2 then
+      if board.sunCrystals.amount >= 2 && !_hasExtraActionBeenBought.value then
         board.sunCrystals = board.sunCrystals - SunCrystal(2)
         _hasExtraActionBeenBought.value = true
         _hasTurnActionBeenTaken.value = false

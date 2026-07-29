@@ -29,14 +29,13 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     )
   }
 
-  private var turnPhaseSection: Node = Label("Action not Taken")
+  private var turnPhaseSection: Node = Label(BSStrings.actionNotTakenText)
 
   private val actionTaken: BooleanProperty = BooleanProperty(false)
   actionTaken.onChange((_, _, newVal) =>
-    turnPhaseSection = Label(if newVal then "Action Taken" else "Action not Taken")
+    turnPhaseSection = Label(if newVal then BSStrings.actionTakenText else BSStrings.actionNotTakenText)
     pane.bottom = activePlayerPane()
   )
-
 
   private val pane = new BorderPane {
     top = topMainPane()
@@ -71,12 +70,19 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private def menuSection: Node = VBox(
     turnPhaseSection,
-    nextTurnButton
+    buyExtraActionButton,
+    nextTurnButton,
   )
 
   private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
     () => controller.nextTurn()
+  )
+
+  private def buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
+    BSStrings.buyExtraActionButton,
+    () => controller.buyExtraAction(),
+    () => controller.hasExtraActionBeenBought
   )
 
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
