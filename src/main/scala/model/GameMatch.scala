@@ -21,6 +21,8 @@ trait GameMatch:
 
   def playerBoardOf(playerName: String): PlayerBoard
 
+  def activePlayerBoard: PlayerBoard
+
   def nextTurn(): Unit
 
   def currentTurn: Int
@@ -58,6 +60,9 @@ object GameMatch:
 
     override def playerBoardOf(playerName: String): PlayerBoard =
       _players.collect({ case PlayerInformation(Player(name, _), _, b) if name == playerName => b }).head
+
+    override def activePlayerBoard: PlayerBoard =
+      _players.collect({case PlayerInformation(_, turnOrder, board) if turnOrder == turn => board}).head
 
     override def nextTurn(): Unit =
       turn = turn + 1
