@@ -1,10 +1,33 @@
 package model.utils
 
 trait ValueProperty[T]:
+  /**
+   * A getter for the wrapped value
+   * 
+   * @return The wrapped value
+   */
   def value: T
+
+  /**
+   * A setter for the wrapped value. It updates the value and then call the onChange function
+   * 
+   * @param newValue the new wrapped value
+   */
   def value_=(newValue: T): Unit
-  def onChange(fun: (oldValue: T, newValue: T) => Unit): Unit
-  def onChange_=(fun: (oldValue: T, newValue: T) => Unit): Unit = this.onChange(fun)
+
+  /**
+   * Set the onChange function
+   * 
+   * @param onChangeFun The new onChange Function
+   */
+  def onChange(onChangeFun: (oldValue: T, newValue: T) => Unit): Unit
+
+  /**
+   * An alternative to onChange().
+   * 
+   * @param onChangeFun The new onChange Function
+   */
+  def onChange_=(onChangeFun: (oldValue: T, newValue: T) => Unit): Unit = this.onChange(onChangeFun)
 
 object ValueProperty:
   private case class ValuePropertyImpl[T](
@@ -18,7 +41,7 @@ object ValueProperty:
       _value = newValue
       _onChange(oldVal, newValue)
 
-    override def onChange(fun: (T, T) => Unit): Unit = _onChange = fun
+    override def onChange(onChangeFun: (T, T) => Unit): Unit = _onChange = onChangeFun
 
   def apply[T](value: T): ValueProperty[T] = ValuePropertyImpl(value)
   def apply[T](value: T, onChange: (T,T)=>Unit): ValueProperty[T] = ValuePropertyImpl(value, onChange)
