@@ -1,10 +1,13 @@
 package controller.dto.pathfinders
 
-import model.resource.{Resource, Gold, GloryPoint, SunCrystal, MoonCrystal}
+import model.resource.{GloryPoint, Gold, MoonCrystal, Resource, SunCrystal}
 import scalafx.scene.layout.BackgroundImage
 
+import java.io.File
+
 trait ImagePathFinder[T]:
-  val assetCommonPath = "assets/"
+  val systemSeparator: String = System.getProperty("file.separator")
+  val assetCommonPath: String = System.getProperty("user.dir") + systemSeparator + "assets" + systemSeparator
 
   /**
    *
@@ -18,7 +21,7 @@ object ImagePathFinders:
   def findImagePath[T: ImagePathFinder](element: T): String = summon[ImagePathFinder[T]].getPath(element)
 
   given ImagePathFinder[Resource] with
-    private val spritePath = assetCommonPath + "sprites/"
+    private val spritePath = assetCommonPath + "sprites" + systemSeparator
 
     override def getPath(element: Resource): String = element match
       case Gold(_) => spritePath + "placeholder.png"
