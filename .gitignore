@@ -17,3 +17,6 @@ local.sbt
 .idea
 .idea_modules
 /.worksheet/
+
+# project specific
+assets/*
