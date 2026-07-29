@@ -1,11 +1,11 @@
 package view.scenes
 
-import controller.ViewPublishers.Context.TurnChangeContext
+import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import controller.ViewState.MatchEnd
 import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
 import controller.dto.PlayerDTO
-import scalafx.beans.property.ObjectProperty
+import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
@@ -28,6 +28,15 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       pane.bottom = activePlayerPane()
     )
   }
+
+  private var turnPhaseSection: Node = Label("Action not Taken")
+
+  private val actionTaken: BooleanProperty = BooleanProperty(false)
+  actionTaken.onChange((_, _, newVal) =>
+    turnPhaseSection = Label(if newVal then "Action Taken" else "Action not Taken")
+    pane.bottom = activePlayerPane()
+  )
+
 
   private val pane = new BorderPane {
     top = topMainPane()
@@ -60,14 +69,10 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     }
     pane
 
-  private def menuSection: Node = new VBox {
-    children = Seq(
-      turnPhaseSection,
-      nextTurnButton,
-    )
-  }
-
-  private def turnPhaseSection: Node = Label("Action not Taken")
+  private def menuSection: Node = VBox(
+    turnPhaseSection,
+    nextTurnButton
+  )
 
   private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
@@ -79,5 +84,8 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   override def scene: Node = pane
 
   override def update(context: ViewPublishers.Context): Unit = context match
-    case TurnChangeContext => activePlayer() = controller.activePlayer
+    case TurnChangeContext =>
+      activePlayer() = controller.activePlayer
+      actionTaken() = controller.hasTurnActionBeenTaken
+    case ActionContext => actionTaken() = controller.hasTurnActionBeenTaken
     case _ =>

@@ -1,10 +1,11 @@
 package controller
 
-import controller.ViewPublishers.Context.{MissionBoughtContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublishers.Context.{ActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
+import model.utils.ValueProperty
 
 trait GameController:
   /**
@@ -66,8 +67,13 @@ trait GameController:
 
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
-    
-    private var _hasTurnActionBeenTaken: Boolean = false
+
+    private val _hasTurnActionBeenTaken: ValueProperty[Boolean] =
+      ValueProperty(
+        false,
+        (_, _) =>
+          ViewPublisher.notify(ActionContext)
+      )
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
@@ -75,7 +81,7 @@ object GameController:
         () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)),
         () => {
           m.get(gameMatch.playerBoardOf(activePlayer.name))
-          _hasTurnActionBeenTaken = true
+          _hasTurnActionBeenTaken.value = true
           ViewPublisher.notify(ResourceContext)
           ViewPublisher.notify(MissionBoughtContext)
         }
@@ -93,7 +99,7 @@ object GameController:
 
     override def nextTurn(): Unit =
       gameMatch.nextTurn()
-      _hasTurnActionBeenTaken = false
+      _hasTurnActionBeenTaken.value = false
       ViewPublisher.notify(TurnChangeContext)
 
     override def currentRound: Int = gameMatch.currentRound + 1
@@ -102,7 +108,7 @@ object GameController:
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
-    override def hasTurnActionBeenTaken: Boolean = _hasTurnActionBeenTaken
+    override def hasTurnActionBeenTaken: Boolean = _hasTurnActionBeenTaken.value
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

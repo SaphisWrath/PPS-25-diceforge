@@ -6,8 +6,7 @@ object ViewPublishers:
     case ResourceMaxContext
     case MissionBoughtContext
     case TurnChangeContext
-    case ActionTakenContext
-    case ActionBoughtContext
+    case ActionContext
 
   trait ViewSubscriber:
     /**
