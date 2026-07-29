@@ -26,24 +26,17 @@ object ViewPublishers:
     def subscribe(subscriber: ViewSubscriber): Unit
 
     /**
-     * notify current subscribe that there as been a ResourceAmount change
+     * Notify all subscribers
+     *
+     * @param context The context of the message
      */
-    def notifyResourceChange(): Unit
-
-    /**
-     * notify current subscribe that there as been a ResourceCap change
-     */
-    def notifyResourceCapChange(): Unit
+    def notify(context: Context): Unit
 
   object ViewPublisher extends ViewPublisher:
     private var subscribers: Seq[ViewSubscriber] = Seq.empty
 
     def subscribe(subscriber: ViewSubscriber): Unit = subscribers = subscribers.appended(subscriber)
 
-    private def notify(context: Context): Unit = subscribers.foreach(_.update(context))
-
-    def notifyResourceChange(): Unit = notify(Context.ResourceContext)
-
-    def notifyResourceCapChange(): Unit = notify(Context.ResourceMaxContext)
+    def notify(context: Context): Unit = subscribers.foreach(_.update(context))
 
     def apply(): ViewPublisher = this
