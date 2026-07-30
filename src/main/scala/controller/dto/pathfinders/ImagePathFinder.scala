@@ -24,5 +24,8 @@ object ImagePathFinders:
     private val spritePath = assetCommonPath + "sprites" + systemSeparator
 
     override def getPath(element: Resource): String = element match
-      case Gold(_) => spritePath + "placeholder.png"
-      case _ => spritePath + "placeholder.jpg"
+      case Gold(_) => spritePath + "gold.png"
+      case GloryPoint(_) => spritePath + "glory_point.png"
+      case SunCrystal(_) => spritePath + "sun.png"
+      case MoonCrystal(_) => spritePath + "moon.png"
+      case _ => spritePath + "placeholder.png"

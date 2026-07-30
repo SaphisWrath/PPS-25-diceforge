@@ -32,6 +32,9 @@ object Sprite:
     override def getSpriteAsBackground: Background =
       Background(Array(BackgroundImage(getSpriteAsImage, NoRepeat, NoRepeat, BackgroundPosition.Center, BackgroundSize.Default)))
 
-    override def getSpriteAsImageView: ImageView = ImageView(getSpriteAsImage)
+    override def getSpriteAsImageView: ImageView = new ImageView(getSpriteAsImage) {
+      fitHeight = 50
+      fitWidth = 50
+    }
 
   def apply(path: String): Sprite = BaseSprite(path)

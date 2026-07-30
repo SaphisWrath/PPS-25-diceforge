@@ -15,12 +15,6 @@ object EffectPanes:
     override def component: Node = new StackPane {
       alignment = Center
       width <= height
-      border = new Border(new BorderStroke(
-        Color.Red,
-        BorderStrokeStyle.Solid,
-        CornerRadii.Empty,
-        BorderWidths.Default)
-      )
       children = Sprite(effectDTO.sprite).getSpriteAsImageView
       effectDTO.label match
         case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
@@ -34,8 +28,8 @@ object EffectPanes:
       effectDTOs.zipWithIndex.foreach((e, i)=>
         gridPane.add(
           EffectPane(e).component,
-          0,
-          i
+          i % 2,
+          i / 2
         )
       )
       border = new Border(new BorderStroke(

@@ -1,8 +1,8 @@
 package view.text
 
 import scalafx.geometry.Insets
-import scalafx.scene.paint.Color.{DarkRed, Red}
-import scalafx.scene.paint.{LinearGradient, Stops}
+import scalafx.scene.paint.Color.{Black, Cyan, DarkRed, Peru, Red, White}
+import scalafx.scene.paint.{LinearGradient, Paint, Stops}
 import scalafx.scene.text.Text
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 
@@ -20,7 +20,7 @@ object TextFactory:
   def makeMissionName(name: String): Text =
     new Text {
       text = name
-      style = "-fx-font: bold"
+      style = "-fx-font: normal bold 15pt sans-serif"
     }
     
   def makeMissionLabel(label: String): Text = 
@@ -31,5 +31,7 @@ object TextFactory:
   def makeEffectText(label: String): Text =
     new Text {
       text = label
-      style = "-fx-font: bold"
+      style = "-fx-font: normal bolder 25pt sans-serif"
+      fill = White
+      stroke = Black
     }
