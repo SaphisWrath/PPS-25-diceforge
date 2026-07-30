@@ -1,7 +1,7 @@
 package view.buttons
 
 import controller.ViewPublishers
-import controller.ViewPublishers.Context.{MissionBoughtContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublishers.Context.{ActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import javafx.event.{ActionEvent, EventHandler}
 import scalafx.beans.property.ObjectProperty
@@ -34,7 +34,7 @@ object ButtonFactory:
       disable = isDisabled()
 
       override def update(context: ViewPublishers.Context): Unit = context match
-        case MissionBoughtContext | TurnChangeContext | ResourceContext => this.disable = isDisabled()
+        case MissionBoughtContext | TurnChangeContext | ResourceContext | ActionContext => this.disable = isDisabled()
         case _ =>
     }
 

@@ -1,10 +1,12 @@
 package controller
 
-import controller.ViewPublishers.Context.{MissionBoughtContext, TurnChangeContext}
+import controller.ViewPublishers.Context.{ActionContext, ExtraActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
+import model.resource.SunCrystal
+import model.utils.ValueProperty
 
 trait GameController:
   /**
@@ -59,16 +61,38 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
+  /**
+   * @return true if the player already took his action, false otherwise
+   */
+  def hasTurnActionBeenTaken: Boolean
+
+  def hasExtraActionBeenBought: Boolean
+
+  def buyExtraAction(): Unit
+
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
+
+    private val _hasTurnActionBeenTaken: ValueProperty[Boolean] =
+      ValueProperty(
+        false,
+        (_, _) => ViewPublisher.notify(ActionContext)
+      )
+
+    private val _hasExtraActionBeenBought: ValueProperty[Boolean] =
+      ValueProperty(
+        false,
+        (_, newVal) => if newVal then ViewPublisher.notify(ExtraActionContext)
+      )
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
-        () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)),
+        () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)) || _hasTurnActionBeenTaken.value,
         () => {
           m.get(gameMatch.playerBoardOf(activePlayer.name))
-          ViewPublisher.notifyResourceChange()
+          _hasTurnActionBeenTaken.value = true
+          ViewPublisher.notify(ResourceContext)
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
@@ -83,16 +107,28 @@ object GameController:
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-    override def nextTurn(): Unit = {
+    override def nextTurn(): Unit =
       gameMatch.nextTurn()
+      _hasTurnActionBeenTaken.value = false
+      _hasExtraActionBeenBought.value = false
       ViewPublisher.notify(TurnChangeContext)
-    }
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
     override def isGameEnded: Boolean = gameMatch.isGameEnded
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
+
+    override def hasTurnActionBeenTaken: Boolean = _hasTurnActionBeenTaken.value
+
+    override def hasExtraActionBeenBought: Boolean = _hasExtraActionBeenBought.value
+
+    override def buyExtraAction(): Unit =
+      val board = gameMatch.activePlayerBoard
+      if board.sunCrystals.amount >= 2 && !_hasExtraActionBeenBought.value then
+        board.sunCrystals = board.sunCrystals - SunCrystal(2)
+        _hasExtraActionBeenBought.value = true
+        _hasTurnActionBeenTaken.value = false
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
