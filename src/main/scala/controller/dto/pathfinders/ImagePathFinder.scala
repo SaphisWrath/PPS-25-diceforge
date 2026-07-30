@@ -7,7 +7,7 @@ import java.io.File
 
 trait ImagePathFinder[T]:
   val systemSeparator: String = System.getProperty("file.separator")
-  val assetCommonPath: String = System.getProperty("user.dir") + systemSeparator + "assets" + systemSeparator
+  val assetCommonPath: String = "assets" + systemSeparator
 
   /**
    *
