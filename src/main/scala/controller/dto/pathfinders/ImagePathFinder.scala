@@ -25,4 +25,4 @@ object ImagePathFinders:
 
     override def getPath(element: Resource): String = element match
       case Gold(_) => spritePath + "placeholder.png"
-      case _ => spritePath + "placeholder.jpeg"
+      case _ => spritePath + "placeholder.jpg"
