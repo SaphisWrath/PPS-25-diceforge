@@ -1,6 +1,6 @@
 package model
 
-import model.missions.{Mission, ObtainedMission}
+import model.missions.{Mission, Obtained, ObtainedMission}
 import model.resource.PlayerBoard
 
 object Players:
@@ -24,18 +24,18 @@ object Players:
 
     def board: PlayerBoard
 
-    def missions: Seq[Mission]
+    def missions: Seq[Obtained]
 
-    def addMission(mission: Mission): Unit
+    def addMission(mission: Obtained): Unit
 
   object Player:
     private case class PlayerImpl(name: String, color: Color) extends Player:
-      private var _missions: Seq[Mission] = Seq.empty
+      private var _missions: Seq[Obtained] = Seq.empty
       override val board: PlayerBoard = PlayerBoard.emptyBoard
 
-      override def missions: Seq[Mission] = _missions
+      override def missions: Seq[Obtained] = _missions
 
-      override def addMission(mission: Mission): Unit = _missions = _missions.appended(mission)
+      override def addMission(mission: Obtained): Unit = _missions = _missions.appended(mission)
 
     def apply(name: String, color: Color): Player = PlayerImpl(name, color)
 
