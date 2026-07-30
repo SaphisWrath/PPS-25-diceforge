@@ -5,6 +5,8 @@ import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
+import model.effects.Target
+import model.effects.Target.{All, Others, Self}
 import model.resource.{PlayerBoard, SunCrystal}
 import model.utils.ValueProperty
 
@@ -88,14 +90,19 @@ object GameController:
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
-        () => !m.canGet(gameMatch.activePlayer.board) || _hasTurnActionBeenTaken.value,
+        () => !m.canGet(extractTarget) || _hasTurnActionBeenTaken.value,
         () => {
-          m.get(gameMatch.activePlayer.board)
+          m.get(extractTarget)
           _hasTurnActionBeenTaken.value = true
           ViewPublisher.notify(ResourceContext)
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
+      
+    private def extractTarget(target: Target): Seq[Player] = target match
+      case Self => Seq(gameMatch.activePlayer)
+      case All => gameMatch.players
+      case Others => gameMatch.nonActivePlayers
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
 

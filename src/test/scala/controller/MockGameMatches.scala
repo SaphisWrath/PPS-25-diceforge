@@ -7,19 +7,17 @@ import model.Players.Player
 import model.resource.PlayerBoard
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
+import _root_.mock.MockPlayer
 
 object MockGameMatches:
   def mockGameMatch: GameMatch =
-    val boards = Seq(
-      PlayerBoard(Player("Mario", Orange), 0, 0, 0, 60),
-      PlayerBoard(Player("Luigi", Green), 0, 0, 0, 110),
-      PlayerBoard(Player("Toad", Blue), 0, 0, 0, 85)
+    val players = Seq(
+      MockPlayer("Mario", Orange, PlayerBoard(0, 0, 0, 60)),
+      MockPlayer("Luigi", Green, PlayerBoard(0, 0, 0, 110)),
+      MockPlayer("Toad", Blue, PlayerBoard(0, 0, 0, 85))
     )
-    val players = boards.map(_.player)
+    val boards = players.map(_.board) 
 
     val gameMatch = mock[GameMatch]
     when(gameMatch.players).thenReturn(players)
-    players.foreach(
-      player => when(player.board).thenReturn(boards.find(_.player.name == player.name).get)
-    )
     gameMatch

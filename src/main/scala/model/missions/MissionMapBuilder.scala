@@ -1,12 +1,13 @@
 package model.missions
 
 import model.effects.ResourceEffect
+import model.effects.Target.Self
 import model.resource.{Gold, MoonCrystal, SunCrystal}
 
 object MissionMapBuilder:
   def makePlaceholderMissions: Map[Int, List[Mission]] =
-    val cost: List[ResourceEffect] = List(ResourceEffect(Gold(3)))
-    val reward: List[ResourceEffect] = List(ResourceEffect(SunCrystal(3)), ResourceEffect(MoonCrystal(3)))
+    val cost: List[ResourceEffect] = List(ResourceEffect(Gold(3), Self))
+    val reward: List[ResourceEffect] = List(ResourceEffect(SunCrystal(3), Self), ResourceEffect(MoonCrystal(3), Self))
     val placeholderMission = InstantMission(reward, cost, "one")
     List(
       0 -> List(placeholderMission, placeholderMission),

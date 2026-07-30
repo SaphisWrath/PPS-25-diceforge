@@ -1,38 +1,40 @@
 package model.missions
 
-import model.effects.{Effect, ResourceEffect}
+import model.Players.Player
+import model.effects.{Effect, ResourceEffect, Target}
 import model.resource.{PlayerBoard, Resource}
+
+import javax.sound.midi.Receiver
 
 trait Mission:
   def reward: List[Effect]
   def cost: List[ResourceEffect]
   def id: String
-  def get(receiver: PlayerBoard): Unit
-  def canGet(receiver: PlayerBoard): Boolean
+  def get(receiverProducer: Target => Seq[Player]): Unit
+  def canGet(receiverProducer: Target => Seq[Player]): Boolean
 
 object Mission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
 case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") extends Mission:
-  override def get(receiver: PlayerBoard): Unit =
-    if canGet(receiver) then
+  override def get(receiverProducer: Target => Seq[Player]): Unit =
+    if canGet(receiverProducer) then
       cost.foreach(r => {
         r.setModule(model.utils.ResourceEffectModules.SubtractResource)
-        r.setReceiver(receiver)
-        r.resolve()
+        r.resolve(receiverProducer(r.target))
       })
-
-  override def canGet(receiver: PlayerBoard): Boolean = cost.forall(e => receiver.canSpend(e.resource))
+      
+  override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
+    cost.flatMap(e => receiverProducer(e.target).map(_.board.canSpend(e.resource))).reduce(_&&_)
 
 trait InstantRewards extends Mission:
-  abstract override def get(receiver: PlayerBoard): Unit =
-    if canGet(receiver) then
+  abstract override def get(receiverProducer: Target => Seq[Player]): Unit =
+    if canGet(receiverProducer) then
       reward.foreach {
         case res@ResourceEffect(_, _) =>
-          res.setReceiver(receiver)
-          res.resolve()
+          res.resolve(receiverProducer(res.target))
       }
-      super.get(receiver)
+      super.get(receiverProducer)
 
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") 
   extends BaseMission(reward, cost, id) with InstantRewards

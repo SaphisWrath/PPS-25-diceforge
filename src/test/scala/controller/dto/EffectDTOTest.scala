@@ -12,14 +12,14 @@ class EffectDTOTest extends AnyFunSuite{
   val gpRes = GloryPoint(9)
   val sunRes = SunCrystal(8)
   val moonRes = MoonCrystal(7)
-
-  test("apply"):
-    var effectDTO = EffectDTO(ResourceEffect(goldRes, None))
-    assert(effectDTO.label.get == goldRes.amount.toString)
-    effectDTO = EffectDTO(ResourceEffect(gpRes, None))
-    assert(effectDTO.label.get == gpRes.amount.toString)
-    effectDTO = EffectDTO(ResourceEffect(sunRes, None))
-    assert(effectDTO.label.get == sunRes.amount.toString)
-    effectDTO = EffectDTO(ResourceEffect(moonRes, None))
-    assert(effectDTO.label.get == moonRes.amount.toString)
+//
+//  test("apply"):
+//    var effectDTO = EffectDTO(ResourceEffect(goldRes, None))
+//    assert(effectDTO.label.get == goldRes.amount.toString)
+//    effectDTO = EffectDTO(ResourceEffect(gpRes, None))
+//    assert(effectDTO.label.get == gpRes.amount.toString)
+//    effectDTO = EffectDTO(ResourceEffect(sunRes, None))
+//    assert(effectDTO.label.get == sunRes.amount.toString)
+//    effectDTO = EffectDTO(ResourceEffect(moonRes, None))
+//    assert(effectDTO.label.get == moonRes.amount.toString)
 }

@@ -31,7 +31,7 @@ object Players:
   object Player:
     private case class PlayerImpl(name: String, color: Color) extends Player:
       private var _missions: Seq[Mission] = Seq.empty
-      override val board: PlayerBoard = PlayerBoard.emptyBoard(this)
+      override val board: PlayerBoard = PlayerBoard.emptyBoard
 
       override def missions: Seq[Mission] = _missions
 
