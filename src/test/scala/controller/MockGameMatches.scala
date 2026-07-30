@@ -20,6 +20,6 @@ object MockGameMatches:
     val gameMatch = mock[GameMatch]
     when(gameMatch.players).thenReturn(players)
     players.foreach(
-      player => when(gameMatch.playerBoardOf(player)).thenReturn(boards.find(_.player.getName == player.getName).get)
+      player => when(player.board).thenReturn(boards.find(_.player.name == player.name).get)
     )
     gameMatch

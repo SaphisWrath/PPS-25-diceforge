@@ -14,8 +14,9 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     case Player2 extends ExPlayers("P2", Blue)
     case Player3 extends ExPlayers("P3", Black)
     case Player4 extends ExPlayers("P4", Orange)
-    override def getName: String = _name
-    override def getColor: Color = _color
+    
+    private val player = Player(_name, _color)
+    export player.*
 
   var gameController = GameController(GameMatch(ExPlayers.values.toSeq))
 

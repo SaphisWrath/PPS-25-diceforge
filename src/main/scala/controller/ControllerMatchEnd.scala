@@ -12,7 +12,7 @@ object ControllerMatchEnd:
   private class ControllerMatchEndImpl(var gameMatch: GameMatch) extends ControllerMatchEnd:
     override def getSortedPlayers: Seq[(Player, GloryPoint)] =
       gameMatch.players
-        .map(player => (player, gameMatch.playerBoardOf(player).gloryPoints.amount))
+        .map(player => (player, player.board.gloryPoints.amount))
         .sortBy(pair => - pair._2)
         .map(pair => (pair._1, GloryPoint(pair._2)))
         

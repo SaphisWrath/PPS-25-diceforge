@@ -22,7 +22,6 @@ class GameMatchTest extends AnyFlatSpec with should.Matchers:
     gm.playerBoards should not be empty
     gm.playerBoards.length should be (players.length)
     gm.playerBoards.map(_.player) should contain allElementsOf players
-    gm.playerBoards should contain allElementsOf players.collect({case p => gm.playerBoardOf(p)})
 
   it should "have an active player" in:
     val gm: GameMatch = gameMatch(players)

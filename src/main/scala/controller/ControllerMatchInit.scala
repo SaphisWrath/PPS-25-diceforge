@@ -23,7 +23,7 @@ object ControllerMatchInit:
     private var playerAmount: Int = 0
   
     private def accept(newPlayer: Player): Boolean =
-      !matchBuilder.currentPlayers.exists(p => p.getName == newPlayer.getName || p.getColor == newPlayer.getColor)
+      !matchBuilder.currentPlayers.exists(p => p.name == newPlayer.name || p.color == newPlayer.color)
   
     override def setPlayerAmount(amount: Int): Unit =
       if !isPlayerAmountSet

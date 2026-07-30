@@ -38,7 +38,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     var fontSize = 20
 
     players.map((player, points) =>
-      val nameLabel = new Label(player.getName)
+      val nameLabel = new Label(player.name)
       val pointLabel = new Label(s"${points.amount} ${RStrings.gloryPoint}")
 
       nameLabel.setMinSize(labelSizeX, labelSizeY)
@@ -49,7 +49,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
       nameLabel.alignmentInParent = Center
       nameLabel.textFill = Color.White
       nameLabel.background = new Background(Array(new BackgroundFill(
-        Color.valueOf(player.getColor.toString),
+        Color.valueOf(player.color.toString),
         CornerRadii.Empty,
         Insets.Empty
       )))
