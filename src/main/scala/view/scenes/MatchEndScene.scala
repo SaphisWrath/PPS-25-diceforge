@@ -1,6 +1,7 @@
 package view.scenes
 
-import controller.ControllerMatchEnd
+import controller.ViewState.{MainMenu, MatchInit}
+import controller.{ControllerMatchEnd, ControllerStage}
 import model.Players.Player
 import model.resource.GloryPoint
 import scalafx.geometry.Insets
@@ -10,11 +11,18 @@ import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
-import view.LanguageStrings.{ResourceStrings as RStrings ,EndScreenStrings as ESStrings}
+import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
+import view.ViewComponents.ViewScene
 
-class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
-  private val newMatchButton = new Button(ESStrings.playAgainButtonText)
-  private val endGameButton = new Button(ESStrings.exitButtonText)
+class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage) extends ViewScene[Node]:
+  private val newMatchButton = new Button {
+    text = ESStrings.playAgainButtonText
+    onAction = _ => controllerStage.changeScene(MatchInit)
+  }
+  private val endGameButton = new Button {
+    text = ESStrings.exitButtonText
+    onAction = _=> controllerStage.changeScene(MainMenu)
+  }
 
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {
@@ -24,7 +32,7 @@ class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
       children = nodes
     }
 
-  private def setupPlayerRanking(players: List[(Player, GloryPoint)]): Seq[HBox] = {
+  private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
     var labelSizeX = 200
     var labelSizeY = 100
     var fontSize = 20
@@ -54,7 +62,7 @@ class MatchEndScene(controller: ControllerMatchEnd) extends Scene:
     )
   }
 
-  root = new VBox {
+  override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
     alignment = Center

@@ -1,3 +1,5 @@
+import sbt.BuiltinCommands.tasks
+
 val scala3Version = "3.8.4"
 
 lazy val root = project
@@ -29,6 +31,6 @@ lazy val root = project
     },
 
     scalacOptions ++= Seq(
-      "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
+      "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s",
     )
   )

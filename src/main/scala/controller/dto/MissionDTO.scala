@@ -1,20 +1,27 @@
 package controller.dto
 
-import controller.converters.ResourceConverters
 import model.missions.Mission
-
-import scala.annotation.tailrec
-
-case class MissionDTO(cost: List[EffectDTO], rewards: List[EffectDTO], id: String)
+  
+case class MissionDTO(
+                       cost: List[EffectDTO], 
+                       rewards: List[EffectDTO], 
+                       id: String,
+                       clickable: () => Boolean,
+                       onClick: () => Unit)
 
 object MissionDTO:
   def apply(mission: Mission): MissionDTO =
-    MissionDTO(
-      mission.cost.map(c =>
-        EffectDTO(c)
-      ),
-      mission.reward.map(r =>
-        EffectDTO(r)
-      ),
-      "placeholder-id"
+    MissionDTO.apply(
+      mission,
+      () => false,
+      () => {println(s"Clicked mission ${mission.id}")}
+    )
+
+  def apply(mission: Mission, clickable: () => Boolean, onClick: () => Unit): MissionDTO = mission match
+    case Mission(cost, reward, id) => MissionDTO(
+      mission.cost.map(c => EffectDTO(c)),
+      mission.reward.map(r => EffectDTO(r)),
+      id,
+      clickable,
+      onClick
     )

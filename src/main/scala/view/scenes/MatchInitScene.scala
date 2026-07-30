@@ -1,6 +1,7 @@
 package view.scenes
 
-import controller.ControllerMatchInit
+import controller.ViewState.Board
+import controller.{ControllerMatchInit, ControllerStage}
 import model.Players.Color
 import model.Players.Color.*
 import scalafx.collections.ObservableBuffer
@@ -9,8 +10,9 @@ import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, VBox}
 import view.LanguageStrings.{separator, GameInitScreenStrings as GISStrings}
+import view.ViewComponents.ViewScene
 
-class MatchInitScene(controller: ControllerMatchInit) extends Scene:
+class MatchInitScene(controller: ControllerMatchInit, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerCountChoice = new ChoiceBox[Int](ObservableBuffer[Int](2, 3, 4))
   private val playerNameField = new TextField()
   private val playerColorChoice = new ChoiceBox[Color](ObservableBuffer[Color](Orange, Green, Blue, Black))
@@ -24,8 +26,8 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
       alignmentInParent = Center
       children = nodes
     }
-    
-  root = new VBox {
+
+  override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
     alignment = Center
@@ -51,5 +53,8 @@ class MatchInitScene(controller: ControllerMatchInit) extends Scene:
     else feedbackLabel.text = GISStrings.playerAddingErrorText
 
     if controller.allPlayersSet
-    then feedbackLabel.text = GISStrings.gameReadyConfirmationText
+    then
+      feedbackLabel.text = GISStrings.gameReadyConfirmationText
+      addPlayerButton.onAction = _ => controllerStage.changeScene(Board)
+      addPlayerButton.text = GISStrings.startButtonText
   }

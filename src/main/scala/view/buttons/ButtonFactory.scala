@@ -1,5 +1,8 @@
 package view.buttons
 
+import controller.ViewPublishers
+import controller.ViewPublishers.Context.{MissionBoughtContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import javafx.event.{ActionEvent, EventHandler}
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.Button
@@ -24,8 +27,17 @@ object ButtonFactory:
       onAction = event => onClick(event)
     }
 
-  def makeBoardButton(buttonText: String, onClick: ActionEvent => Unit): Button =
-    new Button {
+  def makeBoardButton(buttonText: String, onClick: () => Unit, isDisabled: () => Boolean = () => false): Button =
+    class ButtonSubscriber extends Button with ViewSubscriber {
       text = buttonText
-      onAction = event => onClick(event)
+      onAction = event => onClick()
+      disable = isDisabled()
+
+      override def update(context: ViewPublishers.Context): Unit = context match
+        case MissionBoughtContext | TurnChangeContext | ResourceContext => this.disable = isDisabled()
+        case _ =>
     }
+
+    val button = ButtonSubscriber()
+    button.setPublisher(ViewPublisher)
+    button
