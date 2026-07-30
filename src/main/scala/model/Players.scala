@@ -1,6 +1,6 @@
 package model
 
-import model.missions.Mission
+import model.missions.{Mission, ObtainedMission}
 import model.resource.PlayerBoard
 
 object Players:
