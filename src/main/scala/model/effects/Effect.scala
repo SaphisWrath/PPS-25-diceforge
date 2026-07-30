@@ -13,7 +13,7 @@ case class ResourceEffect(resource: Resource, var receiver: Option[PlayerBoard] 
   override def resolve(): Unit =
     receiver match
       case Some(rec) => module.apply(rec, resource)
-      case _ => //TODO
+      case _ => throw IllegalStateException("Missing receiver in ResourceEffect")
 
   def setReceiver(receiver: PlayerBoard): Unit = this.receiver = Option(receiver)
 

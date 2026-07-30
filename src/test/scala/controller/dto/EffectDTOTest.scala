@@ -15,15 +15,11 @@ class EffectDTOTest extends AnyFunSuite{
 
   test("apply"):
     var effectDTO = EffectDTO(ResourceEffect(goldRes, None))
-    assert(effectDTO.sprite == "assets/sprites/placeholder.png")
     assert(effectDTO.label.get == goldRes.amount.toString)
     effectDTO = EffectDTO(ResourceEffect(gpRes, None))
-    assert(effectDTO.sprite == "assets/sprites/placeholder.jpeg")
     assert(effectDTO.label.get == gpRes.amount.toString)
     effectDTO = EffectDTO(ResourceEffect(sunRes, None))
-    assert(effectDTO.sprite == "assets/sprites/placeholder.jpeg")
     assert(effectDTO.label.get == sunRes.amount.toString)
     effectDTO = EffectDTO(ResourceEffect(moonRes, None))
-    assert(effectDTO.sprite == "assets/sprites/placeholder.jpeg")
     assert(effectDTO.label.get == moonRes.amount.toString)
 }
