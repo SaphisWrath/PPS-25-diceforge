@@ -13,24 +13,13 @@ class EffectDTOTest extends AnyFunSuite{
   val sunRes = SunCrystal(8)
   val moonRes = MoonCrystal(7)
 
-  test("toEffect"):
-    var res = EffectDTO("+", Option(resourceWithAmountToString(goldRes)))
-    assert(res.toEffect == ResourceEffect(goldRes, None))
-    res = EffectDTO("+", Option(resourceWithAmountToString(gpRes)))
-    assert(res.toEffect == ResourceEffect(gpRes, None))
-    res = EffectDTO("+", Option(resourceWithAmountToString(sunRes)))
-    assert(res.toEffect == ResourceEffect(sunRes, None))
-    res = EffectDTO("+", Option(resourceWithAmountToString(moonRes)))
-    assert(res.toEffect == ResourceEffect(moonRes, None))
-
   test("apply"):
     var effectDTO = EffectDTO(ResourceEffect(goldRes, None))
-    assert(effectDTO.effectType == "+")
-    assert(effectDTO.resource.get == resourceWithAmountToString(goldRes))
+    assert(effectDTO.label.get == goldRes.amount.toString)
     effectDTO = EffectDTO(ResourceEffect(gpRes, None))
-    assert(effectDTO.resource.get == resourceWithAmountToString(gpRes))
+    assert(effectDTO.label.get == gpRes.amount.toString)
     effectDTO = EffectDTO(ResourceEffect(sunRes, None))
-    assert(effectDTO.resource.get == resourceWithAmountToString(sunRes))
+    assert(effectDTO.label.get == sunRes.amount.toString)
     effectDTO = EffectDTO(ResourceEffect(moonRes, None))
-    assert(effectDTO.resource.get == resourceWithAmountToString(moonRes))
+    assert(effectDTO.label.get == moonRes.amount.toString)
 }
