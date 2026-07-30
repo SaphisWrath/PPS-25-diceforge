@@ -34,8 +34,9 @@ class OptionEffect(val options: List[Resource]) extends ResourceEffect(Gold(0)):
 
   override def getResource: Resource = _resource
 
-class CopyEffect extends Effect:
+class CopyEffect extends CarriesResource:
   override def resolve(): Unit = {}
+  override def getResource: Resource = Gold(0)
 
 class MultiplyEffect(multiplier: Int) extends ResourceEffect(Gold(0)):
   private var _resource: Resource = super.getResource
