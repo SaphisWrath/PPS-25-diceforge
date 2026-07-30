@@ -4,11 +4,10 @@ import controller.ViewPublishers
 import controller.ViewPublishers.Context.{ActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import javafx.event.{ActionEvent, EventHandler}
-import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.Button
-import scalafx.scene.input.MouseEvent
-import scalafx.scene.layout.{Border, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii}
-import scalafx.scene.paint.Color
+import scalafx.scene.layout.CornerRadii
+import view.theme.JfxTheme
+import view.utils.ViewUtils
 
 object ButtonFactory:
   def makeMenuButton(
@@ -18,25 +17,35 @@ object ButtonFactory:
     new Button(text) {
       minWidth = 100
       minHeight = 50
-      border = new Border(new BorderStroke(
-        Color.Black,
-        BorderStrokeStyle.Solid,
-        CornerRadii.Empty,
-        BorderWidths.Default)
-      )
       onAction = event => onClick(event)
+      textFill = JfxTheme.onPrimaryContainer
+      background = ViewUtils.makeBackgroundFill(JfxTheme.primaryContainer, CornerRadii(10))
+      border = ViewUtils.makeBorder(JfxTheme.onPrimaryContainer, CornerRadii(10))
     }
 
   def makeBoardButton(buttonText: String, onClick: () => Unit, isDisabled: () => Boolean = () => false): Button =
-    class ButtonSubscriber extends Button with ViewSubscriber {
+    val cornerRadii = CornerRadii(5)
+    class ButtonSubscriber extends Button with ViewSubscriber:
+      private def calculateColor(): Unit =
+        textFill = if disabled.value then JfxTheme.onSecondaryContainer else JfxTheme.onTertiaryContainer
+        background = ViewUtils.makeBackgroundFill(
+          if disabled.value then JfxTheme.secondaryContainer else JfxTheme.tertiaryContainer,
+          cornerRadii
+        )
+        border = ViewUtils.makeBorder(
+          if disabled.value then JfxTheme.onSecondaryContainer else JfxTheme.onTertiaryContainer,
+          cornerRadii
+        )
+
       text = buttonText
       onAction = event => onClick()
       disable = isDisabled()
+      calculateColor()
+      disable.onChange((_, _, newValue) => calculateColor())
 
       override def update(context: ViewPublishers.Context): Unit = context match
         case MissionBoughtContext | TurnChangeContext | ResourceContext | ActionContext => this.disable = isDisabled()
         case _ =>
-    }
 
     val button = ButtonSubscriber()
     button.setPublisher(ViewPublisher)

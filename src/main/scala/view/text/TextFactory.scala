@@ -2,21 +2,24 @@ package view.text
 
 import scalafx.geometry.Insets
 import scalafx.scene.paint.Color.{Black, Cyan, DarkRed, Peru, Red, White}
-import scalafx.scene.paint.{LinearGradient, Paint, Stops}
+import scalafx.scene.paint.{Color, LinearGradient, Paint, Stops}
 import scalafx.scene.text.Text
 import view.LanguageStrings.TitleScreenStrings as TSStrings
+import view.theme.JfxTheme
 
 object TextFactory:
-  def makeMenuTitle: Text =
+  def makeMenuTitle: Text = {
     new Text {
       text = TSStrings.title
-      style = "-fx-font: normal bold 50pt sans-serif"
+      style = "-fx-font: normal bold 75pt sans-serif"
       margin = Insets(10)
       fill = new LinearGradient(
         endX = 0,
-        stops = Stops(Red, DarkRed))
+        stops = Stops(JfxTheme.primary, JfxTheme.tertiary))
+      stroke = JfxTheme.tertiary
     }
-  
+  }
+
   def makeMissionName(name: String): Text =
     new Text {
       text = name
