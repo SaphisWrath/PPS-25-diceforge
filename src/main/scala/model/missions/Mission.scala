@@ -28,7 +28,7 @@ trait InstantRewards extends Mission:
   abstract override def get(receiver: PlayerBoard): Unit =
     if canGet(receiver) then
       reward.foreach {
-        case res@ResourceEffect(_, _) =>
+        case res@ResourceEffect(_, _, _) =>
           res.setReceiver(receiver)
           res.resolve()
       }

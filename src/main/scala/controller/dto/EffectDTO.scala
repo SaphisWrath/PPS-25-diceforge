@@ -17,7 +17,7 @@ object EffectDTO:
 
   def apply(effect: Effect): EffectDTO =
     effect match
-      case ResourceEffect(resource, _) => EffectDTO(
+      case ResourceEffect(resource, _, _) => EffectDTO(
         "+",
         Option(resourceWithAmountToString(resource))
       )
