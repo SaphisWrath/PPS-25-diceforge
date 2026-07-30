@@ -24,13 +24,18 @@ object Players:
 
     def board: PlayerBoard
 
-    def missions: Set[Mission]
+    def missions: Seq[Mission]
+
+    def addMission(mission: Mission): Unit
 
   object Player:
     private case class PlayerImpl(name: String, color: Color) extends Player:
+      private var _missions: Seq[Mission] = Seq.empty
       override val board: PlayerBoard = PlayerBoard.emptyBoard(this)
 
-      override def missions: Set[Mission] = Set.empty
+      override def missions: Seq[Mission] = _missions
+
+      override def addMission(mission: Mission): Unit = _missions = _missions.appended(mission)
 
     def apply(name: String, color: Color): Player = PlayerImpl(name, color)
 
