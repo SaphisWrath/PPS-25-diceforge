@@ -1,10 +1,13 @@
 package view.scenes
 
+import controller.ViewPublishers.ViewPublisher
 import controller.ViewState.MatchEnd
 import controller.{ControllerStage, GameController, Navigator, PlayerChoice}
 import controller.dto.{EffectDTO, PlayerDTO}
 import model.Players
 import model.Players.Player
+import model.dice.MockDieFactory.*
+import model.effects.Effect
 import model.utils.TemporaryDie
 import scalafx.Includes.jfxNode2sfx
 import scalafx.beans.property.ObjectProperty
@@ -19,7 +22,8 @@ import view.ViewComponents.ViewScene
 import view.panes.ChoiceWindow
 import view.panes.MissionPanes.MissionBoardPane
 
-import java.util.concurrent.CountDownLatch
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, blocking}
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
@@ -72,28 +76,31 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         controllerStage.changeScene(MatchEnd)
       else
         activePlayer() = controller.activePlayer
-        //  throwDice(controller.players.map(p => (p.toPlayer, p.toPlayer.dice)))
+        throwDice(controller.players.map(p => (p.toPlayer, controller.playerDice(p))))
   )
 
   private def throwDice(dice: Seq[(Player, Seq[TemporaryDie])]): Unit =
     val diceThrowManager = controller.diceThrowManager
-    val solvedCopyEffects = manageChoices(diceThrowManager.copyEffectsFromRoll(dice))
-    val solvedOptionEffects = manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects))
-    diceThrowManager.endRoll(solvedOptionEffects)
-
-  private def manageChoices[A](choices: Seq[PlayerChoice[A]]): Seq[(Players.Player, A)] =
-    val choiceRecord: Seq[(Players.Player, A)] = Seq.empty
-    choices.foreach(c =>
-      val latch = CountDownLatch(1)
-      val popup = ChoiceWindow(c, latch)
-      //  popup.stringSupplier = _ => "TODO"
-      val previousCenter = this.pane.center.get()
-      this.pane.center = popup.pane
-      latch.await()
-      this.pane.center = previousCenter
-      choiceRecord.concat(Seq(popup.value))
+    manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
+      manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
+        diceThrowManager.endRoll(solvedOptionEffects)
+        this.pane.left = null
+        ViewPublisher.notifyResourceChange()
+      )
     )
-    choiceRecord
+
+  private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
+    def fun(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
+      val popup = ChoiceWindow(playerChoices, results, fun, orElse)
+      popup.stringSupplier_= {
+        case effect: Effect => EffectDTO(effect).toString
+        case _ => "idk"
+      }
+      this.pane.left = popup.pane
+
+    if choices.isEmpty
+      then orElse(Seq.empty)
+    else fun(Seq.empty, choices)
   
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 

@@ -27,9 +27,19 @@ object DiceThrowManager:
       )
 
     override def optionEffectsFromRoll(solvedCopyEffects: Seq[(Player, CarriesResource)]): Seq[PlayerChoice[ResourceEffect]] =
-      diceThrowHelper.sortEffects(solvedCopyEffects).map((p, e) => PlayerChoice(p, e.options.map(ResourceEffect(_))))
+      diceThrowHelper
+        .sortEffects(solvedCopyEffects)
+        .map((p, e) =>
+          PlayerChoice(p, e.options
+            .map(option =>
+              val resourceEffect = ResourceEffect(option)
+              resourceEffect.setReceiver(gameMatch.playerBoardOf(p))
+              resourceEffect
+            )
+          )
+        )
 
     override def endRoll(solvedOptionEffects: Seq[(Player, CarriesResource)]): Unit =
       diceThrowHelper.resolveAll(solvedOptionEffects)
-      
+
   def apply(gameMatch: GameMatch): DiceThrowManager = DiceThrowManagerImpl(gameMatch)

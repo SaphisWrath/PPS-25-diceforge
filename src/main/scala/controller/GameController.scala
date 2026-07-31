@@ -6,7 +6,8 @@ import controller.converters.ResourceConverters
 import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
-import model.utils.DiceThrow
+import model.dice.MockDieFactory.{mockGoldDie, mockOptionDie}
+import model.utils.{DiceThrow, TemporaryDie}
 
 trait GameController:
   /**
@@ -66,6 +67,8 @@ trait GameController:
    */
   def diceThrowManager: DiceThrowManager
 
+  def playerDice(player: PlayerDTO): Seq[TemporaryDie]
+
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
     override def missions: Map[Int, Seq[MissionDTO]] =
@@ -101,6 +104,15 @@ object GameController:
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
     override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
+
+    override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
+      val diceMap = gameMatch.players.map(p =>
+        (PlayerDTO(p), Seq(mockOptionDie(gameMatch.playerBoardOf(p))))
+      ).toMap
+
+      diceMap(player)
+    }
+
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
