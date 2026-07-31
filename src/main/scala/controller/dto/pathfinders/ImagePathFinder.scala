@@ -1,6 +1,6 @@
 package controller.dto.pathfinders
 
-import model.resource.{GloryPoint, Gold, MoonCrystal, Resource, SunCrystal}
+import model.resource.*
 import scalafx.scene.layout.BackgroundImage
 
 import java.io.File

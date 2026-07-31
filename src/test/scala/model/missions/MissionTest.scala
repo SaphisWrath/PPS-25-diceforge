@@ -2,7 +2,7 @@ package model.missions
 
 import mock.MockPlayer
 import model.Players.Color.Orange
-import model.Players.{Color, Player}
+import model.Players.Player
 import model.effects.{ResourceEffect, Target}
 import model.resource.{Gold, MoonCrystal, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -27,32 +27,32 @@ class MissionTestSpec extends AnyFlatSpec:
   val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(3), Target.Self), ResourceEffect(MoonCrystal(3), Target.Self)).toList
   val reward: List[ResourceEffect] = List(ResourceEffect(Gold(3), Target.Self))
 
-  "Any mission" should "take its cost from player resources when activated" in:
+  "Any mission" should "take its cost from player resources when activated" in :
     player.board = PlayerBoard(0, costAmount, costAmount, 0)
     val mission = BaseMission(reward, cost)
     mission.get(selfTargetProducer)
     assert(player.board.sunCrystals.amount == 0)
     assert(player.board.moonCrystals.amount == 0)
 
-  "InstantMission" should "grant its reward immediately upon acquisition" in:
+  "InstantMission" should "grant its reward immediately upon acquisition" in :
     player.board = PlayerBoard(0, costAmount, costAmount, 0)
     InstantMission(reward, cost).get(selfTargetProducer)
     assert(player.board.gold.amount == rewardAmount)
 
-  "InstantMission" should "both grant its reward and subtract its cost upon acquisition" in:
+  "InstantMission" should "both grant its reward and subtract its cost upon acquisition" in :
     player.board = PlayerBoard(0, costAmount, costAmount, 0)
     InstantMission(reward, cost).get(selfTargetProducer)
     assert(player.board.sunCrystals.amount == 0)
     assert(player.board.moonCrystals.amount == 0)
     assert(player.board.gold.amount == rewardAmount)
 
-  "Support Mission" should "be obtained by the player" in:
+  "Support Mission" should "be obtained by the player" in :
     player.resetMissions()
     player.board = PlayerBoard(0, costAmount, costAmount, 0)
     SupportMission(reward, cost, cost).get(selfTargetProducer)
     assert(player.missions.nonEmpty)
 
-  "Obtained Mission" should "let the player collect them" in:
+  "Obtained Mission" should "let the player collect them" in :
     player.resetMissions()
     SupportMission(reward, cost, List.empty).get(selfTargetProducer)
     player.board = PlayerBoard(0, costAmount, costAmount, 0)
@@ -61,7 +61,7 @@ class MissionTestSpec extends AnyFlatSpec:
     assert(player.board.moonCrystals.amount == 0)
     assert(player.board.gold.amount == rewardAmount)
 
-  "Any Mission" should "not affect playerboard if player does not have necessary resources" in:
+  "Any Mission" should "not affect playerboard if player does not have necessary resources" in :
     player.board = PlayerBoard(0, costAmount, 0, 0)
     InstantMission(reward, cost).get(selfTargetProducer)
     assert(player.board.sunCrystals.amount == costAmount)

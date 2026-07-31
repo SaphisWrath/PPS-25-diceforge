@@ -3,6 +3,7 @@ package controller
 import model.Players.Color.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
 import scala.language.postfixOps
 
 class ControllerMatchInitTest extends AnyFlatSpec with Matchers:
@@ -26,7 +27,7 @@ class ControllerMatchInitTest extends AnyFlatSpec with Matchers:
     controller.updateMatchInfo("Luigi", Orange)
     controller.isLastPlayerValid should be(false)
 
-  "The controller" should "know when there are enough players to start the game" in:
+  "The controller" should "know when there are enough players to start the game" in :
     controller.reset()
     controller.setPlayerAmount(3)
     controller.updateMatchInfo("Mario", Orange)

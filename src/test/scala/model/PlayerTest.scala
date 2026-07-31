@@ -11,8 +11,8 @@ class PlayerTest extends AnyFlatSpec with should.Matchers:
 
   def player: Player = Player(name, color)
 
-  "A Player" should "have a name" in:
-    player.name should be (name)
+  "A Player" should "have a name" in :
+    player.name should be(name)
 
-  it should "have a color" in:
-    player.color should be (color)
+  it should "have a color" in :
+    player.color should be(color)

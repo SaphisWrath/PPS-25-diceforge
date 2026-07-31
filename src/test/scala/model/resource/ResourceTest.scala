@@ -1,7 +1,5 @@
 package model.resource
 
-import model.Players.Color.Orange
-import model.Players.Player
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -16,13 +14,13 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource = anyResource - sameResourceDecrease
     anyResource.amount should be(0)
 
-  "Performing operations between resources of different types" should "yield the unchanged first resource" in:
+  "Performing operations between resources of different types" should "yield the unchanged first resource" in :
     val anyResource: Resource = Gold(3)
     val differentResourceDecrease = SunCrystal(4)
 
     anyResource + differentResourceDecrease should be(anyResource)
 
-  "A resource's current amount" should "not be bigger than the max capacity" in:
+  "A resource's current amount" should "not be bigger than the max capacity" in :
     var anyResource = ResourceWithCap(SunCrystal(0), 6)
     val sameResourceIncrease = SunCrystal(4)
 
@@ -32,7 +30,7 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource = anyResource + sameResourceIncrease
     anyResource.amount should be(6)
 
-  "A resource's max capacity" can "be updated" in:
+  "A resource's max capacity" can "be updated" in :
     var anyResource = ResourceWithCap(MoonCrystal(4), 6)
     val sameResourceIncrease = MoonCrystal(4)
 
@@ -43,7 +41,7 @@ class ResourceTest extends AnyFlatSpec with Matchers:
     anyResource = anyResource + sameResourceIncrease
     anyResource.amount should be(9)
 
-  "When updated, a resource's max capacity" should "still be bigger than 0, otherwise the update is ignored" in:
+  "When updated, a resource's max capacity" should "still be bigger than 0, otherwise the update is ignored" in :
     var anyResource = ResourceWithCap(SunCrystal(4), 6)
 
     anyResource = anyResource + SunCrystal(4)

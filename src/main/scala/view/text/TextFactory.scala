@@ -16,18 +16,18 @@ object TextFactory:
         endX = 0,
         stops = Stops(Red, DarkRed))
     }
-  
+
   def makeMissionName(name: String): Text =
     new Text {
       text = name
       style = "-fx-font: bold"
     }
-    
-  def makeMissionLabel(label: String): Text = 
+
+  def makeMissionLabel(label: String): Text =
     new Text {
       text = label
     }
-    
+
   def makeEffectText(label: String): Text =
     new Text {
       text = label

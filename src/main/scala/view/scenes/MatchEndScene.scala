@@ -6,11 +6,11 @@ import model.Players.Player
 import model.resource.GloryPoint
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
-import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
+import scalafx.scene.{Node, Scene}
 import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
 import view.ViewComponents.ViewScene
 
@@ -21,7 +21,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
   }
   private val endGameButton = new Button {
     text = ESStrings.exitButtonText
-    onAction = _=> controllerStage.changeScene(MainMenu)
+    onAction = _ => controllerStage.changeScene(MainMenu)
   }
 
   private def makeRowWith(nodes: Iterable[Node]): HBox =

@@ -7,14 +7,14 @@ import javafx.event.{ActionEvent, EventHandler}
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.Button
 import scalafx.scene.input.MouseEvent
-import scalafx.scene.layout.{Border, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii}
+import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 
 object ButtonFactory:
   def makeMenuButton(
-                               text: String,
-                               onClick: ActionEvent => Unit
-                             ): Button =
+                      text: String,
+                      onClick: ActionEvent => Unit
+                    ): Button =
     new Button(text) {
       minWidth = 100
       minHeight = 50

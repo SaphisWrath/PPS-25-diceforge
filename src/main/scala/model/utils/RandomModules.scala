@@ -5,7 +5,7 @@ import scala.util.Random
 
 trait RandomModule[T]:
   def randomIndex(upperBound: T): T
-  
+
 object RandomModules:
   given RandomModule[Int] with
     override def randomIndex(upperBound: Int): Int =

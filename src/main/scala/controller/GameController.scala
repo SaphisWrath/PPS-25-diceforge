@@ -1,6 +1,6 @@
 package controller
 
-import controller.ViewPublishers.Context.{ActionContext, ExtraActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublishers.Context.*
 import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
@@ -98,7 +98,7 @@ object GameController:
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
-      
+
     private def extractTarget(target: Target): Seq[Player] = target match
       case Self => Seq(gameMatch.activePlayer)
       case All => gameMatch.players

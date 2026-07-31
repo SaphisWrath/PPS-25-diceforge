@@ -2,11 +2,15 @@ package model.resource
 
 trait Resource:
   def amount: Int
+
   def copy(amount: Int): Resource
 
 case class Gold(amount: Int) extends Resource
+
 case class SunCrystal(amount: Int) extends Resource
+
 case class MoonCrystal(amount: Int) extends Resource
+
 case class GloryPoint(amount: Int) extends Resource
 
 object Resource:
@@ -27,13 +31,17 @@ object Resource:
 
 trait ResourceWithCap extends Resource:
   def maxCapacity: Int
+
   def maxCapacity_=(newCapacity: Int): Unit
+
   def resource: Resource
 
 object ResourceWithCap:
   private class ResourceWithCapImpl(var _resource: Resource, initCapacity: Int) extends ResourceWithCap:
     private var _maxCapacity = initCapacity
+
     override def maxCapacity: Int = _maxCapacity
+
     override def maxCapacity_=(newCapacity: Int): Unit =
       if newCapacity > 0
       then
@@ -41,7 +49,9 @@ object ResourceWithCap:
         _maxCapacity = newCapacity
 
     override def amount: Int = math.min(_resource.amount, _maxCapacity)
+
     override def copy(amount: Int): Resource = ResourceWithCapImpl(_resource, _maxCapacity)
+
     override def resource: Resource = _resource.copy(this.amount)
 
   def apply(resource: Resource, initCapacity: Int): ResourceWithCap =

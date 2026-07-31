@@ -1,10 +1,10 @@
 package controller.dto
 
 import model.missions.Mission
-  
+
 case class MissionDTO(
-                       cost: List[EffectDTO], 
-                       rewards: List[EffectDTO], 
+                       cost: List[EffectDTO],
+                       rewards: List[EffectDTO],
                        id: String,
                        clickable: () => Boolean,
                        onClick: () => Unit)
@@ -14,7 +14,9 @@ object MissionDTO:
     MissionDTO.apply(
       mission,
       () => false,
-      () => {println(s"Clicked mission ${mission.id}")}
+      () => {
+        println(s"Clicked mission ${mission.id}")
+      }
     )
 
   def apply(mission: Mission, clickable: () => Boolean, onClick: () => Unit): MissionDTO = mission match

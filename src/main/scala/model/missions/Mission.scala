@@ -2,15 +2,17 @@ package model.missions
 
 import model.Players.Player
 import model.effects.{Effect, ResourceEffect, Target}
-import model.resource.{PlayerBoard, Resource}
-
-import javax.sound.midi.Receiver
+import model.resource.PlayerBoard
 
 trait Mission:
   def reward: List[Effect]
+
   def cost: List[ResourceEffect]
+
   def id: String
+
   def get(receiverProducer: Target => Seq[Player]): Unit
+
   def canGet(receiverProducer: Target => Seq[Player]): Boolean
 
 object Mission:
@@ -24,11 +26,11 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
         r.resolve(receiverProducer(r.target))
       })
       obtainReward(receiverProducer)
-      
+
   protected def obtainReward(receiverProducer: Target => Seq[Player]): Unit = {}
-      
+
   override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
-    cost.forall{ e =>
+    cost.forall { e =>
       val players = receiverProducer(e.target)
       players.nonEmpty && players.forall(_.board.canSpend(e.resource))
     }
@@ -40,20 +42,20 @@ trait InstantRewards extends BaseMission:
       case res@ResourceEffect(_, _) =>
         res.resolve(receiverProducer(res.target))
     }
-      
+
 trait SupportRewards(supportCost: List[ResourceEffect]) extends BaseMission:
-  override def obtainReward(receiverProducer:  Target => scala.Seq[Player]): Unit = 
+  override def obtainReward(receiverProducer: Target => scala.Seq[Player]): Unit =
     super.obtainReward(receiverProducer)
     val player = receiverProducer(Target.Self).head
     player.addMission(ObtainedMission(reward, supportCost, player, id))
-    
+
 trait Obtained(owner: Player) extends BaseMission:
   override def get(receiverProducer: Target => scala.Seq[Player] = _ => Seq(owner)): Unit = super.get(receiverProducer)
-  
-class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") 
+
+class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder")
   extends BaseMission(reward, cost, id) with InstantRewards
 
-class SupportMission(reward: List[Effect], supportCost: List[ResourceEffect] , missionCost: List[ResourceEffect], id: String = "placeholder")
+class SupportMission(reward: List[Effect], supportCost: List[ResourceEffect], missionCost: List[ResourceEffect], id: String = "placeholder")
   extends BaseMission(reward, missionCost, id) with SupportRewards(supportCost)
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")

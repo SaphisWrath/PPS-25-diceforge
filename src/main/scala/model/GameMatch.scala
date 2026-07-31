@@ -8,7 +8,7 @@ import scala.util.Random
 
 trait GameMatch:
   def missions: Map[Int, Seq[Mission]]
-  
+
   def players: Seq[Player]
 
   def playerBoards: Seq[PlayerBoard]

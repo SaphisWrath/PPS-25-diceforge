@@ -8,10 +8,14 @@ object ViewComponents:
 
   trait ViewScene[T]:
     def scene: T
+
     def apply(): T = this.scene
 
   trait ViewSceneFactory[T](controllerManager: ControllerManager):
     def createMainMenuScene(): ViewScene[T]
+
     def createMatchInitScene(): ViewScene[T]
+
     def createBoardScene(): ViewScene[T]
+
     def createMatchEndScene(): ViewScene[T]

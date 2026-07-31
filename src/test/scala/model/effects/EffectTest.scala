@@ -3,11 +3,11 @@ package model.effects
 import model.Players.Color.Orange
 import model.Players.Player
 import model.effects.Target.Self
-import model.resource.{Gold, PlayerBoard}
+import model.resource.Gold
 import org.scalatest.flatspec.AnyFlatSpec
 
 class EffectTest extends AnyFlatSpec:
-  "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in:
+  "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in :
     val player = Player("Mario", Orange)
     val amount = 20
     val resourceEffect = ResourceEffect(Gold(amount), Self)

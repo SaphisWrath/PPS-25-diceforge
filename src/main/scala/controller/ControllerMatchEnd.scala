@@ -6,6 +6,7 @@ import model.resource.GloryPoint
 
 trait ControllerMatchEnd:
   def gameMatch_=(controller: GameMatch): Unit
+
   def getSortedPlayers: Seq[(Player, GloryPoint)]
 
 object ControllerMatchEnd:
@@ -13,7 +14,7 @@ object ControllerMatchEnd:
     override def getSortedPlayers: Seq[(Player, GloryPoint)] =
       gameMatch.players
         .map(player => (player, player.board.gloryPoints.amount))
-        .sortBy(pair => - pair._2)
+        .sortBy(pair => -pair._2)
         .map(pair => (pair._1, GloryPoint(pair._2)))
-        
+
   def apply(gameMatch: GameMatch): ControllerMatchEnd = ControllerMatchEndImpl(gameMatch)

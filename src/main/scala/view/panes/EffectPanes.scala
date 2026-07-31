@@ -3,7 +3,7 @@ package view.panes
 import controller.dto.EffectDTO
 import scalafx.geometry.Pos.{Center, CenterLeft}
 import scalafx.scene.Node
-import scalafx.scene.layout.{Background, Border, BorderStroke, BorderStrokeStyle, BorderWidths, CornerRadii, GridPane, StackPane, VBox}
+import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.buttons.ButtonFactory
 import view.scenes.ViewComponent
@@ -24,14 +24,14 @@ object EffectPanes:
       children = Sprite(effectDTO.sprite).getSpriteAsImageView
       effectDTO.label match
         case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
-        case _ => 
+        case _ =>
     }
-  
+
   class EffectWrapperPane(title: String, effectDTOs: Seq[EffectDTO]) extends ViewComponent:
     override def component: Node = new VBox {
       val gridPane = new GridPane()
       gridPane.maxWidth = 5
-      effectDTOs.zipWithIndex.foreach((e, i)=>
+      effectDTOs.zipWithIndex.foreach((e, i) =>
         gridPane.add(
           EffectPane(e).component,
           0,
