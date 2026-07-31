@@ -1,8 +1,12 @@
 package view.scenes
 
 import controller.ViewState.MatchEnd
-import controller.{ControllerStage, GameController, Navigator}
-import controller.dto.PlayerDTO
+import controller.{ControllerStage, GameController, Navigator, PlayerChoice}
+import controller.dto.{EffectDTO, PlayerDTO}
+import model.Players
+import model.Players.Player
+import model.utils.TemporaryDie
+import scalafx.Includes.jfxNode2sfx
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
@@ -12,7 +16,10 @@ import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
+import view.panes.ChoiceWindow
 import view.panes.MissionPanes.MissionBoardPane
+
+import java.util.concurrent.CountDownLatch
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
@@ -65,8 +72,29 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         controllerStage.changeScene(MatchEnd)
       else
         activePlayer() = controller.activePlayer
+        //  throwDice(controller.players.map(p => (p.toPlayer, p.toPlayer.dice)))
   )
 
+  private def throwDice(dice: Seq[(Player, Seq[TemporaryDie])]): Unit =
+    val diceThrowManager = controller.diceThrowManager
+    val solvedCopyEffects = manageChoices(diceThrowManager.copyEffectsFromRoll(dice))
+    val solvedOptionEffects = manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects))
+    diceThrowManager.endRoll(solvedOptionEffects)
+
+  private def manageChoices[A](choices: Seq[PlayerChoice[A]]): Seq[(Players.Player, A)] =
+    val choiceRecord: Seq[(Players.Player, A)] = Seq.empty
+    choices.foreach(c =>
+      val latch = CountDownLatch(1)
+      val popup = ChoiceWindow(c, latch)
+      //  popup.stringSupplier = _ => "TODO"
+      val previousCenter = this.pane.center.get()
+      this.pane.center = popup.pane
+      latch.await()
+      this.pane.center = previousCenter
+      choiceRecord.concat(Seq(popup.value))
+    )
+    choiceRecord
+  
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
   override def scene: Node = pane

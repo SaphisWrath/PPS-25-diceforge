@@ -41,3 +41,8 @@ object ButtonFactory:
     val button = ButtonSubscriber()
     button.setPublisher(ViewPublisher)
     button
+    
+  def makeChoiceButton(shortDesc: String, onClick: () => Unit): Button =
+    new Button(shortDesc) {
+      onAction = event => onClick()
+    }

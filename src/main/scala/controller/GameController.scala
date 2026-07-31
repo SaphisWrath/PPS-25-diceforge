@@ -2,9 +2,11 @@ package controller
 
 import controller.ViewPublishers.Context.{MissionBoughtContext, TurnChangeContext}
 import controller.ViewPublishers.ViewPublisher
-import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.converters.ResourceConverters
+import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
+import model.utils.DiceThrow
 
 trait GameController:
   /**
@@ -59,9 +61,13 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
+  /**
+   * @return the DiceThrowManager
+   */
+  def diceThrowManager: DiceThrowManager
+
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
-
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
@@ -72,7 +78,7 @@ object GameController:
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
-
+      
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
 
     override def activePlayer: PlayerDTO = PlayerDTO(gameMatch.activePlayer)
@@ -93,6 +99,8 @@ object GameController:
     override def isGameEnded: Boolean = gameMatch.isGameEnded
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
+
+    override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
