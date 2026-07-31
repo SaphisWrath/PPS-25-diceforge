@@ -8,15 +8,21 @@ import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
 import scalafx.scene.{Node, Scene}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
-import view.panes.MissionPanes.MissionBoardPane
+import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
+  private enum CentralPaneStates:
+    case Missions
+    case ObtainedMissions
+    case Shop //TODO
+
+  import CentralPaneStates.*
   this.setPublisher(ViewPublisher)
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
     controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
@@ -29,6 +35,15 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     )
   }
 
+  private val missionPane = MissionBoardPane(controller.missions).pane
+  private val centralPane: ObjectProperty[CentralPaneStates] = ObjectProperty(Missions)
+  centralPane.onChange((_, _, newVal) =>
+    pane.center = newVal match
+      case Missions => missionPane
+      case ObtainedMissions => obtainedMissionsPane
+      case Shop => ???
+  )
+
   private var turnPhaseSection: Node = Label(BSStrings.actionNotTakenText)
 
   private val actionTaken: BooleanProperty = BooleanProperty(false)
@@ -37,9 +52,10 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     pane.bottom = activePlayerPane()
   )
 
+
   private val pane = new BorderPane {
     top = topMainPane()
-    center = MissionBoardPane(controller.missions).pane
+    center = missionPane
     bottom = activePlayerPane()
   }
 
@@ -72,6 +88,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     turnPhaseSection,
     buyExtraActionButton,
     nextTurnButton,
+    obtainedMissionsButton,
   )
 
   private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
@@ -84,6 +101,14 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.buyExtraAction(),
     () => controller.hasExtraActionBeenBought
   )
+  private def obtainedMissionsButton: Node = ButtonFactory.makeBoardButton(
+    "SEE MISSIONS",
+    () => centralPane() = ObtainedMissions,
+  )
+
+  private def obtainedMissionsPane: Node = new FlowPane {
+    children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+  }
 
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
