@@ -11,6 +11,7 @@ trait MatchBuilder:
    * Reset the builder to his original state
    */
   def reset(): Unit
+
   /**
    * A method that adds a player to the match
    *
@@ -34,7 +35,7 @@ class MatchBuilderImpl extends MatchBuilder:
   var currentPlayers: Seq[Player] = Seq.empty
 
   override def addPlayer(player: Player): Unit =
-    currentPlayers = currentPlayers.concat(Seq(player))
+    currentPlayers = currentPlayers.appended(player)
 
   override def build(): GameMatch = GameMatch(currentPlayers)
 

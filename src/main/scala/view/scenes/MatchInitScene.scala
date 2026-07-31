@@ -6,9 +6,9 @@ import model.Players.Color
 import model.Players.Color.*
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Pos.Center
-import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.{Button, ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, VBox}
+import scalafx.scene.{Node, Scene}
 import view.LanguageStrings.{separator, GameInitScreenStrings as GISStrings}
 import view.ViewComponents.ViewScene
 
@@ -18,7 +18,7 @@ class MatchInitScene(controller: ControllerMatchInit, controllerStage: Controlle
   private val playerColorChoice = new ChoiceBox[Color](ObservableBuffer[Color](Orange, Green, Blue, Black))
   private val feedbackLabel = new Label()
   private val addPlayerButton = new Button(GISStrings.addPlayerButtonText)
-  
+
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {
       spacing = 20

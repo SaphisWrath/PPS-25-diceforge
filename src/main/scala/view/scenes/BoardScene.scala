@@ -3,17 +3,17 @@ package view.scenes
 import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import controller.ViewState.MatchEnd
-import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
 import controller.dto.PlayerDTO
+import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.scene.{Node, Scene}
-import view.builders.PlayerGUIComponentFactory
-import view.buttons.ButtonFactory
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
+import view.builders.PlayerGUIComponentFactory
+import view.buttons.ButtonFactory
 import view.panes.MissionPanes.MissionBoardPane
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:

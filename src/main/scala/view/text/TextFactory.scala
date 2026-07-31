@@ -8,7 +8,7 @@ import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.theme.JfxTheme
 
 object TextFactory:
-  def makeMenuTitle: Text = {
+  def makeMenuTitle: Text =
     new Text {
       text = TSStrings.title
       style = "-fx-font: normal bold 75pt sans-serif"
@@ -18,19 +18,18 @@ object TextFactory:
         stops = Stops(JfxTheme.primary, JfxTheme.tertiary))
       stroke = JfxTheme.tertiary
     }
-  }
 
   def makeMissionName(name: String): Text =
     new Text {
       text = name
       style = "-fx-font: normal bold 15pt sans-serif"
     }
-    
-  def makeMissionLabel(label: String): Text = 
+
+  def makeMissionLabel(label: String): Text =
     new Text {
       text = label
     }
-    
+
   def makeEffectText(label: String): Text =
     new Text {
       text = label

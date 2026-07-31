@@ -1,10 +1,10 @@
 package view
 
-import controller.{ControllerMatchEnd, ControllerStage}
-import controller.MockGameMatches.mockGameMatch
-import org.mockito.Mockito.mock
 import _root_.mock.MockControllerStage
+import controller.MockGameMatches.mockGameMatch
 import controller.ViewState.MatchEnd
+import controller.{ControllerMatchEnd, ControllerStage}
+import org.mockito.Mockito.mock
 import scalafx.application.JFXApp3
 import view.TestStageSetup
 import view.scenes.MatchEndScene

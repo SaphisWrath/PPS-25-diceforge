@@ -9,18 +9,18 @@ class ValuePropertyTest extends AnyFlatSpec with should.Matchers:
 
   private def valueProperty: ValueProperty[Int] = ValueProperty(initialValue)
 
-  "A ValueProperty" should "start with the given value" in:
-    valueProperty.value should be (initialValue)
+  "A ValueProperty" should "start with the given value" in :
+    valueProperty.value should be(initialValue)
 
-  it should "be able to update the value" in:
+  it should "be able to update the value" in :
     val property = valueProperty
     val oldValue = property.value
     val newValue = oldValue + 1
     property.value = newValue
 
-    property.value should be (newValue)
+    property.value should be(newValue)
 
-  it should "call the onChange function after a value change" in:
+  it should "call the onChange function after a value change" in :
     val property = valueProperty
     val oldValue = valueProperty.value
     var oldValueBuffer = 0
@@ -33,7 +33,7 @@ class ValuePropertyTest extends AnyFlatSpec with should.Matchers:
       valueBuffer = property.value
     property.value = newValue
 
-    oldValueBuffer should be (oldValue)
-    newValueBuffer should be (newValue)
-    valueBuffer should be (newValue)
+    oldValueBuffer should be(oldValue)
+    newValueBuffer should be(newValue)
+    valueBuffer should be(newValue)
 

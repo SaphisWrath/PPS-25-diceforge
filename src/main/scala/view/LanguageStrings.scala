@@ -2,6 +2,7 @@ package view
 
 object LanguageStrings:
   val separator = ":"
+
   object TitleScreenStrings:
     val title = "DICE FORGE"
     val startButtonText = "INIZIA"
@@ -22,7 +23,7 @@ object LanguageStrings:
     val buyExtraActionButton = "Buy extra action(2 SunCrystals)"
     val actionTakenText = "Hai eseguito la tua azione"
     val actionNotTakenText = "Esegui la tua azione"
-    
+
   object MissionPaneStrings:
     val cost = "Costo"
     val reward = "Ricompensa"
@@ -31,6 +32,7 @@ object LanguageStrings:
   object EndScreenStrings:
     val playAgainButtonText = "Gioca Ancora!"
     val exitButtonText = "Esci"
+
   object ResourceStrings:
     val gold = "Oro"
     val sunCrystal = "Cristalli Solari"

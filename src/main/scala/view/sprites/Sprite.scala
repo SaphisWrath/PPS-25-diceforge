@@ -1,8 +1,8 @@
 package view.sprites
 
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.{Background, BackgroundImage, BackgroundPosition, BackgroundSize}
 import scalafx.scene.layout.BackgroundRepeat.NoRepeat
+import scalafx.scene.layout.{Background, BackgroundImage, BackgroundPosition, BackgroundSize}
 
 import java.io.{File, FileInputStream}
 

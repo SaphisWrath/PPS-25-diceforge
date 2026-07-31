@@ -10,7 +10,9 @@ enum ViewState:
 
 trait ControllerStage:
   def init(): Unit
+
   def changeScene(newState: ViewState): Unit
+
   def getViewState: ViewState
 
 object ControllerStage:
@@ -26,6 +28,7 @@ object ControllerStage:
         case Board => navigator.navigateToBoard()
         case MatchEnd => navigator.navigateToMatchEnd()
       viewState = newState
+
     override def getViewState: ViewState = viewState
 
   def apply(navigator: Navigator): ControllerStage = ControllerStageImpl(navigator)

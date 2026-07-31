@@ -1,11 +1,13 @@
 package controller
 
-import controller.ViewPublishers.Context.{ActionContext, ExtraActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublishers.Context.*
 import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
-import model.resource.SunCrystal
+import model.effects.Target
+import model.effects.Target.{All, Others, Self}
+import model.resource.{PlayerBoard, SunCrystal}
 import model.utils.ValueProperty
 
 trait GameController:
@@ -88,14 +90,19 @@ object GameController:
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
-        () => !m.canGet(gameMatch.playerBoardOf(gameMatch.activePlayer)) || _hasTurnActionBeenTaken.value,
+        () => !m.canGet(extractTarget) || _hasTurnActionBeenTaken.value,
         () => {
-          m.get(gameMatch.playerBoardOf(activePlayer.name))
+          m.get(extractTarget)
           _hasTurnActionBeenTaken.value = true
           ViewPublisher.notify(ResourceContext)
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
+
+    private def extractTarget(target: Target): Seq[Player] = target match
+      case Self => Seq(gameMatch.activePlayer)
+      case All => gameMatch.players
+      case Others => gameMatch.nonActivePlayers
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
 
@@ -103,7 +110,9 @@ object GameController:
 
     override def nonActivePlayerList: Seq[PlayerDTO] = gameMatch.nonActivePlayers.map(PlayerDTO(_))
 
-    override def playerBoard(playerName: String): PlayerBoardDTO = PlayerBoardDTO(gameMatch.playerBoardOf(playerName))
+    override def playerBoard(playerName: String): PlayerBoardDTO = gameMatch.playerFrom(playerName) match
+      case Some(player) => PlayerBoardDTO(player.board)
+      case _ => throw IllegalArgumentException(s"$playerName does not correspond to any player") //TODO handle it better
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
@@ -124,7 +133,7 @@ object GameController:
     override def hasExtraActionBeenBought: Boolean = _hasExtraActionBeenBought.value
 
     override def buyExtraAction(): Unit =
-      val board = gameMatch.activePlayerBoard
+      val board = gameMatch.activePlayer.board
       if board.sunCrystals.amount >= 2 && !_hasExtraActionBeenBought.value then
         board.sunCrystals = board.sunCrystals - SunCrystal(2)
         _hasExtraActionBeenBought.value = true

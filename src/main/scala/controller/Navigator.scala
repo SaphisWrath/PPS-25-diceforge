@@ -4,8 +4,11 @@ import view.ViewComponents.{MainStage, ViewSceneFactory}
 
 trait Navigator:
   def navigateToMainMenu(): Unit
+
   def navigateToMatchInit(): Unit
+
   def navigateToBoard(): Unit
+
   def navigateToMatchEnd(): Unit
 
 object Navigator:
