@@ -1,5 +1,8 @@
 package model
 
+import model.missions.Obtained
+import model.resource.PlayerBoard
+
 object Players:
   enum Color(string: String):
     case Orange extends Color("Orange")
@@ -12,20 +15,28 @@ object Players:
     /**
      * @return The name of the player
      */
-    def getName: String
+    def name: String
 
     /**
      * @return The assigned color
      */
-    def getColor: Color
+    def color: Color
+
+    def board: PlayerBoard
+
+    def missions: Seq[Obtained]
+
+    def addMission(mission: Obtained): Unit
 
   object Player:
-    private class PlayerImpl(name: String, color: Color) extends Player:
+    private case class PlayerImpl(name: String, color: Color) extends Player:
+      private var _missions: Seq[Obtained] = Seq.empty
+      override val board: PlayerBoard = PlayerBoard.emptyBoard
 
-      override def getName: String = name
+      override def missions: Seq[Obtained] = _missions
 
-      override def getColor: Color = color
+      override def addMission(mission: Obtained): Unit = _missions = _missions.appended(mission)
 
-    def apply(name: String, color: Color): Player = new PlayerImpl(name, color)
+    def apply(name: String, color: Color): Player = PlayerImpl(name, color)
 
-    def unapply(player: Player): (String, Color) = (player.getName, player.getColor)
+    def unapply(player: Player): (String, Color) = (player.name, player.color)

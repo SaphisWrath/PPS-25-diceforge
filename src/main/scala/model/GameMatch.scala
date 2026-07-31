@@ -8,7 +8,7 @@ import scala.util.Random
 
 trait GameMatch:
   def missions: Map[Int, Seq[Mission]]
-  
+
   def players: Seq[Player]
 
   def playerBoards: Seq[PlayerBoard]
@@ -17,11 +17,7 @@ trait GameMatch:
 
   def nonActivePlayers: Seq[Player]
 
-  def playerBoardOf(player: Player): PlayerBoard
-
-  def playerBoardOf(playerName: String): PlayerBoard
-
-  def activePlayerBoard: PlayerBoard
+  def playerFrom(name: String): Option[Player]
 
   def nextTurn(): Unit
 
@@ -35,34 +31,20 @@ trait GameMatch:
 
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
-    private case class PlayerInformation(player: Player, turnOrder: Int, playerBoard: PlayerBoard)
-
-    private val _players: Seq[PlayerInformation] =
-      val shuffleList = Random.shuffle(playerList)
-      shuffleList.map(p => PlayerInformation(p, shuffleList.indexOf(p), PlayerBoard.emptyBoard(p)))
+    val players: Seq[Player] = Random.shuffle(playerList)
     private var turn: Int = 0
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
 
-    def missions: Map[Int, Seq[Mission]] = _missions 
-    
-    def players: Seq[Player] = _players.map(_.player)
+    def missions: Map[Int, Seq[Mission]] = _missions
 
-    def playerBoards: Seq[PlayerBoard] = _players.map(_.playerBoard)
+    def playerBoards: Seq[PlayerBoard] = players.map(_.board)
 
-    override def activePlayer: Player =
-      _players.collect({ case PlayerInformation(player, turnOrder, _) if turnOrder == turn => player }).head
+    override def activePlayer: Player = players(turn)
 
-    override def nonActivePlayers: Seq[Player] =
-      _players.collect({ case PlayerInformation(player, turnOrder, _) if turnOrder != turn => player })
+    override def nonActivePlayers: Seq[Player] = players.filter(_ != activePlayer)
 
-    override def playerBoardOf(player: Player): PlayerBoard = playerBoardOf(player.getName)
-
-    override def playerBoardOf(playerName: String): PlayerBoard =
-      _players.collect({ case PlayerInformation(Player(name, _), _, b) if name == playerName => b }).head
-
-    override def activePlayerBoard: PlayerBoard =
-      _players.collect({case PlayerInformation(_, turnOrder, board) if turnOrder == turn => board}).head
+    override def playerFrom(name: String): Option[Player] = players.find(_.name == name)
 
     override def nextTurn(): Unit =
       turn = turn + 1
@@ -74,7 +56,7 @@ object GameMatch:
 
     override def currentRound: Int = round
 
-    override val maxNumberOfRounds: Int = if _players.length == 3 then 10 else 9
+    override val maxNumberOfRounds: Int = if players.length == 3 then 10 else 9
 
     override def isGameEnded: Boolean = round >= maxNumberOfRounds
 

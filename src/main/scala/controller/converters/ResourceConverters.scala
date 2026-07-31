@@ -14,7 +14,7 @@ object ResourceConverters:
 
   def resourceWithAmountToString(resource: Resource): String = resource match
     case Resource(amount) => resourceToString(resource) + separator + amount.toString
-  
+
   def stringToResourceBuilder(string: String)(amount: Int): Resource = string match
     case Strings.gold => Gold(amount)
     case Strings.sunCrystal => SunCrystal(amount)

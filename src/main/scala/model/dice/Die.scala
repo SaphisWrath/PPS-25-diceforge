@@ -6,12 +6,16 @@ import scala.util.Random
 
 trait Die:
   def maxFaces: Int
+
   def roll(using randomModule: RandomModule[Int]): Face
+
   def addFaces(addedFaces: Face*): Unit
 
 class BaseDie(numFaces: Int) extends Die:
   override def maxFaces: Int = numFaces
+
   var faces: List[Face] = List()
+
   def isFull: Boolean = numFaces == faces.length
 
   private def addFace(face: Face): Unit =

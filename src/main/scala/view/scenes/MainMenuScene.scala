@@ -1,16 +1,16 @@
 package view.scenes
 
-import controller.{ControllerStage, Navigator}
 import controller.ViewState.{MainMenu, MatchInit}
+import controller.{ControllerStage, Navigator}
 import javafx.event.ActionEvent
 import scalafx.geometry.Pos.Center
-import scalafx.scene.{Node, Scene}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
-import view.buttons.ButtonFactory
-import view.text.TextFactory
+import scalafx.scene.{Node, Scene}
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.ViewComponents.ViewScene
+import view.buttons.ButtonFactory
+import view.text.TextFactory
 
 class MainMenuScene(controllerStage: ControllerStage) extends ViewScene[Node] {
   override def scene: Node = new VBox {
@@ -27,7 +27,7 @@ class MainMenuScene(controllerStage: ControllerStage) extends ViewScene[Node] {
     children = Seq(
       TextFactory.makeMenuTitle,
       ButtonFactory.makeMenuButton(TSStrings.startButtonText, _ => controllerStage.changeScene(MatchInit)),
-      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _=> controllerStage.changeScene(MainMenu))
+      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _ => controllerStage.changeScene(MainMenu))
     )
   }
 }

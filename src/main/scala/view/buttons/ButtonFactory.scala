@@ -5,15 +5,17 @@ import controller.ViewPublishers.Context.{ActionContext, MissionBoughtContext, R
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import javafx.event.{ActionEvent, EventHandler}
 import scalafx.scene.control.Button
-import scalafx.scene.layout.CornerRadii
+import scalafx.scene.input.MouseEvent
+import scalafx.scene.layout.*
+import scalafx.scene.paint.Color
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 
 object ButtonFactory:
   def makeMenuButton(
-                               text: String,
-                               onClick: ActionEvent => Unit
-                             ): Button =
+                      text: String,
+                      onClick: ActionEvent => Unit
+                    ): Button =
     new Button(text) {
       minWidth = 100
       minHeight = 50

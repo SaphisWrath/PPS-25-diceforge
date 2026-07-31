@@ -2,21 +2,22 @@ package model.effects
 
 import model.Players.Color.Orange
 import model.Players.Player
-import model.resource.{Gold, PlayerBoard}
+import model.effects.Target.Self
+import model.resource.Gold
 import org.scalatest.flatspec.AnyFlatSpec
 
 class EffectTest extends AnyFlatSpec:
-  "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in:
-    val playerBoard = PlayerBoard.emptyBoard(Player("Mario", Orange))
+  "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in :
+    val player = Player("Mario", Orange)
     val amount = 20
-    val resourceEffect = ResourceEffect(Gold(amount), Option(playerBoard))
-    resourceEffect.resolve()
-    val expectedAdd1 = if playerBoard.gold.maxCapacity > amount then amount else playerBoard.gold.maxCapacity
-    assert(playerBoard.gold.amount == expectedAdd1)
-    val expectedAdd2 = if playerBoard.gold.maxCapacity > amount * 2 then amount * 2 else playerBoard.gold.maxCapacity
-    resourceEffect.resolve()
-    assert(playerBoard.gold.amount == expectedAdd2)
+    val resourceEffect = ResourceEffect(Gold(amount), Self)
+    resourceEffect.resolve(player)
+    val expectedAdd1 = if player.board.gold.maxCapacity > amount then amount else player.board.gold.maxCapacity
+    assert(player.board.gold.amount == expectedAdd1)
+    val expectedAdd2 = if player.board.gold.maxCapacity > amount * 2 then amount * 2 else player.board.gold.maxCapacity
+    resourceEffect.resolve(player)
+    assert(player.board.gold.amount == expectedAdd2)
     resourceEffect.setModule(model.utils.ResourceEffectModules.SubtractResource)
     val expectedSub = expectedAdd2 - resourceEffect.resource.amount
-    resourceEffect.resolve()
-    assert(playerBoard.gold.amount == (if expectedSub >= 0 then expectedSub else 0))
+    resourceEffect.resolve(player)
+    assert(player.board.gold.amount == (if expectedSub >= 0 then expectedSub else 0))
