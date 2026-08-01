@@ -111,6 +111,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         case _ => ???
       }
       this.pane.left = popup.pane
+      if !popup.buttonsAvailable then popup.forceNext()
 
     if choices.isEmpty
       then orElse(Seq.empty)
