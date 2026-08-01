@@ -4,8 +4,10 @@ import controller.dto.MissionDTO
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.Node
+import scalafx.scene.control.Button
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
+import scalafx.scene.text.Text
 import view.LanguageStrings
 import view.buttons.ButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
@@ -13,16 +15,30 @@ import view.scenes.ViewComponent
 import view.text.TextFactory
 
 object MissionPanes:
-  private class MissionPane(missionDTO: MissionDTO) extends VBox:
+  class MissionPane(missionDTO: MissionDTO) extends VBox:
     alignment = Center
     padding = Insets(10)
     children = Seq(
-      TextFactory.makeMissionName(missionDTO.id),
-      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost).component,
-      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards).component,
-      ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
+      name,
+      cost.component,
+      rewards.component,
+      button
     )
 
+    protected def button: Button =
+      ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
+
+    protected def rewards: ViewComponent =
+      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards)
+
+    protected def cost: ViewComponent =
+      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost)
+
+    protected def name: Text = TextFactory.makeMissionName(missionDTO.id)
+  
+  class ObtainedMissionPane(missionDTO: MissionDTO) extends MissionPane(missionDTO):
+    override protected def button: Button = ButtonFactory.makeBoardButton("BUY", missionDTO.onClick, missionDTO.clickable)
+  
   private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false):
     val pane = new GridPane()
     pane.border = new Border(new BorderStroke(
