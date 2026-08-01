@@ -7,8 +7,9 @@ import model.resource.Gold
 import org.scalatest.flatspec.AnyFlatSpec
 
 class EffectTest extends AnyFlatSpec:
-  "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in :
-    val player = Player("Mario", Orange)
+  private val player = Player("Mario", Orange)
+
+  "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in:
     val amount = 20
     val resourceEffect = ResourceEffect(Gold(amount), Self)
     resourceEffect.resolve(player)
@@ -21,3 +22,21 @@ class EffectTest extends AnyFlatSpec:
     val expectedSub = expectedAdd2 - resourceEffect.resource.amount
     resourceEffect.resolve(player)
     assert(player.board.gold.amount == (if expectedSub >= 0 then expectedSub else 0))
+    resourceEffect.resolve(player)
+    assert(player.board.gold.amount == (if expectedSub >= 0 then expectedSub else 0))
+
+  "A MultiplyEffect" should "increase or decrease the player's resources by the multiplied amount" in:
+    val amount = 2
+    val resourceEffect = ResourceEffect(Gold(amount), Self)
+    val multiplyEffect = MultiplyEffect(3)
+
+    multiplyEffect.resource = resourceEffect.resource
+    resourceEffect.resolve(player)
+    multiplyEffect.resolve(player)
+    assert(player.board.gold.amount == 6)
+
+    resourceEffect.setModule(model.utils.ResourceEffectModules.SubtractResource)
+    multiplyEffect.setModule(model.utils.ResourceEffectModules.SubtractResource)
+    resourceEffect.resolve(player)
+    multiplyEffect.resolve(player)
+    assert(player.board.gold.amount == 0)

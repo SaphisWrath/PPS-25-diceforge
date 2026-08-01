@@ -1,19 +1,32 @@
 package view.scenes
 
-import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
+import controller.ViewPublishers.Context.{ActionContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
+import controller.ViewPublishers.ViewPublisher
 import controller.ViewState.MatchEnd
 import controller.dto.PlayerDTO
 import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
+import controller.{ControllerStage, GameController, Navigator, PlayerChoice}
+import controller.dto.{EffectDTO, PlayerDTO}
+import model.Players.Player
+import model.effects.{Effect, ResourceEffect}
+import model.utils.TemporaryDie
+import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.scene.{Node, Scene}
+import scalafx.scene.layout.{BorderPane, HBox}
+import scalafx.scene.Node
+import view.builders.PlayerGUIComponentFactory
+import view.buttons.ButtonFactory
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
+import view.panes.ChoiceWindowChain
+import view.panes.EffectPanes.EffectPane
 import view.panes.MissionPanes.MissionBoardPane
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
@@ -85,6 +98,29 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.hasExtraActionBeenBought
   )
 
+  private def throwDice(dice: Seq[(Player, Seq[TemporaryDie])]): Unit =
+    val diceThrowManager = controller.diceThrowManager
+    manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
+      manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
+        diceThrowManager.endRoll(solvedOptionEffects)
+        this.pane.left = null
+        ViewPublisher.notify(ResourceContext)
+      )
+    )
+
+  private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
+    def fun(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
+      val popup = ChoiceWindowChain(playerChoices, results, fun, orElse)
+      popup.setMapper {
+        case effect: Effect => EffectPane(EffectDTO(effect))
+        case _ => ???
+      }
+      this.pane.left = popup.pane
+
+    if choices.isEmpty
+      then orElse(Seq.empty)
+    else fun(Seq.empty, choices)
+
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
   override def scene: Node = pane
@@ -93,5 +129,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
       actionTaken() = controller.hasTurnActionBeenTaken
+      throwDice(controller.players.map(p => (p.toPlayer, controller.playerDice(p))))
     case ActionContext => actionTaken() = controller.hasTurnActionBeenTaken
     case _ =>

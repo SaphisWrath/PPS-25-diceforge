@@ -11,7 +11,7 @@ import view.sprites.Sprite
 import view.text.TextFactory
 
 object EffectPanes:
-  private class EffectPane(effectDTO: EffectDTO) extends ViewComponent:
+  class EffectPane(effectDTO: EffectDTO) extends ViewComponent:
     override def component: Node = new StackPane {
       alignment = Center
       width <= height
