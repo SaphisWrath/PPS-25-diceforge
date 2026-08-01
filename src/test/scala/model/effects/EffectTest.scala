@@ -30,13 +30,13 @@ class EffectTest extends AnyFlatSpec:
     val resourceEffect = ResourceEffect(Gold(amount), Self)
     val multiplyEffect = MultiplyEffect(3)
 
-    multiplyEffect.resource = resourceEffect.resource
+    multiplyEffect.currentEffect = resourceEffect
     resourceEffect.resolve(player)
     multiplyEffect.resolve(player)
     assert(player.board.gold.amount == 6)
 
     resourceEffect.setModule(model.utils.ResourceEffectModules.SubtractResource)
-    multiplyEffect.setModule(model.utils.ResourceEffectModules.SubtractResource)
+    multiplyEffect.currentEffect = resourceEffect
     resourceEffect.resolve(player)
     multiplyEffect.resolve(player)
     assert(player.board.gold.amount == 0)

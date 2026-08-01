@@ -3,19 +3,18 @@ package model.utils
 import model.GameMatch
 import model.Players.Player
 import model.effects.*
-import model.resource.Gold
 import model.utils.RandomModules.given_RandomModule_Int
 
 trait TemporaryDie:
   def maxFaces: Int
-  def roll(using randomModule: RandomModule[Int]): ResourceEffect
-  def addFaces(addedFaces: ResourceEffect*): Unit
+  def roll(using randomModule: RandomModule[Int]): Effect
+  def addFaces(addedFaces: Effect*): Unit
 
 trait DiceThrow:
   def initiateDiceRoll(dice: Seq[(Player, Seq[TemporaryDie])]):
-    (Seq[(Player, CopyEffect)], Seq[(Player, ResourceEffect)])
-  def sortEffects(effects: Seq[(Player, ResourceEffect)]): Seq[(Player, OptionEffect)]
-  def resolveAll(effects: Seq[(Player, ResourceEffect)]): Unit
+    (Seq[(Player, CopyEffect)], Seq[(Player, Effect)])
+  def sortEffects(effects: Seq[(Player, Effect)]): Seq[(Player, OptionEffect)]
+  def resolveAll(effects: Seq[(Player, Effect)]): Unit
 
 object DiceThrow:
   private def beforeActivePlayer(gameMatch: GameMatch)(player: Player): Boolean =
@@ -24,11 +23,11 @@ object DiceThrow:
 
   private class DiceThrowImpl(gameMatch: GameMatch) extends DiceThrow:
     private val orderCheck = beforeActivePlayer(gameMatch)
-    private var nonCopyEffects: Seq[(Player, ResourceEffect)] = Seq.empty
-    private var nonOptionEffects: Seq[(Player, ResourceEffect)] = Seq.empty
+    private var nonCopyEffects: Seq[(Player, Effect)] = Seq.empty
+    private var nonOptionEffects: Seq[(Player, Effect)] = Seq.empty
     
     override def initiateDiceRoll(dice: Seq[(Player, Seq[TemporaryDie])]):
-      (Seq[(Player, CopyEffect)], Seq[(Player, ResourceEffect)]) =
+      (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
       val (copyEffects, resourceEffects) = dice
         .sortBy((p, _) => if orderCheck(p) then 1 else -1)
         .flatMap((p, d) => d.map(dice => (p, dice.roll)))
@@ -36,7 +35,7 @@ object DiceThrow:
       nonCopyEffects = resourceEffects
       (copyEffects.map((p, e) => (p, e.asInstanceOf[CopyEffect])), resourceEffects)
 
-    override def sortEffects(effects: Seq[(Player, ResourceEffect)]):
+    override def sortEffects(effects: Seq[(Player, Effect)]):
       Seq[(Player, OptionEffect)] =
       val (optionEffects, resourceEffects) = effects
         .concat(nonCopyEffects)
@@ -45,7 +44,7 @@ object DiceThrow:
       nonOptionEffects = resourceEffects
       optionEffects.map((p, e) => (p, e.asInstanceOf[OptionEffect]))
     
-    override def resolveAll(effects: Seq[(Player, ResourceEffect)]): Unit =
+    override def resolveAll(effects: Seq[(Player, Effect)]): Unit =
       val (multiplyEffects, resourceEffects) = effects
         .concat(nonOptionEffects)
         .sortBy((p, _) => if orderCheck(p) then 1 else -1)
@@ -60,8 +59,8 @@ object DiceThrow:
           resourceEffects
             .find((player, _) => player.name == p.name)
             .map(_._2) match
-            case None => e.resource = Gold(0)
-            case Some(resourceEffect) => e.resource = resourceEffect.resource
+            case Some(effect) => e.currentEffect = effect
+            case _ =>
           e.resolve(correctPlayerDestination(p))
         )
       
