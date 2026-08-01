@@ -16,6 +16,7 @@ val player: MockPlayer = MockPlayer("Mario", Orange)
 
 class MissionTestSuite extends AnyFunSuite:
   test("canGet"):
+    player.board = PlayerBoard.emptyBoard
     val mission = BaseMission(reward, cost)
     val selfTargetProducer: Target => Seq[Player] = _ => Seq(player)
     assert(!mission.canGet(selfTargetProducer))
@@ -24,8 +25,6 @@ class MissionTestSuite extends AnyFunSuite:
 
 class MissionTestSpec extends AnyFlatSpec:
   val selfTargetProducer: Target => Seq[Player] = _ => Seq(player)
-  val cost: List[ResourceEffect] = (ResourceEffect(SunCrystal(3), Target.Self), ResourceEffect(MoonCrystal(3), Target.Self)).toList
-  val reward: List[ResourceEffect] = List(ResourceEffect(Gold(3), Target.Self))
 
   "Any mission" should "take its cost from player resources when activated" in :
     player.board = PlayerBoard(0, costAmount, costAmount, 0)
