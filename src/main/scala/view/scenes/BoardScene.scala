@@ -111,13 +111,13 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     new FlowPane {
       children = centralPane.currentState match
         case ObtainedMissions => ButtonFactory.makeBoardButton(
-          "HIDE MISSIONS",
+          BSStrings.hideObtainedMissionsButton,
           () =>
             centralPane.setState(Missions)
             obtainedMissionsButton.redraw()
         )
         case _ => ButtonFactory.makeBoardButton(
-          "SEE MISSIONS",
+          BSStrings.showObtainedMissionsButton,
           () =>
             centralPane.setState(ObtainedMissions)
             obtainedMissionsButton.redraw()
