@@ -2,69 +2,59 @@ package view.scenes
 
 import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
-import controller.ViewState.MatchEnd
 import controller.dto.PlayerDTO
-import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
+import controller.{ControllerStage, GameController, ViewPublishers}
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
-import scalafx.scene.control.{Button, Label}
+import scalafx.scene.Node
+import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
-import scalafx.scene.{Node, Scene}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
+import view.panes.MultiPanes.{MultiPane, MultiPaneState}
+import view.scenes.CentralPaneStates.ObtainedMissions
+import view.{Redrawable, scenes}
+
+object CentralPaneStates:
+  val Missions = MultiPaneState("Missions")
+  val ObtainedMissions = MultiPaneState("ObtainedMissions")
+  val Shop = MultiPaneState("Shop")
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
-  private enum CentralPaneStates:
-    case Missions
-    case ObtainedMissions
-    case Shop //TODO
+  this.setPublisher(ViewPublisher)
 
   import CentralPaneStates.*
-  this.setPublisher(ViewPublisher)
+
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
     controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
-
   private val activePlayerPropertyName = "activePlayer"
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>
-      pane.top = topMainPane()
-      pane.bottom = activePlayerPane()
+      topMainPane.redraw()
+      centralPane.setState(Missions)
+      obtainedMissionsButton.redraw()
     )
   }
-
-  private val missionPane = MissionBoardPane(controller.missions).pane
-  private val centralPane: ObjectProperty[CentralPaneStates] = ObjectProperty(Missions)
-  centralPane.onChange((_, _, newVal) =>
-    pane.center = newVal match
-      case Missions => missionPane
-      case ObtainedMissions => obtainedMissionsPane
-      case Shop => ???
-  )
-
-  private var turnPhaseSection: Node = Label(BSStrings.actionNotTakenText)
-
   private val actionTaken: BooleanProperty = BooleanProperty(false)
   actionTaken.onChange((_, _, newVal) =>
-    turnPhaseSection = Label(if newVal then BSStrings.actionTakenText else BSStrings.actionNotTakenText)
-    pane.bottom = activePlayerPane()
+    turnPhaseSection.redraw()
   )
-
-
-  private val pane = new BorderPane {
-    top = topMainPane()
-    center = missionPane
-    bottom = activePlayerPane()
+  private val turnPhaseSection: Redrawable = Redrawable { () =>
+    Label(if actionTaken() then BSStrings.actionTakenText else BSStrings.actionNotTakenText)
   }
+  private val centralPane: MultiPane = MultiPane(
+    {
+      case Missions => MissionBoardPane(controller.missions).pane
+      case ObtainedMissions => obtainedMissionsPane()
+    },
+    Set(Missions, ObtainedMissions)
+  )
+  centralPane.setState(Missions)
 
-  private def topMainPane(): Node = new BorderPane {
-    left = nonActivePlayersPane()
-    right = roundCounter()
-  }
-
-  private def activePlayerPane(): Node =
+  private val activePlayerPane: Redrawable = Redrawable { () =>
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
     val playerPane: HBox = new HBox {
       children = Seq(playerBox, menuSection)
@@ -73,8 +63,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     HBox.setHgrow(playerBox, Always)
     playerBox.maxWidth(Double.MaxValue)
     playerPane
+  }
 
-  private def nonActivePlayersPane(): Node =
+  private val nonActivePlayersPane: Redrawable = Redrawable { () =>
     val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerDirectors(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
       .map(_.nonActivePlayerBox)
@@ -83,12 +74,20 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       spacing = 5
     }
     pane
+  }
+
+  private val topMainPane: Redrawable = Redrawable { () =>
+    new BorderPane {
+      left = nonActivePlayersPane()
+      right = roundCounter()
+    }
+  }
 
   private def menuSection: Node = VBox(
-    turnPhaseSection,
+    turnPhaseSection(),
     buyExtraActionButton,
     nextTurnButton,
-    obtainedMissionsButton,
+    obtainedMissionsButton(),
   )
 
   private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
@@ -101,18 +100,40 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.buyExtraAction(),
     () => controller.hasExtraActionBeenBought
   )
-  private def obtainedMissionsButton: Node = ButtonFactory.makeBoardButton(
-    "SEE MISSIONS",
-    () => centralPane() = ObtainedMissions,
-  )
 
-  private def obtainedMissionsPane: Node = new FlowPane {
-    children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+  private val obtainedMissionsPane: Redrawable = Redrawable { () =>
+    new FlowPane {
+      children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+    }
+  }
+
+  private val obtainedMissionsButton: Redrawable = Redrawable { () =>
+    new FlowPane {
+      children = centralPane.currentState match
+        case ObtainedMissions => ButtonFactory.makeBoardButton(
+          "HIDE MISSIONS",
+          () =>
+            centralPane.setState(Missions)
+            obtainedMissionsButton.redraw()
+        )
+        case _ => ButtonFactory.makeBoardButton(
+          "SEE MISSIONS",
+          () =>
+            centralPane.setState(ObtainedMissions)
+            obtainedMissionsButton.redraw()
+        )
+    }
   }
 
   private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
-  override def scene: Node = pane
+  private val mainPane = new BorderPane {
+    top = topMainPane.component
+    center = centralPane.component
+    bottom = activePlayerPane.component
+  }
+
+  override def scene: Node = mainPane
 
   override def update(context: ViewPublishers.Context): Unit = context match
     case TurnChangeContext =>
