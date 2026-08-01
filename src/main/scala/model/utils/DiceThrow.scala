@@ -50,8 +50,10 @@ object DiceThrow:
         .concat(nonOptionEffects)
         .sortBy((p, _) => if orderCheck(p) then 1 else -1)
         .partition((_, e) => e.isInstanceOf[MultiplyEffect])
-      
-      resourceEffects.foreach((p, e) => e.resolve(p))
+
+      val correctPlayerDestination: Player => Player = p => gameMatch.players.find(player => player.name == p.name).get
+
+      resourceEffects.foreach((p, e) => e.resolve(correctPlayerDestination(p)))
       multiplyEffects
         .map((p, e) => (p, e.asInstanceOf[MultiplyEffect]))
         .foreach((p, e) =>
@@ -60,7 +62,7 @@ object DiceThrow:
             .map(_._2) match
             case None => e.resource = Gold(0)
             case Some(resourceEffect) => e.resource = resourceEffect.resource
-          e.resolve(p)
+          e.resolve(correctPlayerDestination(p))
         )
       
   def apply(gameMatch: GameMatch): DiceThrow = DiceThrowImpl(gameMatch)

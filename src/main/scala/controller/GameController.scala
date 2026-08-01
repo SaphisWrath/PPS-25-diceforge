@@ -142,8 +142,8 @@ object GameController:
     override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
       val diceMap = gameMatch.players.map(p =>
         if gameMatch.players.indexOf(p) != 0
-        then (PlayerDTO(p), Seq(mockOptionDie))
-        else (PlayerDTO(p), Seq(mockCopyDie))
+        then (PlayerDTO(p), Seq(mockCopyDie))
+        else (PlayerDTO(p), Seq(mockOptionDie))
       ).toMap
 
       diceMap(player)
