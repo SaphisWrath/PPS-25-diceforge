@@ -1,26 +1,21 @@
 package view.scenes
 
 import controller.ViewPublishers.Context.{ActionContext, ResourceContext, TurnChangeContext}
-import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
+import controller.ViewPublishers.ViewSubscriber
 import controller.ViewPublishers.ViewPublisher
-import controller.ViewState.MatchEnd
-import controller.dto.PlayerDTO
-import controller.{ControllerStage, GameController, Navigator, ViewPublishers}
-import scalafx.beans.property.{BooleanProperty, ObjectProperty}
-import controller.{ControllerStage, GameController, Navigator, PlayerChoice}
+import controller.ViewPublishers
+import scalafx.beans.property.BooleanProperty
+import controller.{ControllerStage, GameController, PlayerChoice}
 import controller.dto.{EffectDTO, PlayerDTO}
 import model.Players.Player
-import model.effects.{Effect, ResourceEffect}
+import model.effects.Effect
 import model.utils.TemporaryDie
 import scalafx.beans.property.ObjectProperty
-import scalafx.scene.control.{Button, Label}
+import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.{BorderPane, HBox, VBox}
-import scalafx.scene.{Node, Scene}
+import scalafx.scene.layout.VBox
 import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.Node
-import view.builders.PlayerGUIComponentFactory
-import view.buttons.ButtonFactory
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory

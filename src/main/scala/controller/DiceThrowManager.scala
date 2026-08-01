@@ -14,13 +14,16 @@ trait DiceThrowManager:
   def copyEffectsFromRoll(dice: Seq[(Player, Seq[TemporaryDie])]): Seq[PlayerChoice[ResourceEffect]]
   def optionEffectsFromRoll(solvedCopyEffects: Seq[(Player, ResourceEffect)]): Seq[PlayerChoice[ResourceEffect]]
   def endRoll(solvedOptionEffects: Seq[(Player, ResourceEffect)]): Unit
+  def allRawEffects: Seq[(Player, ResourceEffect)]
 
 object DiceThrowManager:
   private class DiceThrowManagerImpl(gameMatch: GameMatch) extends DiceThrowManager:
     private val diceThrowHelper = DiceThrow(gameMatch)
+    var allRawEffects: Seq[(Player, ResourceEffect)] = Seq.empty
 
     override def copyEffectsFromRoll(dice: Seq[(Player, Seq[TemporaryDie])]): Seq[PlayerChoice[ResourceEffect]] =
       val (copyEffects, otherEffects) = diceThrowHelper.initiateDiceRoll(dice)
+      allRawEffects = copyEffects.concat(otherEffects)
       copyEffects.map((p, e) =>
         PlayerChoice(p, otherEffects.flatMap((otherP, otherE) => if otherP == p then Seq.empty else Seq(otherE)))
       )

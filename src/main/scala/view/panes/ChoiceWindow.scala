@@ -20,9 +20,7 @@ object ChoiceWindowChain:
                                     orElse: Seq[(Player, A)] => Unit) extends ChoiceWindow[A]:
 
     private val playerChoice = playerChoices.head
-    private var mapper: A => ViewComponent = _ => new ViewComponent {
-      override def component: Node = ???
-    }
+    private var mapper: A => ViewComponent = _ => ???
 
     override def pane: Pane =
       val buttons: Seq[Button] = playerChoice._2.map(option => makeChoiceButton(mapper(option), () => {
