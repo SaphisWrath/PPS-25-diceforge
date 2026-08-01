@@ -30,6 +30,7 @@ object LanguageStrings:
     val cost = "Costo"
     val reward = "Ricompensa"
     val get = "Completa"
+    val supportGet = "Compra"
 
   object EndScreenStrings:
     val playAgainButtonText = "Gioca Ancora!"

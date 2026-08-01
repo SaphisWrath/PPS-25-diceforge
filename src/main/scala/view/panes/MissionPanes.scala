@@ -37,7 +37,11 @@ object MissionPanes:
     protected def name: Text = TextFactory.makeMissionName(missionDTO.id)
   
   class ObtainedMissionPane(missionDTO: MissionDTO) extends MissionPane(missionDTO):
-    override protected def button: Button = ButtonFactory.makeBoardButton("BUY", missionDTO.onClick, missionDTO.clickable)
+    override protected def button: Button = ButtonFactory.makeBoardButton(
+      LanguageStrings.MissionPaneStrings.supportGet,
+      missionDTO.onClick,
+      missionDTO.clickable
+    )
   
   private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false):
     val pane = new GridPane()
