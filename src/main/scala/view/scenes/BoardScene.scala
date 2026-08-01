@@ -4,26 +4,21 @@ import controller.ViewPublishers.ViewPublisher
 import controller.ViewState.MatchEnd
 import controller.{ControllerStage, GameController, Navigator, PlayerChoice}
 import controller.dto.{EffectDTO, PlayerDTO}
-import model.Players
 import model.Players.Player
-import model.dice.MockDieFactory.*
 import model.effects.Effect
 import model.utils.TemporaryDie
-import scalafx.Includes.jfxNode2sfx
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, HBox}
-import scalafx.scene.{Node, Scene}
+import scalafx.scene.Node
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
-import view.panes.ChoiceWindow
+import view.panes.ChoiceWindowChain
 import view.panes.MissionPanes.MissionBoardPane
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, blocking}
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
@@ -91,8 +86,8 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
     def fun(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
-      val popup = ChoiceWindow(playerChoices, results, fun, orElse)
-      popup.stringSupplier_= {
+      val popup = ChoiceWindowChain(playerChoices, results, fun, orElse)
+      popup.setStringSupplier {
         case effect: Effect => EffectDTO(effect).toString
         case _ => "idk"
       }

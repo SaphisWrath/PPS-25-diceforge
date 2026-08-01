@@ -2,12 +2,10 @@ package controller
 
 import controller.ViewPublishers.Context.{MissionBoughtContext, TurnChangeContext}
 import controller.ViewPublishers.ViewPublisher
-import controller.converters.ResourceConverters
-import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
-import model.Players.Player
-import model.dice.MockDieFactory.{mockGoldDie, mockOptionDie}
-import model.utils.{DiceThrow, TemporaryDie}
+import model.dice.MockDieFactory.*
+import model.utils.TemporaryDie
 
 trait GameController:
   /**
@@ -107,12 +105,13 @@ object GameController:
 
     override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
       val diceMap = gameMatch.players.map(p =>
-        (PlayerDTO(p), Seq(mockOptionDie(gameMatch.playerBoardOf(p))))
+        if gameMatch.players.indexOf(p) != 0
+        then (PlayerDTO(p), Seq(mockOptionDie(gameMatch.playerBoardOf(p))))
+        else (PlayerDTO(p), Seq(mockCopyDie(gameMatch.playerBoardOf(p))))
       ).toMap
 
       diceMap(player)
     }
-
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

@@ -2,7 +2,7 @@ package model.utils
 
 import model.GameMatch
 import model.Players.Player
-import model.effects.{CarriesResource, CopyEffect, Effect, MultiplyEffect, OptionEffect, ResourceEffect}
+import model.effects.*
 import model.resource.Gold
 import model.utils.RandomModules.given_RandomModule_Int
 

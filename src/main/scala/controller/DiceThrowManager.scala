@@ -1,10 +1,8 @@
 package controller
 
-import controller.converters.ResourceConverters
-import controller.dto.{EffectDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
-import model.effects.{CarriesResource, CopyEffect, OptionEffect, ResourceEffect}
+import model.effects.{CarriesResource, ResourceEffect}
 import model.utils.{DiceThrow, TemporaryDie}
 
 type PlayerChoice[A] = (Player, Seq[A])
