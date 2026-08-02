@@ -23,11 +23,14 @@ object LanguageStrings:
     val buyExtraActionButton = "Buy extra action(2 SunCrystals)"
     val actionTakenText = "Hai eseguito la tua azione"
     val actionNotTakenText = "Esegui la tua azione"
+    val showObtainedMissionsButton = "Mostra i rinforzi"
+    val hideObtainedMissionsButton = "Nascondi i rinforzi"
 
   object MissionPaneStrings:
     val cost = "Costo"
     val reward = "Ricompensa"
     val get = "Completa"
+    val supportGet = "Compra"
 
   object EndScreenStrings:
     val playAgainButtonText = "Gioca Ancora!"

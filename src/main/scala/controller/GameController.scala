@@ -37,7 +37,7 @@ trait GameController:
    * @param player the player proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
-  def playerBoard(player: PlayerDTO): PlayerBoardDTO
+  def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
   /**
    * @param playerName the name of the proprietary of the board
@@ -45,6 +45,18 @@ trait GameController:
    */
   def playerBoard(playerName: String): PlayerBoardDTO
 
+  /**
+   * @param player the player proprietary of the missions
+   * @return the missions obtained by the given player
+   */
+  def playerMissions(player: PlayerDTO): Seq[MissionDTO] = playerMissions(player.name)
+
+  /**
+   * @param playerName the name of the proprietary of the missions
+   * @return the missions obtained by the given player
+   */
+  def playerMissions(playerName: String): Seq[MissionDTO]
+  
   /**
    * Notify the game to go to the next turn
    */
@@ -107,6 +119,17 @@ object GameController:
           ViewPublisher.notify(MissionBoughtContext)
         }
       ))))
+      
+    override def playerMissions(playerName: String): Seq[MissionDTO] =
+      gameMatch.playerFrom(playerName) match
+        case Some(player) => player.missions.map(m => MissionDTO(
+          m,
+          () => !m.canGet(extractTarget),
+          () =>
+            m.get(extractTarget)
+            ViewPublisher.notify(ResourceContext)
+        ))
+        case _ => Seq.empty
 
     private def extractTarget(target: Target): Seq[Player] = target match
       case Self => Seq(gameMatch.activePlayer)
