@@ -1,7 +1,6 @@
 package view.theme
 
 trait Theme[T]:
-
   /**
    * @return primary element colour
    */

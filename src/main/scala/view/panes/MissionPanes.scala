@@ -16,13 +16,22 @@ import view.text.TextFactory
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
+import controller.dto.MissionType.*
 
 object MissionPanes:
   class MissionPane(missionDTO: MissionDTO) extends VBox:
+    private val fillColor: Color = missionDTO.missionType match
+      case Support => JfxTheme.tertiaryContainer
+      case _ => JfxTheme.primaryContainer
+      
+    private val borderColor: Color = missionDTO.missionType match
+      case Support => JfxTheme.tertiaryBorder
+      case _ => JfxTheme.primaryBorder
+
+    border = makeBorder(borderColor)
+    background = makeBackgroundFill(fillColor)
     alignment = Center
     padding = Insets(10)
-    background = makeBackgroundFill(JfxTheme.primaryContainer)
-    border = makeBorder(JfxTheme.primaryBorder)
     spacing = 10
     children = Seq(
       name,
@@ -35,10 +44,10 @@ object MissionPanes:
       ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
 
     protected def rewards =
-      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards)
+      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards, borderColor)
 
     protected def cost =
-      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost)
+      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
 
     protected def name: Text = TextFactory.makeMissionName(missionDTO.id)
   
@@ -50,8 +59,7 @@ object MissionPanes:
     )
   
   private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false) extends HBox:
-    border = makeBorder(JfxTheme.tertiaryBorder)
-    background = makeBackgroundFill(JfxTheme.tertiaryContainer)
+    border = makeBorder(JfxTheme.primaryBorder)
     padding = Insets(15)
     spacing = 10
     children = missions.map(m => MissionPane(m))

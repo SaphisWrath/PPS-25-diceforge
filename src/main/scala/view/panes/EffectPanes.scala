@@ -4,6 +4,7 @@ import controller.dto.EffectDTO
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{Center, CenterLeft}
 import scalafx.scene.layout.*
+import scalafx.scene.paint.Color
 import view.sprites.Sprite
 import view.text.TextFactory
 import view.theme.JfxTheme
@@ -18,7 +19,7 @@ object EffectPanes:
       case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
       case _ =>
 
-  class EffectWrapperPane(title: String, effectDTOs: Seq[EffectDTO]) extends VBox:
+  class EffectWrapperPane(title: String, effectDTOs: Seq[EffectDTO], color: Color) extends VBox:
     private val gridPane = new GridPane()
     gridPane.maxWidth = 5
     effectDTOs.zipWithIndex.foreach((e, i) =>
@@ -28,7 +29,7 @@ object EffectPanes:
         i / 2
       )
     )
-    border = makeBorder(JfxTheme.tertiary)
+    border = makeBorder(color)
     padding = Insets(10)
     alignment = CenterLeft
     children = Seq(
