@@ -23,11 +23,14 @@ object TextFactory:
     new Text {
       text = name
       style = "-fx-font: normal bold 15pt sans-serif"
+      fill = JfxTheme.onPrimaryContainer
     }
 
   def makeMissionLabel(label: String): Text =
     new Text {
       text = label
+      style = "-fx-font: normal bold 10pt sans-serif"
+      fill = JfxTheme.onPrimaryContainer
     }
 
   def makeEffectText(label: String): Text =

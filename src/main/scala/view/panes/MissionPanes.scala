@@ -13,25 +13,31 @@ import view.buttons.ButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
 import view.scenes.ViewComponent
 import view.text.TextFactory
+import view.theme.JfxTheme
+import view.utils.ViewUtils
+import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
 
 object MissionPanes:
   class MissionPane(missionDTO: MissionDTO) extends VBox:
     alignment = Center
     padding = Insets(10)
+    background = makeBackgroundFill(JfxTheme.tertiaryContainer)
+    border = makeBorder(JfxTheme.tertiary)
+    spacing = 10
     children = Seq(
       name,
-      cost.component,
-      rewards.component,
+      cost,
+      rewards,
       button
     )
 
     protected def button: Button =
       ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
 
-    protected def rewards: ViewComponent =
+    protected def rewards =
       new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards)
 
-    protected def cost: ViewComponent =
+    protected def cost =
       new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost)
 
     protected def name: Text = TextFactory.makeMissionName(missionDTO.id)
@@ -43,44 +49,40 @@ object MissionPanes:
       missionDTO.clickable
     )
   
-  private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false):
-    val pane = new GridPane()
-    pane.border = new Border(new BorderStroke(
-      Color.Green,
+  private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false) extends HBox:
+    border = makeBorder(JfxTheme.primary)
+    background = makeBackgroundFill(JfxTheme.primaryContainer)
+    padding = Insets(15)
+    spacing = 10
+    children = missions.map(m => MissionPane(m))
+
+  class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]]) extends BorderPane:
+    private val contentSpacing: Double = 20
+    padding = Insets(20)
+    border = new Border(new BorderStroke(
+      Color.Yellow,
       BorderStrokeStyle.Solid,
       CornerRadii.Empty,
       BorderWidths.Default)
     )
-    missions.zipWithIndex.foreach((m, i) => {
-      pane.add(new MissionPane(m), i, 0)
-    })
-
-  class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]]):
-    val pane = new BorderPane {
-      padding = Insets(20)
-      border = new Border(new BorderStroke(
-        Color.Yellow,
-        BorderStrokeStyle.Solid,
-        CornerRadii.Empty,
-        BorderWidths.Default)
+    top = new HBox {
+      alignment = Center
+      spacing = contentSpacing
+      children = Seq(
+        MissionCell(missions(0)),
+        MissionCell(missions(1)),
+        MissionCell(missions(2)),
       )
-      top = new HBox {
-        alignment = Center
-        children = Seq(
-          MissionCell(missions(0)).pane,
-          MissionCell(missions(1)).pane,
-          MissionCell(missions(2)).pane,
-        )
-      }
-      bottom = new HBox {
-        alignment = Center
-        children = Seq(
-          MissionCell(missions(3)).pane,
-          MissionCell(missions(4)).pane,
-          MissionCell(missions(5)).pane,
-          MissionCell(missions(6), true).pane
-        )
-      }
+    }
+    bottom = new HBox {
+      spacing = contentSpacing
+      alignment = Center
+      children = Seq(
+        MissionCell(missions(3)),
+        MissionCell(missions(4)),
+        MissionCell(missions(5)),
+        MissionCell(missions(6), true)
+      )
     }
     
 
