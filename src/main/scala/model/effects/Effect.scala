@@ -27,7 +27,7 @@ trait EffectWrapper extends Effect:
   override def resolve(receiver: Player): Unit = currentEffect.resolve(receiver)
 
 case class OptionEffect(options: Seq[Effect]) extends Effect with EffectWrapper:
-  private var _currentEffect: Effect = emptyEffect
+  private var _currentEffect: Effect = options.head
   override def currentEffect: Effect = _currentEffect
   override def currentEffect_=(effect: Effect): Unit = if options.contains(effect) then _currentEffect = effect
 
@@ -41,3 +41,4 @@ case class MultiplyEffect(multiplier: Int) extends Effect with EffectWrapper:
       .continually(() => currentEffect.resolve(receiver))
       .take(multiplier - 1)
       .foreach(_())
+    currentEffect = emptyEffect

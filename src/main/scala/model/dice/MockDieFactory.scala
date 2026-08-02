@@ -2,7 +2,7 @@ package model.dice
 
 import model.effects.Target.Self
 import model.effects.*
-import model.resource.{Gold, PlayerBoard, SunCrystal}
+import model.resource.{Gold, SunCrystal}
 import model.utils.{RandomModule, TemporaryDie}
 
 object MockDieFactory:
@@ -32,7 +32,7 @@ object MockDieFactory:
     oneFaceDie(CopyEffect())
 
   def mockOptionDie: TemporaryDie =
-    oneFaceDie(OptionEffect(List(ResourceEffect(Gold(3), Self), ResourceEffect(SunCrystal(2), Self))))
+    oneFaceDie(OptionEffect(Seq(ResourceEffect(Gold(3), Self), ResourceEffect(SunCrystal(2), Self))))
 
   def mockMultiplyDie: TemporaryDie =
     oneFaceDie(MultiplyEffect(3))
