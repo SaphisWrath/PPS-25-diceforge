@@ -11,11 +11,11 @@ import view.sprites.Sprite
 import view.text.TextFactory
 
 object EffectPanes:
-  private class EffectPane(effectDTO: EffectDTO) extends ViewComponent:
+  class EffectPane(effectDTO: EffectDTO) extends ViewComponent:
     override def component: Node = new StackPane {
       alignment = Center
       width <= height
-      children = Sprite(effectDTO.sprite).getSpriteAsImageView
+      if effectDTO.label.isDefined then children = Sprite(effectDTO.sprite).getSpriteAsImageView
       effectDTO.label match
         case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
         case _ =>

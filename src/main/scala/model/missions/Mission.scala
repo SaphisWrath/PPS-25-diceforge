@@ -39,7 +39,7 @@ trait InstantRewards extends BaseMission:
   override def obtainReward(receiverProducer: Target => Seq[Player]): Unit =
     super.obtainReward(receiverProducer)
     reward.foreach {
-      case res@ResourceEffect(_, _) =>
+      case res@ResourceEffect(_, _, _) =>
         res.resolve(receiverProducer(res.target))
     }
 
