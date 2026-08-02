@@ -9,6 +9,8 @@ import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.resource.{PlayerBoard, SunCrystal}
 import model.utils.ValueProperty
+import model.dice.MockDieFactory.*
+import model.utils.TemporaryDie
 
 trait GameController:
   /**
@@ -74,6 +76,13 @@ trait GameController:
    * @return the maximum number of rounds of the currently initialized game
    */
   def maxNumberOfRounds: Int
+
+  /**
+   * @return the DiceThrowManager
+   */
+  def diceThrowManager: DiceThrowManager
+
+  def playerDice(player: PlayerDTO): Seq[TemporaryDie]
 
   /**
    * @return true if the player already took his action, false otherwise
@@ -150,6 +159,18 @@ object GameController:
     override def isGameEnded: Boolean = gameMatch.isGameEnded
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
+
+    override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
+
+    override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
+      val diceMap = gameMatch.players.map(p =>
+        if gameMatch.players.indexOf(p) != 0
+        then (PlayerDTO(p), Seq(mockCopyDie))
+        else (PlayerDTO(p), Seq(mockOptionDie))
+      ).toMap
+
+      diceMap(player)
+    }
 
     override def hasTurnActionBeenTaken: Boolean = _hasTurnActionBeenTaken.value
 

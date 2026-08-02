@@ -4,10 +4,12 @@ import controller.ViewPublishers
 import controller.ViewPublishers.Context.{ActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import javafx.event.{ActionEvent, EventHandler}
+import scalafx.scene.Node
 import scalafx.scene.control.Button
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
+import view.scenes.ViewComponent
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 
@@ -52,3 +54,9 @@ object ButtonFactory:
     val button = ButtonSubscriber()
     button.setPublisher(ViewPublisher)
     button
+    
+  def makeChoiceButton(icon: ViewComponent, onClick: () => Unit): Button =
+    new Button {
+      graphic = icon.component
+      onAction = event => onClick()
+    }
