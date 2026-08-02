@@ -26,7 +26,6 @@ trait Sprite:
 object Sprite:
   private class BaseSprite(path: String) extends Sprite:
     override def getSpriteAsImage: Image =
-      println(path)
       val file = File(path)
       Image(FileInputStream(file))
 

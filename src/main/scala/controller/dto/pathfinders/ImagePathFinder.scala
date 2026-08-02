@@ -1,6 +1,6 @@
 package controller.dto.pathfinders
 
-import model.effects.{Effect, ResourceEffect}
+import model.effects.{CopyEffect, Effect, ResourceEffect, MultiplyEffect}
 import model.resource.*
 import scalafx.scene.layout.BackgroundImage
 
@@ -36,4 +36,7 @@ object ImagePathFinders:
 
     override def getPath(element: Effect): String = element match
       case ResourceEffect(resource, _, _) => summon[ImagePathFinder[Resource]].getPath(resource)
+      case MultiplyEffect(_) => spritePath + "multiply.png"
+      case t: CopyEffect => spritePath + "copy.png"
       case _ =>  spritePath + "placeholder.png"
+  
