@@ -7,11 +7,10 @@ import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.sprites.Sprite
 import view.text.TextFactory
-import view.theme.JfxTheme
 import view.utils.ViewUtils.makeBorder
 
 object EffectPanes:
-  private class EffectPane(effectDTO: EffectDTO) extends StackPane:
+  class EffectPane(effectDTO: EffectDTO) extends StackPane:
     alignment = Center
     width <= height
     children = Sprite(effectDTO.sprite).getSpriteAsImageView

@@ -11,7 +11,6 @@ import scalafx.scene.text.Text
 import view.LanguageStrings
 import view.buttons.ButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
-import view.scenes.ViewComponent
 import view.text.TextFactory
 import view.theme.JfxTheme
 import view.utils.ViewUtils

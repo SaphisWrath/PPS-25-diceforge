@@ -20,4 +20,4 @@ object EffectDTO:
         findImagePath(resource),
         Some(resource.amount.toString)
       )
-      case _ => EffectDTO("Unknown", Option.empty)
+      case _ => EffectDTO(findImagePath(effect), Option.empty)

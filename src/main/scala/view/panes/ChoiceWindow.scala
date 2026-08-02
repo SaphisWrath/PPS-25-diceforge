@@ -4,13 +4,13 @@ import controller.PlayerChoice
 import model.Players.Player
 import scalafx.scene.control.{Button, Label}
 import scalafx.geometry.Pos.Center
+import scalafx.scene.Node
 import scalafx.scene.layout.{BorderPane, HBox, Pane, VBox}
 import view.buttons.ButtonFactory.makeChoiceButton
-import view.scenes.ViewComponent
 
 trait ChoiceWindow[A]:
   def pane: Pane
-  def setMapper(map: A => ViewComponent): Unit
+  def setMapper(map: A => Node): Unit
   def buttonsAvailable: Boolean
   def forceNext(): Unit
 
@@ -21,7 +21,7 @@ object ChoiceWindowChain:
                                     orElse: Seq[(Player, A)] => Unit) extends ChoiceWindow[A]:
 
     private val playerChoice = playerChoices.head
-    private var mapper: A => ViewComponent = _ => ???
+    private var mapper: A => Node = _ => ???
 
     private def someFun(currentResults: Seq[(Player, A)]): () => Unit =
       () => {
@@ -48,7 +48,7 @@ object ChoiceWindowChain:
         }
       }
 
-    override def setMapper(map: A => ViewComponent): Unit = mapper = map
+    override def setMapper(map: A => Node): Unit = mapper = map
     override def buttonsAvailable: Boolean = playerChoice._2.nonEmpty
     override def forceNext(): Unit = someFun(results)()
 

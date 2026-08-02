@@ -55,8 +55,8 @@ object ButtonFactory:
     button.setPublisher(ViewPublisher)
     button
     
-  def makeChoiceButton(icon: ViewComponent, onClick: () => Unit): Button =
+  def makeChoiceButton(icon: Node, onClick: () => Unit): Button =
     new Button {
-      graphic = icon.component
+      graphic = icon
       onAction = event => onClick()
     }

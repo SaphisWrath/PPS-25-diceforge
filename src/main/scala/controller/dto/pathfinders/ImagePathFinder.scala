@@ -1,5 +1,6 @@
 package controller.dto.pathfinders
 
+import model.effects.{Effect, ResourceEffect}
 import model.resource.*
 import scalafx.scene.layout.BackgroundImage
 
@@ -29,3 +30,10 @@ object ImagePathFinders:
       case SunCrystal(_) => spritePath + "sun.png"
       case MoonCrystal(_) => spritePath + "moon.png"
       case _ => spritePath + "placeholder.png"
+
+  given ImagePathFinder[Effect] with
+    private val spritePath = assetCommonPath + "sprites" + systemSeparator
+
+    override def getPath(element: Effect): String = element match
+      case ResourceEffect(resource, _, _) => summon[ImagePathFinder[Resource]].getPath(resource)
+      case _ =>  spritePath + "placeholder.png"
