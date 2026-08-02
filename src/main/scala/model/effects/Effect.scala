@@ -19,14 +19,26 @@ case class ResourceEffect(resource: Resource, target: Target, private var module
   override def resolve(receiver: Player): Unit = module.apply(receiver.board, resource)
   def setModule(mod: ResourceEffectModule): Unit = module = mod
 
-class OptionEffect(val options: List[Resource]) extends ResourceEffect(Gold(0), Self)
+val emptyEffect = ResourceEffect(Gold(0), Self)
 
-class CopyEffect extends ResourceEffect(Gold(0), Self)
+trait EffectWrapper extends Effect:
+  def currentEffect: Effect
+  def currentEffect_=(effect: Effect): Unit
+  override def resolve(receiver: Player): Unit = currentEffect.resolve(receiver)
 
-class MultiplyEffect(multiplier: Int) extends ResourceEffect(Gold(0), Self):
-  private val emptyResource = Gold(0)
-  private var _resource: Resource = emptyResource
+case class OptionEffect(options: Seq[Effect]) extends Effect with EffectWrapper:
+  private var _currentEffect: Effect = options.head
+  override def currentEffect: Effect = _currentEffect
+  override def currentEffect_=(effect: Effect): Unit = if options.contains(effect) then _currentEffect = effect
 
-  def resource_=(resource: Resource): Unit = _resource = resource
-  override def resolve(player: Player): Unit =
-    super.copy(_resource * (multiplier - 1), Self).resolve(player)
+class CopyEffect extends Effect with EffectWrapper:
+  var currentEffect: Effect = emptyEffect
+
+case class MultiplyEffect(multiplier: Int) extends Effect with EffectWrapper:
+  var currentEffect: Effect = emptyEffect
+  override def resolve(receiver: Player): Unit =
+    LazyList
+      .continually(() => currentEffect.resolve(receiver))
+      .take(multiplier - 1)
+      .foreach(_())
+    currentEffect = emptyEffect

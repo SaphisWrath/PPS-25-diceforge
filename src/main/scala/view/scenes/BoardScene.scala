@@ -1,34 +1,25 @@
 package view.scenes
 
-import controller.ViewPublishers.Context.{ActionContext, ResourceContext, TurnChangeContext}
-import controller.ViewPublishers.ViewSubscriber
-import controller.ViewPublishers.ViewPublisher
-import controller.ViewPublishers
-import scalafx.beans.property.BooleanProperty
-import controller.{ControllerStage, GameController, PlayerChoice}
-import controller.dto.{EffectDTO, PlayerDTO}
+import controller.ViewPublishers.Context.ResourceContext
+import controller.PlayerChoice
+import controller.dto.EffectDTO
 import model.Players.Player
 import model.effects.Effect
 import model.utils.TemporaryDie
-import scalafx.beans.property.ObjectProperty
-import scalafx.scene.control.Label
 import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import controller.dto.PlayerDTO
 import controller.{ControllerStage, GameController, ViewPublishers}
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
-import scalafx.scene.Node
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.layout.VBox
-import scalafx.scene.layout.{BorderPane, HBox}
 import scalafx.scene.Node
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
-import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
+import view.panes.MissionPanes.ObtainedMissionPane
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.scenes.CentralPaneStates.ObtainedMissions
 import view.{Redrawable, scenes}
@@ -137,6 +128,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         case _ => ???
       }
       this.mainPane.left = popup.pane
+      if !popup.buttonsAvailable then popup.forceNext()
 
     if choices.isEmpty
       then orElse(Seq.empty)
