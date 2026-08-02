@@ -46,3 +46,38 @@ trait Theme[T]:
    * @return tertiary container text colour
    */
   def onTertiaryContainer: T
+
+  /**
+   * @return the color of the primary border
+   */
+  def primaryBorder: T
+
+  /**
+   * @return the color of the secondary border
+   */
+  def secondaryBorder: T
+
+  /**
+   * @return the color of the tertiary border
+   */
+  def tertiaryBorder: T
+
+  /**
+   * @return error element colour
+   */
+  def error: T
+
+  /**
+   * @return error container colour
+   */
+  def errorContainer: T
+
+  /**
+   * @return error container text colour
+   */
+  def onErrorContainer: T
+
+  /**
+   * @return the color of the error border
+   */
+  def errorBorder: T

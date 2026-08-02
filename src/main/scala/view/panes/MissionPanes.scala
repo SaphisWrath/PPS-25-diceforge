@@ -21,8 +21,8 @@ object MissionPanes:
   class MissionPane(missionDTO: MissionDTO) extends VBox:
     alignment = Center
     padding = Insets(10)
-    background = makeBackgroundFill(JfxTheme.tertiaryContainer)
-    border = makeBorder(JfxTheme.tertiary)
+    background = makeBackgroundFill(JfxTheme.primaryContainer)
+    border = makeBorder(JfxTheme.primaryBorder)
     spacing = 10
     children = Seq(
       name,
@@ -50,8 +50,8 @@ object MissionPanes:
     )
   
   private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false) extends HBox:
-    border = makeBorder(JfxTheme.primary)
-    background = makeBackgroundFill(JfxTheme.primaryContainer)
+    border = makeBorder(JfxTheme.tertiaryBorder)
+    background = makeBackgroundFill(JfxTheme.tertiaryContainer)
     padding = Insets(15)
     spacing = 10
     children = missions.map(m => MissionPane(m))
@@ -59,12 +59,6 @@ object MissionPanes:
   class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]]) extends BorderPane:
     private val contentSpacing: Double = 20
     padding = Insets(20)
-    border = new Border(new BorderStroke(
-      Color.Yellow,
-      BorderStrokeStyle.Solid,
-      CornerRadii.Empty,
-      BorderWidths.Default)
-    )
     top = new HBox {
       alignment = Center
       spacing = contentSpacing

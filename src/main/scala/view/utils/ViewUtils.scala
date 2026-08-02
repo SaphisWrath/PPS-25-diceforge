@@ -5,13 +5,16 @@ import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 
 object ViewUtils:
-  def makeBackgroundFill(color: Color, cornerRadii: CornerRadii = CornerRadii(5)): Background =
+  val globalCornerRadii = 15
+  val globalBorderWidth = 4
+
+  def makeBackgroundFill(color: Color, cornerRadii: CornerRadii = CornerRadii(globalCornerRadii)): Background =
     Background(Array(BackgroundFill(color, cornerRadii, Insets.Empty)))
 
   def makeBorder(
                   color: Color,
-                  cornerRadii: CornerRadii = CornerRadii(5),
-                  borderWidths: BorderWidths = BorderWidths(2)
+                  cornerRadii: CornerRadii = CornerRadii(globalCornerRadii),
+                  borderWidths: BorderWidths = BorderWidths(globalBorderWidth)
                 ): Border =
     new Border(new BorderStroke(
       color,
