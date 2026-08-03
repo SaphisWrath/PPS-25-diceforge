@@ -44,6 +44,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>
       topMainPane.redraw()
+      activePlayerPane.redraw()
       centralPane.setState(Missions)
       obtainedMissionsButton.redraw()
     )
@@ -75,7 +76,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     playerPane
   }
 
-  private val nonActivePlayersPane: Redrawable = Redrawable { () =>
+  private def nonActivePlayersPane: Node =
     val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerDirectors(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
       .map(_.nonActivePlayerBox)
@@ -84,12 +85,11 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       spacing = 5
     }
     pane
-  }
 
   private val topMainPane: Redrawable = Redrawable { () =>
     new BorderPane {
-      left = nonActivePlayersPane()
-      right = roundCounter()
+      left = nonActivePlayersPane
+      right = roundCounter
     }
   }
 
@@ -155,12 +155,13 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           BSStrings.showObtainedMissionsButton,
           () =>
             centralPane.setState(ObtainedMissions)
+            obtainedMissionsPane.redraw()
             obtainedMissionsButton.redraw()
         )
     }
   }
 
-  private def roundCounter(): Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
+  private def roundCounter: Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
 
   private val mainPane = new BorderPane {
     top = topMainPane.component
