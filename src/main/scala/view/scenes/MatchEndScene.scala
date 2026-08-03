@@ -34,7 +34,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
 
   private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
     def samePlacement(player: (Player, GloryPoint), previousPlayer: Option[(Player, GloryPoint)]): Boolean =
-      previousPlayer.isDefined && previousPlayer.get._2.amount == player._2.amount
+      previousPlayer.isEmpty || previousPlayer.get._2.amount == player._2.amount
 
     def buildLabel(_text: String, sizeX: Int, sizeY: Int, fontSize: Int): Label =
       new Label {
@@ -54,7 +54,12 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
       .zip(previousPlayers)
       .map((pair, prevPlayer) =>
         val (player, points) = pair
-        if !samePlacement(pair, prevPlayer) then placement = players.map(_._1).indexOf(player) + 1
+        if !samePlacement(pair, prevPlayer)
+        then
+          placement = players.map(_._1).indexOf(player) + 1
+          labelSizeX = 100
+          labelSizeY = 50
+          fontSize = 15
         val placementLabel = buildLabel(s"$placement.", 20, labelSizeY, fontSize)
         val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
         val pointLabel = buildLabel(s"${points.amount} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
@@ -69,9 +74,6 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
         )))
         val returnBox = makeRowWith(Seq(placementLabel, nameLabel, pointLabel))
         returnBox.setMinSize(labelSizeX, labelSizeY)
-        labelSizeX = 100
-        labelSizeY = 50
-        fontSize = 15
         returnBox
       )
   }
