@@ -2,7 +2,7 @@ package view.panes
 
 import controller.dto.MissionDTO
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.Center
+import scalafx.geometry.Pos.{BottomRight, Center, TopRight}
 import scalafx.scene.Node
 import scalafx.scene.control.Button
 import scalafx.scene.layout.*
@@ -37,7 +37,11 @@ object MissionPanes:
       cost,
       rewards,
       button
-    )
+    ).concat(Seq(missionDTO).flatMap(m =>
+      if m.startingCount > 0
+      then Seq(new Text(s"${missionDTO.count}/ ${missionDTO.startingCount}"))
+      else Seq.empty
+    ))
 
     protected def button: Button =
       ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
