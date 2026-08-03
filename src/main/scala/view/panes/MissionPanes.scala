@@ -58,10 +58,12 @@ object MissionPanes:
     )
   
   private class MissionCell(missions: Seq[MissionDTO], vertical: Boolean = false) extends HBox:
-    border = makeBorder(JfxTheme.primaryBorder)
-    padding = Insets(15)
-    spacing = 10
-    children = missions.map(m => MissionPane(m))
+    if missions.nonEmpty
+      then
+        border = makeBorder(JfxTheme.primaryBorder)
+        padding = Insets(15)
+        spacing = 10
+        children = missions.map(m => MissionPane(m))
 
   class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]]) extends BorderPane:
     private val contentSpacing: Double = 20
