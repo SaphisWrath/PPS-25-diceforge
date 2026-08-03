@@ -109,16 +109,18 @@ object GameController:
       )
 
     override def missions: Map[Int, Seq[MissionDTO]] =
-      gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
-        m,
-        () => !m.canGet(extractTarget) || _hasTurnActionBeenTaken.value,
-        () => {
-          m.get(extractTarget)
-          _hasTurnActionBeenTaken.value = true
-          ViewPublisher.notify(ResourceContext)
-          ViewPublisher.notify(MissionBoughtContext)
-        }
-      ))))
+      gameMatch.missions.map((i, list) => (i, list
+        .filter(_.available)
+        .map(m => MissionDTO(
+          m,
+          () => !m.canGet(extractTarget) || _hasTurnActionBeenTaken.value,
+          () => {
+            m.get(extractTarget)
+            _hasTurnActionBeenTaken.value = true
+            ViewPublisher.notify(ResourceContext)
+            ViewPublisher.notify(MissionBoughtContext)
+          }
+        ))))
       
     override def playerMissions(playerName: String): Seq[MissionDTO] =
       gameMatch.playerFrom(playerName) match

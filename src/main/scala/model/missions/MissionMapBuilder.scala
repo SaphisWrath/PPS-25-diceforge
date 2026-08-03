@@ -8,8 +8,8 @@ object MissionMapBuilder:
   def makePlaceholderMissions: Map[Int, List[Mission]] =
     val cost: List[ResourceEffect] = List(ResourceEffect(Gold(3), Self))
     val reward: List[ResourceEffect] = List(ResourceEffect(SunCrystal(3), Self), ResourceEffect(MoonCrystal(3), Self))
-    val placeholderMission = SupportMission(reward, cost, cost, "one")
-    val placeholderInstant = InstantMission(reward, cost, "two")
+    val placeholderMission = SupportMission(reward, cost, cost, "one", 2)
+    val placeholderInstant = InstantMission(reward, cost, "two", 2)
     List(
       0 -> List(placeholderMission, placeholderInstant),
       1 -> List(placeholderMission, placeholderMission),
