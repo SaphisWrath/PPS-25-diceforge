@@ -4,14 +4,14 @@ import controller.dto.MissionDTO
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{BottomRight, Center, TopRight}
 import scalafx.scene.Node
-import scalafx.scene.control.Button
+import scalafx.scene.control.{Button, Tooltip}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Text
 import view.LanguageStrings
 import view.buttons.ButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
-import view.text.TextFactory
+import view.text.{MissionDescriptions, TextFactory}
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
@@ -56,8 +56,12 @@ object MissionPanes:
     protected def cost =
       new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
 
-    protected def name: Text = TextFactory.makeMissionName(missionDTO.id)
-  
+    protected def name: Text = {
+      val nameText = TextFactory.makeMissionName(missionDTO.id)
+      Tooltip.install(nameText, new Tooltip(MissionDescriptions.getDescription(missionDTO.id)))
+      nameText
+    }
+
   class ObtainedMissionPane(missionDTO: MissionDTO) extends MissionPane(missionDTO):
     override protected def button: Button = ButtonFactory.makeBoardButton(
       LanguageStrings.MissionPaneStrings.supportGet,
