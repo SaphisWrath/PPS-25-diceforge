@@ -15,7 +15,7 @@ trait Mission:
 
   def canGet(receiverProducer: Target => Seq[Player]): Boolean
 
-  def available: Boolean
+  def available: Boolean = count > 0
 
   def count: Int
 
@@ -38,13 +38,13 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
 
   protected def obtainReward(receiverProducer: Target => Seq[Player]): Unit = {}
 
-  override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
+  override def canGet(receiverProducer: Target => Seq[Player]): Boolean = {
+    available &&
     cost.forall { e =>
       val players = receiverProducer(e.target)
       players.nonEmpty && players.forall(_.board.canSpend(e.resource))
     }
-
-  override def available: Boolean = count > 0
+  }
 
 trait InstantRewards extends BaseMission:
   override def obtainReward(receiverProducer: Target => Seq[Player]): Unit =

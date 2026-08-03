@@ -19,13 +19,17 @@ import controller.dto.MissionType.*
 
 object MissionPanes:
   class MissionPane(missionDTO: MissionDTO) extends VBox:
-    private val fillColor: Color = missionDTO.missionType match
-      case Support => JfxTheme.tertiaryContainer
-      case _ => JfxTheme.primaryContainer
-      
-    private val borderColor: Color = missionDTO.missionType match
-      case Support => JfxTheme.tertiaryBorder
-      case _ => JfxTheme.primaryBorder
+    private def getCorrectColor(disabledColor: Color, supportColor: Color, defaultColor: Color): Color =
+      if missionDTO.startingCount != 0 && missionDTO.count == 0
+      then disabledColor
+      else
+        missionDTO.missionType match
+          case Support => supportColor
+          case _ => defaultColor
+
+    import JfxTheme.*
+    private val fillColor: Color = getCorrectColor(errorContainer, tertiaryContainer, primaryContainer)
+    private val borderColor: Color = getCorrectColor(errorBorder, tertiaryBorder, primaryBorder)
 
     border = makeBorder(borderColor)
     background = makeBackgroundFill(fillColor)
