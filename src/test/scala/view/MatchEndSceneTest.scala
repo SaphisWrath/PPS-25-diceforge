@@ -11,5 +11,5 @@ import view.scenes.MatchEndScene
 object MatchEndSceneTest extends JFXApp3:
 
   override def start(): Unit =
-    val controllerEnd = ControllerMatchEnd(mockGameMatch)
+    val controllerEnd = ControllerMatchEnd(mockGameMatchDraw)
     stage = TestStageSetup(MatchEndScene(controllerEnd, MockControllerStage(MatchEnd))).stage

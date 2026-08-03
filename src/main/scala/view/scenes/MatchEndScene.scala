@@ -33,18 +33,22 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     }
 
   private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
+    def buildLabel(_text: String, sizeX: Int, sizeY: Int, fontSize: Int): Label =
+      new Label {
+        text = _text
+        font = new Font(fontSize)
+        minWidth = sizeX
+        minHeight = sizeY
+      }
+
     var labelSizeX = 200
     var labelSizeY = 100
     var fontSize = 20
 
     players.map((player, points) =>
-      val nameLabel = new Label(player.name)
-      val pointLabel = new Label(s"${points.amount} ${RStrings.gloryPoint}")
+      val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
+      val pointLabel = buildLabel(s"${points.amount} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
 
-      nameLabel.setMinSize(labelSizeX, labelSizeY)
-      pointLabel.setMinSize(labelSizeX, labelSizeY)
-      nameLabel.font = new Font(fontSize)
-      pointLabel.font = new Font(fontSize)
       nameLabel.alignment = Center
       nameLabel.alignmentInParent = Center
       nameLabel.textFill = Color.White
