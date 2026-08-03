@@ -33,8 +33,8 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     }
 
   private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
-    def samePlacement(player: (Player, GloryPoint), previosPlayer: Option[(Player, GloryPoint)]): Boolean =
-      false
+    def samePlacement(player: (Player, GloryPoint), previousPlayer: Option[(Player, GloryPoint)]): Boolean =
+      previousPlayer.isDefined && previousPlayer.get._2.amount == player._2.amount
 
     def buildLabel(_text: String, sizeX: Int, sizeY: Int, fontSize: Int): Label =
       new Label {
