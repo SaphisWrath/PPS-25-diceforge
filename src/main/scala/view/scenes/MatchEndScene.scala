@@ -46,6 +46,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     var fontSize = 20
 
     players.map((player, points) =>
+      val placementLabel = buildLabel(s"${players.map(_._1).indexOf(player) + 1}.", 20, labelSizeY, fontSize)
       val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
       val pointLabel = buildLabel(s"${points.amount} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
 
@@ -57,7 +58,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
         CornerRadii.Empty,
         Insets.Empty
       )))
-      val returnBox = makeRowWith(Seq(nameLabel, pointLabel))
+      val returnBox = makeRowWith(Seq(placementLabel, nameLabel, pointLabel))
       returnBox.setMinSize(labelSizeX, labelSizeY)
       labelSizeX = 100
       labelSizeY = 50
