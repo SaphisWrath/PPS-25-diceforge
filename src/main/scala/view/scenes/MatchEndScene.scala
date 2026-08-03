@@ -33,6 +33,9 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     }
 
   private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
+    def samePlacement(player: (Player, GloryPoint), previosPlayer: Option[(Player, GloryPoint)]): Boolean =
+      false
+
     def buildLabel(_text: String, sizeX: Int, sizeY: Int, fontSize: Int): Label =
       new Label {
         text = _text
@@ -44,27 +47,33 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     var labelSizeX = 200
     var labelSizeY = 100
     var fontSize = 20
+    var placement = 1
+    val previousPlayers = Seq(Option.empty).concat(players.map(Option(_)).take(players.size - 1))
 
-    players.map((player, points) =>
-      val placementLabel = buildLabel(s"${players.map(_._1).indexOf(player) + 1}.", 20, labelSizeY, fontSize)
-      val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
-      val pointLabel = buildLabel(s"${points.amount} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
+    players
+      .zip(previousPlayers)
+      .map((pair, prevPlayer) =>
+        val (player, points) = pair
+        if !samePlacement(pair, prevPlayer) then placement = players.map(_._1).indexOf(player) + 1
+        val placementLabel = buildLabel(s"$placement.", 20, labelSizeY, fontSize)
+        val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
+        val pointLabel = buildLabel(s"${points.amount} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
 
-      nameLabel.alignment = Center
-      nameLabel.alignmentInParent = Center
-      nameLabel.textFill = Color.White
-      nameLabel.background = new Background(Array(new BackgroundFill(
-        Color.valueOf(player.color.toString),
-        CornerRadii.Empty,
-        Insets.Empty
-      )))
-      val returnBox = makeRowWith(Seq(placementLabel, nameLabel, pointLabel))
-      returnBox.setMinSize(labelSizeX, labelSizeY)
-      labelSizeX = 100
-      labelSizeY = 50
-      fontSize = 15
-      returnBox
-    )
+        nameLabel.alignment = Center
+        nameLabel.alignmentInParent = Center
+        nameLabel.textFill = Color.White
+        nameLabel.background = new Background(Array(new BackgroundFill(
+          Color.valueOf(player.color.toString),
+          CornerRadii.Empty,
+          Insets.Empty
+        )))
+        val returnBox = makeRowWith(Seq(placementLabel, nameLabel, pointLabel))
+        returnBox.setMinSize(labelSizeX, labelSizeY)
+        labelSizeX = 100
+        labelSizeY = 50
+        fontSize = 15
+        returnBox
+      )
   }
 
   override def scene: Node = new VBox {
