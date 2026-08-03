@@ -4,7 +4,7 @@ import controller.ViewPublishers.Context.ResourceContext
 import controller.PlayerChoice
 import controller.dto.EffectDTO
 import model.Players.Player
-import model.effects.Effect
+import model.effects.{Effect, OptionEffect}
 import model.utils.TemporaryDie
 import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
@@ -24,8 +24,9 @@ import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.scenes.CentralPaneStates.ObtainedMissions
 import view.{Redrawable, scenes}
 import view.panes.ChoiceWindowChain
-import view.panes.EffectPanes.EffectPane
+import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.MissionBoardPane
+import view.theme.JfxTheme
 
 object CentralPaneStates:
   val Missions = MultiPaneState("Missions")
@@ -124,8 +125,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     def fun(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
       val popup = ChoiceWindowChain(playerChoices, results, fun, orElse)
       popup.setMapper {
+        case effect: OptionEffect  => EffectWrapperPane("", EffectDTO(effect), JfxTheme.primaryBorder)
         case effect: Effect => EffectPane(EffectDTO(effect))
-        case _ => ???
+        case _ => throw IllegalStateException("Choice element is not an effect")
       }
       this.mainPane.left = popup.pane
       if !popup.buttonsAvailable then popup.forceNext()
