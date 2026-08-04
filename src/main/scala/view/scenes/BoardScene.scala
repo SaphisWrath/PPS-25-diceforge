@@ -115,7 +115,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
       manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
         diceThrowManager.endRoll(solvedOptionEffects)
-        this.mainPane.left = null
         ViewPublisher.notify(ResourceContext)
       )
     )
@@ -123,11 +122,10 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
     def fun(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
       val popup = ChoiceWindowChain(playerChoices, results, fun, orElse)
-      popup.setMapper {
+      popup.show({
         case effect: Effect => EffectPane(EffectDTO(effect))
         case _ => ???
-      }
-      this.mainPane.left = popup.pane
+      })
       if !popup.buttonsAvailable then popup.forceNext()
 
     if choices.isEmpty
