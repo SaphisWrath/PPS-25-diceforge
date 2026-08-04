@@ -32,8 +32,7 @@ object ChoiceWindowChain:
 
     override def show(mapper: A => Node): Unit =
       val popupStage = new Stage {
-        title = ""
-        initStyle(StageStyle.Utility)
+        initStyle(StageStyle.Undecorated)
         initModality(Modality.ApplicationModal)
 
         scene = new Scene(500, 300) {
