@@ -1,28 +1,30 @@
 package model.dice
 
+import model.effects.Effect
 import model.utils.RandomModule
 
-import scala.util.Random
-
 trait Die:
-  def maxFaces: Int
+  def roll(using randomModule: RandomModule[Int]): Effect
 
-  def roll(using randomModule: RandomModule[Int]): Face
+  def addFaces(addedFaces: Effect*): Unit
 
-  def addFaces(addedFaces: Face*): Unit
+  def faces: Seq[Effect]
 
-class BaseDie(numFaces: Int) extends Die:
-  override def maxFaces: Int = numFaces
+object Die:
+  private class BaseDie(numFaces: Int) extends Die:
+    private var _faces: Seq[Effect] = Seq.empty
+    private val maxFaces: Int = numFaces
+    private val isFull: Boolean = numFaces == _faces.length
 
-  var faces: List[Face] = List()
+    private def addFace(face: Effect): Unit =
+      if !isFull then _faces = _faces.+:(face)
 
-  def isFull: Boolean = numFaces == faces.length
+    override def addFaces(addedFaces: Effect*): Unit =
+      addedFaces.foreach(addFace)
 
-  private def addFace(face: Face): Unit =
-    if !isFull then faces = face :: faces
+    override def roll(using randomModule: RandomModule[Int]): Effect =
+      _faces(randomModule.randomIndex(maxFaces))
 
-  override def addFaces(addedFaces: Face*): Unit =
-    addedFaces.foreach(f => this.addFace(f))
+    override def faces: Seq[Effect] = _faces
 
-  override def roll(using randomModule: RandomModule[Int]): Face =
-    faces(randomModule.randomIndex(maxFaces))
+  def apply(numFaces: Int): Die = BaseDie(numFaces)
