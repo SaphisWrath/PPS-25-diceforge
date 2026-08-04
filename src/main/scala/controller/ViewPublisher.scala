@@ -10,9 +10,9 @@ object ViewPublisher:
     case TurnChangeContext
     case ActionContext
     case ExtraActionContext
-    
+
   trait ViewSubscriber extends Subscriber[ViewContext]
-    
+
   private val publisher = Publisher[ViewContext]()
 
   def apply(): Publisher[ViewContext] = publisher

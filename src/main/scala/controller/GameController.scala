@@ -2,7 +2,8 @@ package controller
 
 import controller.ViewPublisher.ViewContext.*
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
-import model.GameMatch
+import model.ModelPublisher.*
+import model.{GameMatch, ModelPublisher}
 import model.Players.Player
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
@@ -93,7 +94,15 @@ trait GameController:
   def buyExtraAction(): Unit
 
 object GameController:
-  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
+  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
+    this.setPublisher(ModelPublisher())
+
+    override def update(context: ModelContext): Unit = context match
+      case ModelContext.ResourceContext => ViewPublisher().notify(ResourceContext)
+      case ModelContext.ActionContext => ViewPublisher().notify(ActionContext)
+      case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
+      case ModelContext.TurnContext => ViewPublisher().notify(TurnChangeContext)
+
 
     private val _hasTurnActionBeenTaken: ValueProperty[Boolean] =
       ValueProperty(
