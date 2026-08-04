@@ -1,8 +1,8 @@
 package model
 
 import model.Players.Player
-import model.missions.{InstantMission, Mission, MissionMapBuilder}
-import model.resource.{Gold, PlayerBoard}
+import model.missions.{Mission, MissionMapBuilder}
+import model.resource.PlayerBoard
 
 import scala.util.Random
 
