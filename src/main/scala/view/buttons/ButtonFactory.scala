@@ -1,8 +1,8 @@
 package view.buttons
 
-import controller.ViewPublishers
-import controller.ViewPublishers.Context.{ActionContext, MissionBoughtContext, ResourceContext, TurnChangeContext}
-import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
+import controller.ViewPublisher
+import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.ViewPublisher.ViewContext.*
 import javafx.event.{ActionEvent, EventHandler}
 import scalafx.scene.Node
 import scalafx.scene.control.Button
@@ -47,12 +47,12 @@ object ButtonFactory:
       calculateColor()
       disable.onChange((_, _, newValue) => calculateColor())
 
-      override def update(context: ViewPublishers.Context): Unit = context match
+      override def update(context: ViewContext): Unit = context match
         case MissionBoughtContext | TurnChangeContext | ResourceContext | ActionContext => this.disable = isDisabled()
         case _ =>
 
     val button = ButtonSubscriber()
-    button.setPublisher(ViewPublisher)
+    button.setPublisher(ViewPublisher())
     button
     
   def makeChoiceButton(icon: Node, onClick: () => Unit): Button =

@@ -1,11 +1,12 @@
 package view.builders
 
-import controller.ViewPublishers
-import controller.ViewPublishers.Context.{ResourceContext, ResourceMaxContext}
-import controller.ViewPublishers.ViewSubscriber
+import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.ViewPublisher.ViewContext.*
+import utils.Publishers.Subscriber
 import scalafx.beans.property.IntegerProperty
 import scalafx.scene.control.Label
 import scalafx.scene.layout.{HBox, Pane}
+import utils.Publishers
 
 object ResourceBoxes:
 
@@ -20,7 +21,7 @@ object ResourceBoxes:
 
     override def component: Pane = HBox(Label(s"$resourceName:"), amountLabel)
 
-    override def update(context: ViewPublishers.Context): Unit = context match
+    override def update(context: ViewContext): Unit = context match
       case ResourceContext => amount() = amountProducer()
       case _ =>
 
@@ -38,6 +39,6 @@ object ResourceBoxes:
       box.children ++= Seq(capLabel)
       box
 
-    override def update(context: ViewPublishers.Context): Unit = context match
+    override def update(context: ViewContext): Unit = context match
       case ResourceMaxContext => cap() = capProducer()
       case _ => baseResourceBox.update(context)

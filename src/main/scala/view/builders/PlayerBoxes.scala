@@ -1,6 +1,6 @@
 package view.builders
 
-import controller.ViewPublishers.ViewPublisher
+import utils.Publishers.Publisher
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.layout.*
@@ -55,7 +55,7 @@ object PlayerBoxes:
               ResourceWithCapBox(resource, amountProducer, resourceCapProducers(resource))
             else
               BaseResourceBox(resource, amountProducer)
-            resourceBox.setPublisher(ViewPublisher())
+            resourceBox.setPublisher(Publisher())
             resourceBox.component
           )
         }

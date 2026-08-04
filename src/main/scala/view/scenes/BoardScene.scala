@@ -1,20 +1,20 @@
 package view.scenes
 
-import controller.ViewPublishers.Context.ResourceContext
-import controller.PlayerChoice
+import controller.ViewPublisher.ViewContext.{ActionContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.{ControllerStage, GameController, PlayerChoice, ViewPublisher}
 import controller.dto.EffectDTO
 import model.Players.Player
 import model.effects.{Effect, OptionEffect}
 import model.utils.TemporaryDie
-import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
-import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
+import utils.Publishers.{Publisher, Subscriber}
 import controller.dto.PlayerDTO
-import controller.{ControllerStage, GameController, ViewPublishers}
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.Node
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
+import utils.Publishers
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
@@ -34,7 +34,7 @@ object CentralPaneStates:
   val Shop = MultiPaneState("Shop")
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
-  this.setPublisher(ViewPublisher)
+  this.setPublisher(ViewPublisher())
 
   import CentralPaneStates.*
 
@@ -117,7 +117,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
         diceThrowManager.endRoll(solvedOptionEffects)
         this.mainPane.left = null
-        ViewPublisher.notify(ResourceContext)
+        ViewPublisher().notify(ResourceContext)
       )
     )
 
@@ -171,7 +171,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   override def scene: Node = mainPane
 
-  override def update(context: ViewPublishers.Context): Unit = context match
+  override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
       actionTaken() = controller.hasTurnActionBeenTaken

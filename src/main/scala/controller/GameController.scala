@@ -1,13 +1,12 @@
 package controller
 
-import controller.ViewPublishers.Context.*
-import controller.ViewPublishers.ViewPublisher
+import controller.ViewPublisher.ViewContext.*
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
-import model.resource.{PlayerBoard, SunCrystal}
+import model.resource.SunCrystal
 import model.utils.ValueProperty
 import model.dice.MockDieFactory.*
 import model.utils.TemporaryDie
@@ -99,13 +98,13 @@ object GameController:
     private val _hasTurnActionBeenTaken: ValueProperty[Boolean] =
       ValueProperty(
         false,
-        (_, _) => ViewPublisher.notify(ActionContext)
+        (_, _) => ViewPublisher().notify(ActionContext)
       )
 
     private val _hasExtraActionBeenBought: ValueProperty[Boolean] =
       ValueProperty(
         false,
-        (_, newVal) => if newVal then ViewPublisher.notify(ExtraActionContext)
+        (_, newVal) => if newVal then ViewPublisher().notify(ExtraActionContext)
       )
 
     override def missions: Map[Int, Seq[MissionDTO]] =
@@ -115,8 +114,8 @@ object GameController:
         () => {
           m.get(extractTarget)
           _hasTurnActionBeenTaken.value = true
-          ViewPublisher.notify(ResourceContext)
-          ViewPublisher.notify(MissionBoughtContext)
+          ViewPublisher().notify(ResourceContext)
+          ViewPublisher().notify(MissionBoughtContext)
         }
       ))))
       
@@ -127,7 +126,7 @@ object GameController:
           () => !m.canGet(extractTarget),
           () =>
             m.get(extractTarget)
-            ViewPublisher.notify(ResourceContext)
+            ViewPublisher().notify(ResourceContext)
         ))
         case _ => Seq.empty
 
@@ -152,7 +151,7 @@ object GameController:
       gameMatch.nextTurn()
       _hasTurnActionBeenTaken.value = false
       _hasExtraActionBeenBought.value = false
-      ViewPublisher.notify(TurnChangeContext)
+      ViewPublisher().notify(TurnChangeContext)
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
