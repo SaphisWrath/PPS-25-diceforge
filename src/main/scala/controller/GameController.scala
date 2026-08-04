@@ -5,11 +5,12 @@ import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
+import model.dice.Die
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.resource.{PlayerBoard, SunCrystal}
 import model.utils.ValueProperty
-import model.dice.MockDieFactory.*
+import model.dice.DieFactory.*
 import model.utils.TemporaryDie
 
 trait GameController:
@@ -82,7 +83,7 @@ trait GameController:
    */
   def diceThrowManager: DiceThrowManager
 
-  def playerDice(player: PlayerDTO): Seq[TemporaryDie]
+  def playerDice(player: PlayerDTO): Seq[Die]
 
   /**
    * @return true if the player already took his action, false otherwise
@@ -162,7 +163,7 @@ object GameController:
 
     override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
 
-    override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
+    override def playerDice(player: PlayerDTO): Seq[Die] = {
       val diceMap = gameMatch.players.map(p =>
         if gameMatch.players.indexOf(p) != 0
         then (PlayerDTO(p), Seq(mockCopyDie))

@@ -10,6 +10,7 @@ import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import controller.dto.PlayerDTO
 import controller.{ControllerStage, GameController, ViewPublishers}
+import model.dice.Die
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
@@ -111,7 +112,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.hasExtraActionBeenBought
   )
 
-  private def throwDice(dice: Seq[(Player, Seq[TemporaryDie])]): Unit =
+  private def throwDice(dice: Seq[(Player, Seq[Die])]): Unit =
     val diceThrowManager = controller.diceThrowManager
     manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
       manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>

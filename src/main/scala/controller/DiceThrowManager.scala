@@ -2,6 +2,7 @@ package controller
 
 import model.GameMatch
 import model.Players.Player
+import model.dice.Die
 import model.effects.Target.Self
 import model.effects.{Effect, EffectWrapper, ResourceEffect}
 import model.utils.{DiceThrow, TemporaryDie}
@@ -11,7 +12,7 @@ object PlayerChoice:
   def apply[A](player: Player, options: Seq[A]): PlayerChoice[A] = (player, options)
 
 trait DiceThrowManager:
-  def copyEffectsFromRoll(dice: Seq[(Player, Seq[TemporaryDie])]): Seq[PlayerChoice[Effect]]
+  def copyEffectsFromRoll(dice: Seq[(Player, Seq[Die])]): Seq[PlayerChoice[Effect]]
   def optionEffectsFromRoll(solvedCopyEffects: Seq[(Player, Effect)]): Seq[PlayerChoice[Effect]]
   def endRoll(solvedOptionEffects: Seq[(Player, Effect)]): Unit
   def allRawEffects: Seq[(Player, Effect)]
@@ -21,7 +22,7 @@ object DiceThrowManager:
     private val diceThrowHelper = DiceThrow(gameMatch)
     var allRawEffects: Seq[(Player, Effect)] = Seq.empty
 
-    override def copyEffectsFromRoll(dice: Seq[(Player, Seq[TemporaryDie])]): Seq[PlayerChoice[Effect]] =
+    override def copyEffectsFromRoll(dice: Seq[(Player, Seq[Die])]): Seq[PlayerChoice[Effect]] =
       val (copyEffects, otherEffects) = diceThrowHelper.initiateDiceRoll(dice)
       allRawEffects = copyEffects.concat(otherEffects)
       copyEffects.map((p, e) =>
