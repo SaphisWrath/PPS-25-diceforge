@@ -4,6 +4,7 @@ import model.turn.TurnManagers.TurnStep.{ExtraActionStep, MainActionStep, PostEx
 
 object TurnManagers:
   enum TurnAction(private val transitions: Map[TurnStep, TurnStep]):
+    case CompleteDiceThrow extends TurnAction(Map(StartStep -> SupportStep))
     case StandardAction extends TurnAction(Map(MainActionStep -> PostMainActionStep, ExtraActionStep -> PostExtraActionStep))
     case ActivateSupport extends TurnAction(Map(SupportStep -> SupportStep))
     case EndSupport extends TurnAction(Map(SupportStep -> MainActionStep))

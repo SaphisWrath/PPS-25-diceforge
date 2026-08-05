@@ -55,12 +55,14 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     topMainPane.redraw()
     activePlayerPane.redraw()
     centralPane.setState(Missions)
+    turnPhaseSection.redraw()
     obtainedMissionsButton.redraw()
   )
 
   private val turnPhaseSection: Redrawable = Redrawable { () =>
     Label(turnStep())
   }
+
   private val centralPane: MultiPane = MultiPane(
     {
       case Missions => MissionBoardPane(controller.missions)
@@ -123,6 +125,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         diceThrowManager.endRoll(solvedOptionEffects)
         this.mainPane.left = null
         ViewPublisher().notify(ResourceContext)
+        controller.endDiceThrow()
       )
     )
 
@@ -174,7 +177,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     bottom = activePlayerPane.component
   }
 
-  override def scene: Node = mainPane
+  override def scene: Node =
+    controller.startGame()
+    mainPane
 
   override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>

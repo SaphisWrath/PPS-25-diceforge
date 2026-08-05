@@ -10,10 +10,12 @@ import model.effects.Target.{All, Others, Self}
 import model.resource.SunCrystal
 import model.utils.ValueProperty
 import model.dice.MockDieFactory.*
-import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, StandardAction, EndTurn}
+import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndTurn, StandardAction}
 import model.utils.TemporaryDie
 
 trait GameController:
+
+  def startGame(): Unit
   /**
    * @return the sequence of current players
    */
@@ -85,6 +87,7 @@ trait GameController:
 
   def playerDice(player: PlayerDTO): Seq[TemporaryDie]
 
+  def endDiceThrow(): Unit
   /**
    * @return true if the player already took his action, false otherwise
    */
@@ -105,6 +108,10 @@ object GameController:
       case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
       case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
+
+    override def startGame(): Unit =
+      ViewPublisher().notify(TurnChangeContext)
+      ViewPublisher().notify(TurnStepChangeContext)
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
@@ -164,6 +171,9 @@ object GameController:
       ).toMap
       diceMap(player)
     }
+
+    override def endDiceThrow(): Unit =
+      gameMatch.executeAction(CompleteDiceThrow)
 
     override def canTakeAction: Boolean = !gameMatch.isActionAvailable(StandardAction)
 

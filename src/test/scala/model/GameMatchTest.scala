@@ -1,6 +1,7 @@
 package model
 
 import model.Players.{Color, Player}
+import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndTurn}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -13,9 +14,13 @@ class GameMatchTest extends AnyFlatSpec with should.Matchers:
   )
 
   def gameMatch(playerList: Seq[Player]): GameMatch = GameMatch(playerList)
+  
+  def nextTurn(gameMatch: GameMatch): Unit =
+    gameMatch.executeAction(CompleteDiceThrow)
+    gameMatch.executeAction(EndTurn)
 
   def nextRound(gameMatch: GameMatch): Unit =
-    gameMatch.players.foreach(_ => gameMatch.nextTurn())
+    gameMatch.players.foreach(_ => nextTurn(gameMatch))
 
   "A match" should "have a list of players and playerBoards" in :
     val gm: GameMatch = gameMatch(players)
@@ -38,14 +43,14 @@ class GameMatchTest extends AnyFlatSpec with should.Matchers:
     val gm = gameMatch(players)
     val previousActivePlayer = gm.activePlayer
     val previousTurn = gm.currentTurn
-    gm.nextTurn()
+    nextTurn(gm)
     gm.currentTurn should be(previousTurn + 1)
     gm.activePlayer should not be previousActivePlayer
 
   it should "go to next round after all players took a turn" in :
     val gm = gameMatch(players)
     val previousRound = gm.currentRound
-    players.foreach(_ => gm.nextTurn())
+    nextRound(gm)
     gm.currentRound should be(previousRound + 1)
 
   it should "end after some amount of rounds" in :
