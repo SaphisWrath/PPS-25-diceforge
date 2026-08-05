@@ -1,5 +1,6 @@
 package model
 
+import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.PlayerBoard
@@ -58,6 +59,7 @@ object GameMatch:
       if turn == playerList.length then
         turn = 0
         round = round + 1
+      ModelPublisher().notify(TurnEndContext)
 
     override def currentTurn: Int = turn
 
@@ -69,6 +71,11 @@ object GameMatch:
 
     override def isActionAvailable(turnAction: TurnAction): Boolean = turnManager.isActionAvailable(turnAction)
 
-    override def executeAction(turnAction: TurnAction): Unit = turnManager = turnManager.executeAction(turnAction)
+    override def executeAction(turnAction: TurnAction): Unit = turnManager.executeAction(turnAction) match
+      case Some(tm) => 
+        turnManager = tm
+        ModelPublisher().notify(TurnStepContext)
+      case _ =>
+
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

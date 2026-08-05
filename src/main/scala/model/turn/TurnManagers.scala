@@ -24,8 +24,11 @@ object TurnManagers:
     case PostExtraActionStep
 
   case class TurnManager(currentStep: TurnStep):
-    def executeAction(turnAction: TurnAction): TurnManager =
-      turnAction.getTransition(currentStep).getOrElse(currentStep).move()
+    def executeAction(turnAction: TurnAction): Option[TurnManager] =
+      if isActionAvailable(turnAction) then
+        Option(this.copy(turnAction.getTransition(currentStep).get))
+      else
+        Option.empty
       
     def isActionAvailable(turnAction: TurnAction): Boolean = turnAction.isAvailable(currentStep)
     

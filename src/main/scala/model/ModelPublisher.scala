@@ -7,7 +7,8 @@ object ModelPublisher:
     case ResourceContext
     case ActionContext
     case MissionContext
-    case TurnContext
+    case TurnEndContext
+    case TurnStepContext
     
   trait ModelSubscriber extends Subscriber[ModelContext]
   
