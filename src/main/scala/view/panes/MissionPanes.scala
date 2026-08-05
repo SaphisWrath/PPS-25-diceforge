@@ -7,10 +7,10 @@ import scalafx.scene.control.{Button, Tooltip}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Text
-import view.LanguageStrings
+import view.{LanguageStrings, MissionDescriptions}
 import view.buttons.ButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
-import view.text.{MissionDescriptions, TextFactory}
+import view.text.{TextFactory}
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}

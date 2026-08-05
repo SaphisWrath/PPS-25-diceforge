@@ -1,4 +1,4 @@
-package view.text
+package view
 
 import controller.dto.MissionDTO
 
