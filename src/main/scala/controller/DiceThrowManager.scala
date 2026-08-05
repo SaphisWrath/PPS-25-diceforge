@@ -5,7 +5,7 @@ import model.Players.Player
 import model.dice.Die
 import model.effects.Target.Self
 import model.effects.{Effect, EffectWrapper, ResourceEffect}
-import model.utils.{DiceThrow, TemporaryDie}
+import model.utils.DiceThrow
 
 type PlayerChoice[A] = (Player, Seq[A])
 object PlayerChoice:

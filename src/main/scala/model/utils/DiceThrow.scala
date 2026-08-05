@@ -6,11 +6,6 @@ import model.dice.Die
 import model.effects.*
 import model.utils.RandomModules.given_RandomModule_Int
 
-trait TemporaryDie:
-  def maxFaces: Int
-  def roll(using randomModule: RandomModule[Int]): Effect
-  def addFaces(addedFaces: Effect*): Unit
-
 trait DiceThrow:
   def initiateDiceRoll(dice: Seq[(Player, Seq[Die])]):
     (Seq[(Player, CopyEffect)], Seq[(Player, Effect)])

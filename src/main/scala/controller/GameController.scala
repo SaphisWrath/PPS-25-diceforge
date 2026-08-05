@@ -1,7 +1,7 @@
 package controller
 
-import controller.ViewPublisher.ViewContext.*
-import controller.converters.TurnStepConverter
+import controller.ViewPublishers.Context.*
+import controller.ViewPublishers.ViewPublisher
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
@@ -14,6 +14,7 @@ import model.resource.SunCrystal
 import model.utils.ValueProperty
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
 import model.utils.TemporaryDie
+import model.dice.DieFactory.*
 
 trait GameController:
 
