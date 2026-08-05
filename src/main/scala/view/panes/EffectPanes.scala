@@ -10,20 +10,30 @@ import view.text.TextFactory
 import view.utils.ViewUtils.makeBorder
 
 object EffectPanes:
-  class EffectPane(effectDTO: EffectDTO) extends StackPane:
+  class EffectPane(effectDTO: EffectDTO, spriteDim: Option[Double] = None) extends StackPane:
+    private val sprite = Sprite(effectDTO.sprite).getSpriteAsImageView
+    spriteDim match
+      case Some(dim) =>
+        sprite.fitWidth = dim
+        sprite.fitHeight = dim
+      case _ =>
+
     alignment = Center
     width <= height
-    children = Sprite(effectDTO.sprite).getSpriteAsImageView
+    children = sprite
     effectDTO.label match
       case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
       case _ =>
 
-  class EffectWrapperPane(title: String, effectDTOs: Seq[EffectDTO], color: Color) extends VBox:
+  class EffectWrapperPane(
+                           title: String,
+                           effectDTOs: Seq[EffectDTO],
+                           color: Color,
+                           spriteDim: Option[Double] = None) extends VBox:
     private val gridPane = new GridPane()
-    gridPane.maxWidth = 5
     effectDTOs.zipWithIndex.foreach((e, i) =>
       gridPane.add(
-        EffectPane(e),
+        EffectPane(e, spriteDim),
         i % 2,
         i / 2
       )
