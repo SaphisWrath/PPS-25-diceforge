@@ -8,19 +8,22 @@ import model.resource.{Gold, PlayerBoard, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
 
 class EffectShopTest extends AnyFlatSpec:
-  val mockPlayer = MockPlayer("Bruno", Orange)
   val item = ResourceEffect(SunCrystal(10), Self)
   val price = Gold(10)
 
-  "EffectShop" should "return the correct price of an item regardless of availability" in:
-    var shop = EffectShop((item, price))
-    assert(shop.getPrice(item) == price)
-    shop = EffectShop()
+  "EffectShop" should "return the correct price of an item" in:
+    val shop = EffectShop((item, price))
     assert(shop.getPrice(item) == price)
 
+  "EffectShop" should "throw an exception if the price catalog is empty" in:
+    val shop = EffectShop()
+    assertThrows[IllegalStateException](shop.getPrice(item))
+
   "EffectShop" should "remove an item from inventory if it is bought" in:
-    val shop = EffectShop((item, price), (item, price))
-    mockPlayer.board = PlayerBoard(price.amount * 3, 0, 0, 0)
+    val mockPlayer = MockPlayer("Bruno", Orange)
+    val maxGoldAmount = mockPlayer.board.gold.maxCapacity - 1
+    val shop = EffectShop((item, Gold(maxGoldAmount / 2)), (item, Gold(maxGoldAmount / 2)))
+    mockPlayer.board = PlayerBoard(maxGoldAmount + 1, 0, 0, 0)
     assert(shop.items.length == 2)
     shop.buy(item, mockPlayer)
     assert(shop.items.length == 1)
@@ -28,6 +31,7 @@ class EffectShopTest extends AnyFlatSpec:
     assert(shop.items.isEmpty)
 
   "EffectShop" should "throw IllegalStateException if conditions to buy (necessary funds and item in stock) are not met" in:
+    val mockPlayer = MockPlayer("Bruno", Orange)
     var shop = EffectShop()
     assertThrows[IllegalStateException](shop.buy(item, mockPlayer))
     shop = EffectShop((item, price))
