@@ -15,21 +15,6 @@ trait Mission:
 
   def canGet(receiverProducer: Target => Seq[Player]): Boolean
 
-trait LimitedPurchase extends Mission:
-  private var _purchaseCount = startingPurchaseCount
-  def availableForPurchase: Boolean = _purchaseCount > 0
-  def purchaseCount: Int = _purchaseCount
-  def startingPurchaseCount: Int
-  abstract override def get(receiverProducer: Target => Seq[Player]): Unit =
-    if this.canGet(receiverProducer)
-      then {
-      _purchaseCount = _purchaseCount - 1
-      super.get(receiverProducer)
-    }
-
-  abstract override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
-    availableForPurchase && super.canGet(receiverProducer)
-
 object Mission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
@@ -51,10 +36,21 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
       players.nonEmpty && players.forall(_.board.canSpend(e.resource))
     }
   }
-  
-class LimitedPurchaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int)
-  extends BaseMission(reward, cost, id) with LimitedPurchase:
-    override def startingPurchaseCount: Int = startCount
+
+trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
+  private var _purchaseCount = startingPurchaseCount
+  def availableForPurchase: Boolean = _purchaseCount > 0
+  def purchaseCount: Int = _purchaseCount
+  def startingPurchaseCount: Int = _startingPurchaseCount
+  abstract override def get(receiverProducer: Target => Seq[Player]): Unit =
+    if this.canGet(receiverProducer)
+    then {
+      _purchaseCount = _purchaseCount - 1
+      super.get(receiverProducer)
+    }
+
+  abstract override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
+    availableForPurchase && super.canGet(receiverProducer)
 
 object LimitedPurchaseMission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
@@ -77,10 +73,10 @@ trait Obtained(owner: Player) extends BaseMission:
   override def get(receiverProducer: Target => scala.Seq[Player] = _ => Seq(owner)): Unit = super.get(receiverProducer)
 
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
-  extends LimitedPurchaseMission(reward, cost, id, startCount) with InstantRewards
+  extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount)
 
 class SupportMission(reward: List[Effect], supportCost: List[ResourceEffect], missionCost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
-  extends LimitedPurchaseMission(reward, missionCost, id, startCount) with SupportRewards(supportCost)
+  extends BaseMission(reward, missionCost, id) with SupportRewards(supportCost) with LimitedPurchase(startCount)
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained(owner)
