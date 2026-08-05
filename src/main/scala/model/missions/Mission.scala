@@ -68,8 +68,14 @@ trait SupportRewards(supportCost: List[ResourceEffect]) extends BaseMission:
     val player = receiverProducer(Target.Self).head
     player.addMission(ObtainedMission(reward, supportCost, player, id))
 
-trait Obtained(_owner: Player) extends BaseMission:
-  def owner: Player = _owner
+trait Obtained extends BaseMission:
+  private var _obtained: Boolean = false
+  def isObtained: Boolean = _obtained
+  override def canGet(receiverProducer: Target => Seq[Player]): Boolean = !isObtained && super.canGet(receiverProducer)
+  override def obtainReward(receiverProducer: Target => Seq[Player]): Unit = 
+    super.obtainReward(receiverProducer)
+    _obtained = true
+  def reset: Unit = _obtained = false
 
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
   extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount)
@@ -78,4 +84,4 @@ class SupportMission(reward: List[Effect], supportCost: List[ResourceEffect], mi
   extends BaseMission(reward, missionCost, id) with SupportRewards(supportCost) with LimitedPurchase(startCount)
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
-  extends BaseMission(rewards, cost, id) with InstantRewards with Obtained(owner)
+  extends BaseMission(rewards, cost, id) with InstantRewards with Obtained
