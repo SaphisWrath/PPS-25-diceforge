@@ -28,6 +28,7 @@ object ResourceBoxes:
       case _ =>
 
   class ResourceWithCapBox(val resourceName: String, val amountProducer: () => Int, val capProducer: () => Int) extends ResourceBox with ViewSubscriber:
+    this.setPublisher(ViewPublisher())
     private val baseResourceBox = BaseResourceBox(resourceName, amountProducer)
     private val cap = IntegerProperty(capProducer())
 

@@ -48,8 +48,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private val turnStep: StringProperty = StringProperty("")
   turnStep.onChange((_, _, _) =>
-    topMainPane.redraw()
-    activePlayerPane.redraw()
     centralPane.setState(if controller.canEndSupportPhase then ObtainedMissions else Missions)
     turnPhaseSection.redraw()
     obtainedMissionsPane.redraw()
@@ -67,7 +65,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     },
     Set(Missions, ObtainedMissions)
   )
-  centralPane.setState(ObtainedMissions)
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
@@ -182,6 +179,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   }
 
   override def scene: Node =
+    centralPane.setState(ObtainedMissions)
     controller.startGame()
     mainPane
 
