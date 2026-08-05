@@ -1,4 +1,4 @@
-package controller
+package mock
 
 import _root_.mock.MockPlayer
 import model.GameMatch

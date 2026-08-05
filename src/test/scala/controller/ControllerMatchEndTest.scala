@@ -1,6 +1,6 @@
 package controller
 
-import controller.MockGameMatches.mockGameMatch
+import mock.MockGameMatches.mockGameMatch
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
