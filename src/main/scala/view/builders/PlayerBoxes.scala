@@ -61,8 +61,13 @@ object PlayerBoxes:
         }
       )
 
-    def withDiceSection(): PlayerBoxBuilder = this //TODO
-
+    def withDiceSection(
+                       ): PlayerBoxBuilder = this.copy(
+      diceSection = new HBox {
+        spacing = 10
+        children ++= 
+      }
+    )
     def build: Node = new BorderPane {
       border = boxStyle.fxBorder
       background = boxStyle.fxBackground

@@ -4,12 +4,13 @@ import controller.dto.EffectDTO
 import scalafx.scene.layout.{HBox, StackPane}
 import scalafx.scene.paint.Color
 import view.panes.EffectPanes.EffectWrapperPane
+import view.theme.JfxTheme
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
 
 object DieFacePanes:
-  class DieFacePane(borderColor: Color, bgColor: Color, effectDTO: Seq[EffectDTO]) extends StackPane:
-    border = makeBorder(borderColor)
-    background = makeBackgroundFill(bgColor)
+  class DieFacePane(effectDTO: Seq[EffectDTO]) extends StackPane:
+    border = makeBorder(JfxTheme.primaryBorder)
+    background = makeBackgroundFill(JfxTheme.primaryContainer)
     if effectDTO.length == 1 then
       children = EffectPanes.EffectPane(effectDTO.head)
     else
