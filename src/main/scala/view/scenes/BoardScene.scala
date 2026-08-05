@@ -108,12 +108,12 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     obtainedMissionsButton(),
   )
 
-  private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
+  private val nextTurnButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
     () => controller.nextTurn()
   )
 
-  private def buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
+  private val buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.buyExtraActionButton,
     () => controller.buyExtraAction(),
     () => !controller.canBuyExtraAction
