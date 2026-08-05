@@ -1,7 +1,7 @@
 package view
 
 import _root_.mock.MockControllerStage
-import controller.MockGameMatches.mockGameMatch
+import mock.MockGameMatches.mockGameMatch
 import controller.ViewState.MatchEnd
 import controller.{ControllerMatchEnd, ControllerStage}
 import org.mockito.Mockito.mock
