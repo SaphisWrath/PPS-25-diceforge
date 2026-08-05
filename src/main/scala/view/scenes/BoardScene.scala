@@ -5,11 +5,6 @@ import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, PlayerChoice, ViewPublisher}
 import model.Players.Player
-import model.effects.{Effect, OptionEffect}
-import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
-import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
-import controller.dto.PlayerDTO
-import controller.{ControllerStage, GameController, ViewPublishers}
 import model.dice.Die
 import model.effects.{Effect, OptionEffect}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
@@ -26,7 +21,6 @@ import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.scenes.CentralPaneStates.ObtainedMissions
-import view.text.TextFactory
 import view.theme.JfxTheme
 import view.{Redrawable, scenes}
 
@@ -76,7 +70,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   )
 
   private def startPane: Node = new BorderPane {
-    center = ButtonFactory.makeBoardButton(BSStrings.startButtonText, ()=> controller.startGame())
+    center = ButtonFactory.makeBoardButton(BSStrings.startButtonText, () => controller.startGame())
   }
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
