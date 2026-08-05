@@ -15,7 +15,6 @@ object BoardSceneTest extends JFXApp3:
   override def start(): Unit = {
     val gameMatch = GameMatch(Seq(Player("Paul", Orange), Player("Paulo", Blue)))
     val controller = GameController(gameMatch)
-    gameMatch.playerBoards.head.gold = gameMatch.playerBoards.head.gold + Gold(10)
     stage = TestStageSetup(BoardScene(controller, MockControllerStage(Board))).stage
   }
 

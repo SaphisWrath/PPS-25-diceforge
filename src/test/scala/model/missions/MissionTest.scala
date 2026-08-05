@@ -52,7 +52,7 @@ class MissionTest extends AnyFlatSpec:
     player.resetMissions()
     SupportMission(reward, cost, List.empty).get(selfTargetProducer)
     player.board = enoughResourceBoard
-    player.missions.foreach(_.get())
+    player.missions.foreach(_.get(selfTargetProducer))
     assert(player.board.sunCrystals.amount == 0)
     assert(player.board.moonCrystals.amount == 0)
     assert(player.board.gold.amount == rewardAmount)

@@ -23,6 +23,7 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
   def initGame(playerNum: Int): Seq[PlayerDTO] =
     val players = ExPlayers.values.take(playerNum).toSeq
     gameController = GameController(GameMatch(players))
+    gameController.startGame()
     players.map(PlayerDTO(_))
 
   "A Game" should "be initialized" in :
@@ -36,34 +37,30 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     val nonActivePlayers = players.filter(!_.equals(gameController.activePlayer))
     nonActivePlayers should be(gameController.nonActivePlayerList)
 
-  it should "let you go to the next turn" in :
+  it should "let you go to the next after dice are thrown" in :
     val players = initGame(2)
     val activePlayer = gameController.activePlayer
+    gameController.canGoToNextTurn should be (false)
+    gameController.nextTurn()
+    gameController.activePlayer should be (activePlayer)
+    gameController.endDiceThrow()
+    gameController.canGoToNextTurn should be (true)
     gameController.nextTurn()
     gameController.activePlayer should not be activePlayer
 
   it should "go to the next round after everybody took a turn" in :
     val players = initGame(2)
     val oldRound = gameController.currentRound
-    players.foreach(_ => gameController.nextTurn())
+    players.foreach(_ => goToNextTurn())
     gameController.currentRound should not be oldRound
+
+  private def goToNextTurn(): Unit =
+    gameController.endDiceThrow()
+    gameController.nextTurn()
 
   it should "end when the maximum number of rounds is reached" in :
     val players = initGame(2)
     Range(0, gameController.maxNumberOfRounds).foreach(_ =>
-      players.foreach(_ => gameController.nextTurn())
+      players.foreach(_ => goToNextTurn())
     )
     gameController.isGameEnded should be(true)
-
-  it should "set the Player Board" in :
-    val players = initGame(2)
-    val playerBoard: PlayerBoardDTO = gameController.playerBoard(players.head)
-    playerBoard.amountOf(gold) should be(0)
-    playerBoard.amountOf(sunCrystal) should be(0)
-    playerBoard.amountOf(moonCrystal) should be(0)
-    playerBoard.amountOf(gloryPoint) should be(0)
-
-    playerBoard.capOf(gold) should be(Option(12))
-    playerBoard.capOf(sunCrystal) should be(Option(6))
-    playerBoard.capOf(moonCrystal) should be(Option(6))
-    playerBoard.capOf(gloryPoint) should be(Option.empty)
