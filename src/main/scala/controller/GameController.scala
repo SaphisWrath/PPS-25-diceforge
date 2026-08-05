@@ -10,7 +10,7 @@ import model.effects.Target.{All, Others, Self}
 import model.resource.SunCrystal
 import model.utils.ValueProperty
 import model.dice.MockDieFactory.*
-import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndTurn, StandardAction}
+import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
 import model.utils.TemporaryDie
 
 trait GameController:
@@ -94,6 +94,10 @@ trait GameController:
   def canTakeAction: Boolean
 
   def canBuyExtraAction: Boolean
+  
+  def canEndSupportPhase: Boolean
+  
+  def endSupportPhase(): Unit
 
   def buyExtraAction(): Unit
 
@@ -162,7 +166,11 @@ object GameController:
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
     override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
+    
+    override def canEndSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
 
+    override def endSupportPhase(): Unit = gameMatch.executeAction(EndSupport)
+    
     override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
       val diceMap = gameMatch.players.map(p =>
         if gameMatch.players.indexOf(p) != 0

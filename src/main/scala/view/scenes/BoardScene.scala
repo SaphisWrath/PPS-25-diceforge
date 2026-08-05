@@ -12,7 +12,7 @@ import controller.dto.PlayerDTO
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.Node
+import scalafx.scene.{Group, Node}
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
 import utils.Publishers
 import view.LanguageStrings.BoardScreenStrings as BSStrings
@@ -54,8 +54,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   turnStep.onChange( (_,_,_) =>
     topMainPane.redraw()
     activePlayerPane.redraw()
-    centralPane.setState(Missions)
+    centralPane.setState(if controller.canEndSupportPhase then ObtainedMissions else Missions)
     turnPhaseSection.redraw()
+    obtainedMissionsPane.redraw()
     obtainedMissionsButton.redraw()
   )
 
@@ -70,7 +71,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     },
     Set(Missions, ObtainedMissions)
   )
-  centralPane.setState(Missions)
+  centralPane.setState(ObtainedMissions)
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
@@ -145,8 +146,16 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     else fun(Seq.empty, choices)
 
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
-    new FlowPane {
-      children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+    new VBox {
+      children = Seq(
+        new FlowPane {
+          children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+        },
+        if controller.canEndSupportPhase then
+          ButtonFactory.makeBoardButton("End SUPPORT", ()=>controller.endSupportPhase())
+        else
+          Group()
+      )
     }
   }
 
