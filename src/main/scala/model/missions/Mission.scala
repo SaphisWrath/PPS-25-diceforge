@@ -39,14 +39,14 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
 
 trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
   private var _purchaseCount = startingPurchaseCount
-  def availableForPurchase: Boolean = _purchaseCount > 0
+  private def availableForPurchase: Boolean = _purchaseCount > 0
   def purchaseCount: Int = _purchaseCount
   def startingPurchaseCount: Int = _startingPurchaseCount
   abstract override def get(receiverProducer: Target => Seq[Player]): Unit =
     if this.canGet(receiverProducer)
     then {
-      _purchaseCount = _purchaseCount - 1
       super.get(receiverProducer)
+      _purchaseCount = _purchaseCount - 1
     }
 
   abstract override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
