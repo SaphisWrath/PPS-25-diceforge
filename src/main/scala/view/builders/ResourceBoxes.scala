@@ -1,5 +1,6 @@
 package view.builders
 
+import controller.ViewPublisher
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.ViewPublisher.ViewContext.*
 import utils.Publishers.Subscriber
@@ -15,6 +16,7 @@ object ResourceBoxes:
 
 
   class BaseResourceBox(val resourceName: String, val amountProducer: () => Int) extends ResourceBox with ViewSubscriber:
+    this.setPublisher(ViewPublisher())
     private val amount = IntegerProperty(amountProducer())
     private val amountLabel = Label(s"${amount()}")
     amount.onChange((_, _, _) => amountLabel.text = s"${amount()}")
