@@ -8,7 +8,7 @@
 | Vedere e completare missioni                                  |                                              |            |                  |   |   |   |     |     |     |
 |                                                               | Mettere descrizione alle Missioni            | Lorenzo    |        4         |   |   |   |     |     |     |
 |                                                               | Implementare numero massimo di completamenti | Lorenzo    |        3         |   |   |   |     |     |     |
-|                                                               | Posizione del giocatore                      | Galileo    |        6         |   |   |   |     |     |     |
+|                                                               | Posizione del giocatore                      | Galileo    |        6         | 6 | 6 | 6 |     |     |     |
 | I giocatori possono acquistare facce dal negozio              |                                              |            |                  |   |   |   |     |     |     |
 |                                                               | Gui del negozio                              | Lorenzo    |        6         |   |   |   |     |     |     |
 |                                                               | Gui dell'acquisto                            | Lorenzo    |        7         |   |   |   |     |     |     |
