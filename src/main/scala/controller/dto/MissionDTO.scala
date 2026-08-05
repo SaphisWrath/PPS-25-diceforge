@@ -1,6 +1,6 @@
 package controller.dto
 
-import model.missions.{InstantMission, Mission, SupportMission}
+import model.missions.{InstantMission, LimitedPurchaseMission, Mission, SupportMission}
 
 enum MissionType:
   case Instant
@@ -36,6 +36,17 @@ object MissionDTO:
     )
 
   def apply(mission: Mission, clickable: () => Boolean, onClick: () => Unit): MissionDTO = mission match
+    case m: LimitedPurchaseMission => MissionDTO(
+      mission.cost.map(c => EffectDTO(c)),
+      mission.reward.map(r => EffectDTO(r)),
+      m.id,
+      clickable,
+      onClick,
+      MissionType(mission),
+      m.purchaseCount,
+      m.startingPurchaseCount
+    )
+    
     case Mission(cost, reward, id) => MissionDTO(
       mission.cost.map(c => EffectDTO(c)),
       mission.reward.map(r => EffectDTO(r)),
@@ -43,6 +54,6 @@ object MissionDTO:
       clickable,
       onClick,
       MissionType(mission),
-      mission.purchaseCount,
-      mission.startingPurchaseCount
+      0,
+      0
     )
