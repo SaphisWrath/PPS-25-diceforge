@@ -123,8 +123,6 @@ object GameController:
         () => {
           m.get(extractTarget)
           _hasTurnActionBeenTaken.value = true
-          ViewPublisher().notify(ResourceContext)
-          ViewPublisher().notify(MissionBoughtContext)
         }
       ))))
       

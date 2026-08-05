@@ -1,5 +1,7 @@
 package model.missions
 
+import model.ModelPublisher
+import model.ModelPublisher.ModelContext.{MissionContext, ResourceContext}
 import model.Players.Player
 import model.effects.{Effect, ResourceEffect, Target}
 import model.resource.PlayerBoard
@@ -26,6 +28,8 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
         r.resolve(receiverProducer(r.target))
       })
       obtainReward(receiverProducer)
+      ModelPublisher().notify(ResourceContext)
+      ModelPublisher().notify(MissionContext)
 
   protected def obtainReward(receiverProducer: Target => Seq[Player]): Unit = {}
 

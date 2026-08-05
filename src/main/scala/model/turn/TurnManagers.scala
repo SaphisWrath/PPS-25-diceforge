@@ -1,19 +1,20 @@
 package model.turn
 
-import model.turn.TurnManagers.TurnStep.{ExtraActionStep, MainActionStep, StartStep, SupportStep}
+import model.turn.TurnManagers.TurnStep.{ExtraActionStep, MainActionStep, PostExtraActionStep, PostMainActionStep, StartStep, SupportStep}
 
 object TurnManagers:
-  enum TurnAction:
-    case CompleteMission
-    case BuyFace
-    case ActivateSupport
-    case EndTurn
-
-    def availableSteps: Seq[TurnStep] = this match
-      case CompleteMission | BuyFace => Seq(MainActionStep, ExtraActionStep)
-      case ActivateSupport => Seq(SupportStep)
-      case EndTurn => TurnStep.values.filter(_ != StartStep)
-
+  enum TurnAction(private val transitions: Map[TurnStep, TurnStep]):
+    case CompleteMission extends TurnAction(Map(MainActionStep -> PostMainActionStep, ExtraActionStep -> PostExtraActionStep))
+    case BuyFace extends TurnAction(Map(MainActionStep -> PostMainActionStep, ExtraActionStep -> PostExtraActionStep))
+    case ActivateSupport extends TurnAction(Map(SupportStep -> SupportStep))
+    case EndSupport extends TurnAction(Map(SupportStep -> MainActionStep))
+    case BuyExtraAction extends TurnAction(Map(PostMainActionStep -> ExtraActionStep))
+    case EndTurn extends TurnAction(TurnStep.values.filter(_ != StartStep).map((_, StartStep)).toMap)
+    
+    def isAvailable(step: TurnStep): Boolean = transitions.contains(step)
+    
+    def getTransition(step: TurnStep): Option[TurnStep] = transitions.get(step)
+    
   enum TurnStep:
     case StartStep
     case SupportStep
@@ -22,17 +23,11 @@ object TurnManagers:
     case ExtraActionStep
     case PostExtraActionStep
 
-    def transitions: Seq[TurnStep] = this match
-      case StartStep => Seq(SupportStep, MainActionStep)
-      case SupportStep => Seq(MainActionStep)
-      case MainActionStep => Seq(PostMainActionStep)
-      case PostMainActionStep => Seq(ExtraActionStep, StartStep)
-      case ExtraActionStep => Seq(PostExtraActionStep, StartStep)
-      case PostExtraActionStep => Seq(StartStep)
-
   case class TurnManager(currentStep: TurnStep):
-    def changeStep(step: TurnStep): TurnManager =
-      if isTransitionAvailable(step) then this.copy(step) else this
-
-    def isTransitionAvailable(step: TurnStep): Boolean =
-      currentStep.transitions.contains(step)
+    def executeAction(turnAction: TurnAction): TurnManager =
+      turnAction.getTransition(currentStep).getOrElse(currentStep).move()
+      
+    def isActionAvailable(turnAction: TurnAction): Boolean = turnAction.isAvailable(currentStep)
+    
+    extension (step: TurnStep)
+      private def move(): TurnManager = this.copy(currentStep= step)

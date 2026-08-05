@@ -3,6 +3,8 @@ package model
 import model.Players.Player
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.PlayerBoard
+import model.turn.TurnManagers.TurnStep.StartStep
+import model.turn.TurnManagers.{TurnAction, TurnManager}
 
 import scala.util.Random
 
@@ -29,12 +31,17 @@ trait GameMatch:
 
   def isGameEnded: Boolean
 
+  def isActionAvailable(turnAction: TurnAction): Boolean
+
+  def executeAction(turnAction: TurnAction): Unit
+
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] = Random.shuffle(playerList)
     private var turn: Int = 0
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
+    private var turnManager: TurnManager = TurnManager(StartStep)
 
     def missions: Map[Int, Seq[Mission]] = _missions
 
@@ -59,5 +66,9 @@ object GameMatch:
     override val maxNumberOfRounds: Int = if players.length == 3 then 10 else 9
 
     override def isGameEnded: Boolean = round >= maxNumberOfRounds
+
+    override def isActionAvailable(turnAction: TurnAction): Boolean = turnManager.isActionAvailable(turnAction)
+
+    override def executeAction(turnAction: TurnAction): Unit = turnManager = turnManager.executeAction(turnAction)
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)
