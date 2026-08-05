@@ -11,7 +11,6 @@ import model.effects.Target.{All, Others, Self}
 import model.resource.{PlayerBoard, SunCrystal}
 import model.utils.ValueProperty
 import model.dice.DieFactory.*
-import model.utils.TemporaryDie
 
 trait GameController:
   /**

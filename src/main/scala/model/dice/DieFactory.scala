@@ -3,7 +3,7 @@ package model.dice
 import model.effects.Target.Self
 import model.effects.*
 import model.resource.{Gold, SunCrystal}
-import model.utils.{RandomModule, TemporaryDie}
+import model.utils.RandomModule
 
 object DieFactory:
   private def oneFaceDie(effect: Effect): Die =
