@@ -1,6 +1,7 @@
 package controller
 
 import controller.ViewPublisher.ViewContext.*
+import controller.converters.TurnStepConverter
 import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
@@ -189,7 +190,7 @@ object GameController:
 
     override def buyExtraAction(): Unit = gameMatch.executeAction(BuyExtraAction)
 
-    override def turnStep: String = gameMatch.currentTurnStep.toString
+    override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

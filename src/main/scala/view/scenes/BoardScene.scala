@@ -42,6 +42,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       topMainPane.redraw()
       activePlayerPane.redraw()
       centralPane.setState(Missions)
+      turnPhaseSection.redraw()
       obtainedMissionsButton.redraw()
     )
   }
@@ -144,7 +145,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
         },
         if controller.canEndSupportPhase then
-          ButtonFactory.makeBoardButton("End SUPPORT", () => controller.endSupportPhase())
+          ButtonFactory.makeBoardButton(BSStrings.endSupportPhaseButton, () => controller.endSupportPhase())
         else
           Group()
       )

@@ -25,6 +25,7 @@ object LanguageStrings:
     val actionNotTakenText = "Esegui la tua azione"
     val showObtainedMissionsButton = "Mostra i rinforzi"
     val hideObtainedMissionsButton = "Nascondi i rinforzi"
+    val endSupportPhaseButton = "Termina la fase di rinforzo"
 
   object MissionPaneStrings:
     val cost = "Costo"
@@ -41,3 +42,9 @@ object LanguageStrings:
     val sunCrystal = "Cristalli Solari"
     val moonCrystal = "Cristalli Lunari"
     val gloryPoint = "Punti Gloria"
+
+  object TurnStepStrings:
+    val start = "Fase Iniziale"
+    val support = "Fase di Rinforzo"
+    val action = "Fase Azione"
+    val actionDone = "Azione Eseguita"
