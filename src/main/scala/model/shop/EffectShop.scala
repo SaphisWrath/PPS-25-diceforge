@@ -17,5 +17,7 @@ class EffectShop(initialItems: (Effect, Resource)*) extends Shop[Effect]:
       if player.board.canSpend(price) then
         player.board.takeResource(price)
         _items = _items.diff(Seq(item))
+      else throw IllegalStateException(s"Player ${player.name} bought shop item without the necessary funds")
+    else throw IllegalStateException("Bought shop item that wasn't in stock.")
 
   override def items: Seq[Effect] = _items
