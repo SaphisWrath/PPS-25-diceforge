@@ -70,5 +70,5 @@ object PlayerBoxes:
       top = nameSection
       center = resourceSection
       left = tokenSection
-      bottom = diceSection
+      right = diceSection
     }
