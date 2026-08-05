@@ -5,7 +5,6 @@ import controller.PlayerChoice
 import controller.dto.EffectDTO
 import model.Players.Player
 import model.effects.{Effect, OptionEffect}
-import model.utils.TemporaryDie
 import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
 import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
 import controller.dto.PlayerDTO
