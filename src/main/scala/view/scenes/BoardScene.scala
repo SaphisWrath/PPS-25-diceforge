@@ -21,10 +21,12 @@ import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.scenes.CentralPaneStates.ObtainedMissions
+import view.text.TextFactory
 import view.theme.JfxTheme
 import view.{Redrawable, scenes}
 
 object CentralPaneStates:
+  val Start = MultiPaneState("Start")
   val Missions = MultiPaneState("Missions")
   val ObtainedMissions = MultiPaneState("ObtainedMissions")
   val Shop = MultiPaneState("Shop")
@@ -61,11 +63,16 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private val centralPane: MultiPane = MultiPane(
     {
+      case Start => startPane
       case Missions => MissionBoardPane(controller.missions)
       case ObtainedMissions => obtainedMissionsPane()
     },
-    Set(Missions, ObtainedMissions)
+    Set(Start, Missions, ObtainedMissions)
   )
+
+  private def startPane: Node = new BorderPane {
+    center = ButtonFactory.makeBoardButton(BSStrings.startButtonText, ()=> controller.startGame())
+  }
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
@@ -180,8 +187,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   }
 
   override def scene: Node =
-    centralPane.setState(ObtainedMissions)
-    controller.startGame()
+    centralPane.setState(Start)
     mainPane
 
   override def update(context: ViewContext): Unit = context match

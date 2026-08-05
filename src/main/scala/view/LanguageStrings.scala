@@ -26,6 +26,7 @@ object LanguageStrings:
     val showObtainedMissionsButton = "Mostra i rinforzi"
     val hideObtainedMissionsButton = "Nascondi i rinforzi"
     val endSupportPhaseButton = "Termina la fase di rinforzo"
+    val startButtonText = "Premi Qui Per Iniziare!"
 
   object MissionPaneStrings:
     val cost = "Costo"
