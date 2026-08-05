@@ -30,12 +30,11 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
 
   protected def obtainReward(receiverProducer: Target => Seq[Player]): Unit = {}
 
-  override def canGet(receiverProducer: Target => Seq[Player]): Boolean = {
+  override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
     cost.forall { e =>
       val players = receiverProducer(e.target)
       players.nonEmpty && players.forall(_.board.canSpend(e.resource))
     }
-  }
 
 trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
   private var _purchaseCount = startingPurchaseCount
@@ -44,16 +43,12 @@ trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
   def startingPurchaseCount: Int = _startingPurchaseCount
   abstract override def get(receiverProducer: Target => Seq[Player]): Unit =
     if this.canGet(receiverProducer)
-    then {
+    then
       super.get(receiverProducer)
       _purchaseCount = _purchaseCount - 1
-    }
 
   abstract override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
     availableForPurchase && super.canGet(receiverProducer)
-
-object LimitedPurchaseMission:
-  def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
 trait InstantRewards extends BaseMission:
   override def obtainReward(receiverProducer: Target => Seq[Player]): Unit =
