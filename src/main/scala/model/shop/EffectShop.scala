@@ -1,14 +1,21 @@
 package model.shop
 
+import model.Players
 import model.effects.Effect
 import model.resource.Resource
 
-class EffectShop(items: (Effect, Resource)*) extends Shop[Effect]:
-  private var _catalog: Set[(Effect, Resource)] = Set.from(items)
-  private var _items = items.map((item, _) =>  item)
+class EffectShop(initialItems: (Effect, Resource)*) extends Shop[Effect]:
+  private val _catalog: Set[(Effect, Resource)] = Set.from(initialItems)
+  private var _items = initialItems.map((item, _) =>  item)
 
-  override def getPrice(item: Effect): Option[Resource] =
+  override def getPrice(item: Effect): Resource =
+    _catalog.filter((e, _) => e == item).head._2
+
+  override def buy(item: Effect, player: Players.Player): Unit = 
     if _items.contains(item) then
-      Some(_catalog.filter((e, _) => e == item).head._2)
-    else
-      None
+      val price = getPrice(item)
+      if player.board.canSpend(price) then
+        player.board.takeResource(price)
+        _items = _items.diff(Seq(item))
+
+  override def items: Seq[Effect] = _items
