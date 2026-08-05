@@ -2,8 +2,7 @@ package controller
 
 import model.GameMatch
 import model.Players.Player
-import model.effects.Target.Self
-import model.effects.{Effect, EffectWrapper, ResourceEffect}
+import model.effects.Effect
 import model.utils.{DiceThrow, TemporaryDie}
 
 type PlayerChoice[A] = (Player, Seq[A])
