@@ -16,3 +16,5 @@ case class MockPlayer(
   override def missions: Seq[Obtained] = _missions
 
   def resetMissions(): Unit = _missions = Seq.empty
+  
+  def resetPlayerBoard(): Unit = board = PlayerBoard.emptyBoard
