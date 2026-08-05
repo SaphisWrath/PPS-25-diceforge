@@ -10,7 +10,7 @@ import model.utils.TemporaryDie
 import utils.Publishers.{Publisher, Subscriber}
 import controller.dto.PlayerDTO
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
-import controller.{ControllerStage, GameController, ViewPublishers}
+import controller.{ControllerStage, GameController}
 import model.dice.Die
 import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.Label

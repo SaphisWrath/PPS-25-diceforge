@@ -6,11 +6,11 @@ import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
 import model.dice.Die
+import model.dice.DieFactory.{mockCopyDie, mockOptionDie}
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.resource.SunCrystal
 import model.utils.ValueProperty
-import model.dice.MockDieFactory.*
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
 import model.utils.TemporaryDie
 
@@ -60,7 +60,8 @@ trait GameController:
    * @return the missions obtained by the given player
    */
   def playerMissions(playerName: String): Seq[MissionDTO]
-  
+
+  def canGoToNextTurn: Boolean
   /**
    * Notify the game to go to the next turn
    */
@@ -156,9 +157,8 @@ object GameController:
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-    override def nextTurn(): Unit =
-      if gameMatch.isActionAvailable(EndTurn) then
-        gameMatch.executeAction(EndTurn)
+    override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
+    override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
