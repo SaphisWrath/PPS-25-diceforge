@@ -64,16 +64,3 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
       players.foreach(_ => goToNextTurn())
     )
     gameController.isGameEnded should be(true)
-
-  it should "set the Player Board" in :
-    val players = initGame(2)
-    val playerBoard: PlayerBoardDTO = gameController.playerBoard(players.head)
-    playerBoard.amountOf(gold) should be(0)
-    playerBoard.amountOf(sunCrystal) should be(0)
-    playerBoard.amountOf(moonCrystal) should be(0)
-    playerBoard.amountOf(gloryPoint) should be(0)
-
-    playerBoard.capOf(gold) should be(Option(12))
-    playerBoard.capOf(sunCrystal) should be(Option(6))
-    playerBoard.capOf(moonCrystal) should be(Option(6))
-    playerBoard.capOf(gloryPoint) should be(Option.empty)

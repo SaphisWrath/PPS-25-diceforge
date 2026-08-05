@@ -3,7 +3,7 @@ package model
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.missions.{Mission, MissionMapBuilder}
-import model.resource.PlayerBoard
+import model.resource.{Gold, PlayerBoard}
 import model.turn.TurnManagers.TurnAction.EndSupport
 import model.turn.TurnManagers.TurnStep.{MainActionStep, StartStep, SupportStep}
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
@@ -39,7 +39,10 @@ trait GameMatch:
 
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
-    val players: Seq[Player] = Random.shuffle(playerList)
+    val players: Seq[Player] =
+      val list = Random.shuffle(playerList)
+      list.foreach(p => p.board.gold = p.board.gold + Gold(3-list.indexOf(p)))
+      list
     private var turn: Int = 0
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
