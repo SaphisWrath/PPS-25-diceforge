@@ -10,7 +10,7 @@ import model.effects.Target.{All, Others, Self}
 import model.resource.SunCrystal
 import model.utils.ValueProperty
 import model.dice.MockDieFactory.*
-import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteMission, EndTurn}
+import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, StandardAction, EndTurn}
 import model.utils.TemporaryDie
 
 trait GameController:
@@ -88,11 +88,13 @@ trait GameController:
   /**
    * @return true if the player already took his action, false otherwise
    */
-  def hasTurnActionBeenTaken: Boolean
+  def canTakeAction: Boolean
 
-  def hasExtraActionBeenBought: Boolean
+  def canBuyExtraAction: Boolean
 
   def buyExtraAction(): Unit
+
+  def turnStep: String
 
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
@@ -100,30 +102,17 @@ object GameController:
 
     override def update(context: ModelContext): Unit = context match
       case ModelContext.ResourceContext => ViewPublisher().notify(ResourceContext)
-      case ModelContext.ActionContext => ViewPublisher().notify(ActionContext)
       case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
       case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
-
-
-    private val _hasTurnActionBeenTaken: ValueProperty[Boolean] =
-      ValueProperty(
-        false,
-        (_, _) => ViewPublisher().notify(ActionContext)
-      )
-
-    private val _hasExtraActionBeenBought: ValueProperty[Boolean] =
-      ValueProperty(
-        false,
-        (_, newVal) => if newVal then ViewPublisher().notify(ExtraActionContext)
-      )
+      case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
-        () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(CompleteMission),
+        () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
         () => {
           m.get(extractTarget)
-          gameMatch.executeAction(CompleteMission)
+          gameMatch.executeAction(StandardAction)
         }
       ))))
       
@@ -158,7 +147,6 @@ object GameController:
     override def nextTurn(): Unit =
       if gameMatch.isActionAvailable(EndTurn) then
         gameMatch.executeAction(EndTurn)
-        gameMatch.nextTurn()
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
@@ -177,16 +165,13 @@ object GameController:
       diceMap(player)
     }
 
-    override def hasTurnActionBeenTaken: Boolean = !gameMatch.isActionAvailable(CompleteMission)
+    override def canTakeAction: Boolean = !gameMatch.isActionAvailable(StandardAction)
 
-    override def hasExtraActionBeenBought: Boolean = !gameMatch.isActionAvailable(BuyExtraAction)
+    override def canBuyExtraAction: Boolean = gameMatch.isActionAvailable(BuyExtraAction)
+    
+    override def buyExtraAction(): Unit = gameMatch.executeAction(BuyExtraAction)
 
-    override def buyExtraAction(): Unit =
-      if gameMatch.isActionAvailable(BuyExtraAction) then
-        val board = gameMatch.activePlayer.board 
-        if board.sunCrystals.amount >= 2 then
-          board.sunCrystals = board.sunCrystals - SunCrystal(2)
-          gameMatch.executeAction(BuyExtraAction)
+    override def turnStep: String = gameMatch.currentTurnStep.toString
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

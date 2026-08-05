@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ActionContext, ResourceContext, TurnChangeContext}
+import controller.ViewPublisher.ViewContext.{ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.{ControllerStage, GameController, PlayerChoice, ViewPublisher}
 import controller.dto.EffectDTO
@@ -9,7 +9,7 @@ import model.effects.{Effect, OptionEffect}
 import model.utils.TemporaryDie
 import utils.Publishers.{Publisher, Subscriber}
 import controller.dto.PlayerDTO
-import scalafx.beans.property.{BooleanProperty, ObjectProperty}
+import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.Node
@@ -49,12 +49,17 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       obtainedMissionsButton.redraw()
     )
   }
-  private val actionTaken: BooleanProperty = BooleanProperty(false)
-  actionTaken.onChange((_, _, newVal) =>
-    turnPhaseSection.redraw()
+
+  private val turnStep: StringProperty = StringProperty("")
+  turnStep.onChange( (_,_,_) =>
+    topMainPane.redraw()
+    activePlayerPane.redraw()
+    centralPane.setState(Missions)
+    obtainedMissionsButton.redraw()
   )
+
   private val turnPhaseSection: Redrawable = Redrawable { () =>
-    Label(if actionTaken() then BSStrings.actionTakenText else BSStrings.actionNotTakenText)
+    Label(turnStep())
   }
   private val centralPane: MultiPane = MultiPane(
     {
@@ -108,7 +113,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private def buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.buyExtraActionButton,
     () => controller.buyExtraAction(),
-    () => controller.hasExtraActionBeenBought
+    () => !controller.canBuyExtraAction
   )
 
   private def throwDice(dice: Seq[(Player, Seq[TemporaryDie])]): Unit =
@@ -174,7 +179,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
-      actionTaken() = controller.hasTurnActionBeenTaken
       throwDice(controller.players.map(p => (p.toPlayer, controller.playerDice(p))))
-    case ActionContext => actionTaken() = controller.hasTurnActionBeenTaken
+    case TurnStepChangeContext => turnStep() = controller.turnStep
     case _ =>

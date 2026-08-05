@@ -4,8 +4,8 @@ import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.PlayerBoard
-import model.turn.TurnManagers.TurnStep.StartStep
-import model.turn.TurnManagers.{TurnAction, TurnManager}
+import model.turn.TurnManagers.TurnStep.{MainActionStep, StartStep, SupportStep}
+import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 
 import scala.util.Random
 
@@ -22,8 +22,6 @@ trait GameMatch:
 
   def playerFrom(name: String): Option[Player]
 
-  def nextTurn(): Unit
-
   def currentTurn: Int
 
   def currentRound: Int
@@ -36,13 +34,15 @@ trait GameMatch:
 
   def executeAction(turnAction: TurnAction): Unit
 
+  def currentTurnStep: TurnStep
+
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] = Random.shuffle(playerList)
     private var turn: Int = 0
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
-    private var turnManager: TurnManager = TurnManager(StartStep)
+    private var turnManager: TurnManager = TurnManager(MainActionStep)
 
     def missions: Map[Int, Seq[Mission]] = _missions
 
@@ -54,7 +54,7 @@ object GameMatch:
 
     override def playerFrom(name: String): Option[Player] = players.find(_.name == name)
 
-    override def nextTurn(): Unit =
+    private def nextTurn(): Unit =
       turn = turn + 1
       if turn == playerList.length then
         turn = 0
@@ -72,10 +72,22 @@ object GameMatch:
     override def isActionAvailable(turnAction: TurnAction): Boolean = turnManager.isActionAvailable(turnAction)
 
     override def executeAction(turnAction: TurnAction): Unit = turnManager.executeAction(turnAction) match
-      case Some(tm) => 
-        turnManager = tm
-        ModelPublisher().notify(TurnStepContext)
+      case Some(tm) =>
+        if otherParameters(turnAction) then
+          turnManager = tm
+          otherActions(turnAction)
+          ModelPublisher().notify(TurnStepContext)
       case _ =>
+      
+    private def otherParameters(turnAction: TurnAction): Boolean = turnAction match
+      case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
+      case _ => true
+
+    private def otherActions(turnAction: TurnAction): Unit = turnAction match
+      case TurnAction.EndTurn => nextTurn()
+      case _ =>
+
+    override def currentTurnStep: TurnStep = turnManager.currentStep
 
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

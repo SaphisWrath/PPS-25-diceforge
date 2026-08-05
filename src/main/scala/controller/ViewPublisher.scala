@@ -8,8 +8,7 @@ object ViewPublisher:
     case ResourceMaxContext
     case MissionBoughtContext
     case TurnChangeContext
-    case ActionContext
-    case ExtraActionContext
+    case TurnStepChangeContext
 
   trait ViewSubscriber extends Subscriber[ViewContext]
 

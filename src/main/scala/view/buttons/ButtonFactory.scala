@@ -48,7 +48,7 @@ object ButtonFactory:
       disable.onChange((_, _, newValue) => calculateColor())
 
       override def update(context: ViewContext): Unit = context match
-        case MissionBoughtContext | TurnChangeContext | ResourceContext | ActionContext => this.disable = isDisabled()
+        case MissionBoughtContext | TurnChangeContext | ResourceContext | TurnStepChangeContext => this.disable = isDisabled()
         case _ =>
 
     val button = ButtonSubscriber()
