@@ -8,14 +8,21 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 
 object MockGameMatches:
-  def mockGameMatch: GameMatch =
-    val players = Seq(
-      MockPlayer("Mario", Orange, PlayerBoard(0, 0, 0, 60)),
-      MockPlayer("Luigi", Green, PlayerBoard(0, 0, 0, 110)),
-      MockPlayer("Toad", Blue, PlayerBoard(0, 0, 0, 85))
+  private def mockPlayers(gloryPoints: Int*): Seq[MockPlayer] =
+    Seq(
+      MockPlayer("Mario", Orange, PlayerBoard(0, 0, 0, gloryPoints(0))),
+      MockPlayer("Luigi", Green, PlayerBoard(0, 0, 0, gloryPoints(1))),
+      MockPlayer("Toad", Blue, PlayerBoard(0, 0, 0, gloryPoints(2)))
     )
-    val boards = players.map(_.board)
 
+  private def mockMatch(players: Seq[MockPlayer]): GameMatch =
+    val boards = players.map(_.board)
     val gameMatch = mock[GameMatch]
     when(gameMatch.players).thenReturn(players)
     gameMatch
+
+  def mockGameMatch: GameMatch =
+    mockMatch(mockPlayers(60, 110, 85))
+
+  def mockGameMatchDraw: GameMatch =
+    mockMatch(mockPlayers(75, 90, 90))
