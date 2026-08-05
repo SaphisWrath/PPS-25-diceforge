@@ -32,4 +32,4 @@ object Die:
             addFace(newFace)
           case _ => throw IllegalStateException("Max number of faces was reached but no replacedFace was provided.")
 
-  def apply(numFaces: Int): Die = BaseDie(numFaces)
+  def apply(numFaces: Int): Die = new BaseDie(numFaces)
