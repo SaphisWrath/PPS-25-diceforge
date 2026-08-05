@@ -1,7 +1,7 @@
 package view.panes
 
 import controller.PlayerChoice
-import model.Players.Player
+import controller.dto.PlayerDTO
 import scalafx.scene.control.{Button, Label}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.{Node, Scene}
@@ -16,13 +16,13 @@ trait ChoiceWindow[A]:
 
 object ChoiceWindowChain:
   private class ChoiceWindowChainImpl[A](playerChoices: Seq[PlayerChoice[A]],
-                                    results: Seq[(Player, A)],
-                                    next: (Seq[(Player, A)], Seq[PlayerChoice[A]]) => Unit,
-                                    orElse: Seq[(Player, A)] => Unit) extends ChoiceWindow[A]:
+                                         results: Seq[(PlayerDTO, A)],
+                                         next: (Seq[(PlayerDTO, A)], Seq[PlayerChoice[A]]) => Unit,
+                                         orElse: Seq[(PlayerDTO, A)] => Unit) extends ChoiceWindow[A]:
 
     private val playerChoice = playerChoices.head
 
-    private def buttonCallback(currentResults: Seq[(Player, A)], closeCall: () => Unit): () => Unit =
+    private def buttonCallback(currentResults: Seq[(PlayerDTO, A)], closeCall: () => Unit): () => Unit =
       () => {
         if playerChoices.tail.isEmpty
         then orElse(currentResults)
@@ -58,6 +58,6 @@ object ChoiceWindowChain:
     override def forceNext(): Unit = buttonCallback(results, println)()
 
   def apply[A](playerChoices: Seq[PlayerChoice[A]],
-               results: Seq[(Player, A)],
-               next: (Seq[(Player, A)], Seq[PlayerChoice[A]]) => Unit,
-               orElse: Seq[(Player, A)] => Unit): ChoiceWindow[A] = ChoiceWindowChainImpl[A](playerChoices, results, next, orElse)
+               results: Seq[(PlayerDTO, A)],
+               next: (Seq[(PlayerDTO, A)], Seq[PlayerChoice[A]]) => Unit,
+               orElse: Seq[(PlayerDTO, A)] => Unit): ChoiceWindow[A] = ChoiceWindowChainImpl[A](playerChoices, results, next, orElse)
