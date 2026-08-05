@@ -2,6 +2,7 @@ package model.utils
 
 import model.GameMatch
 import model.Players.Player
+import model.dice.Die
 import model.effects.*
 import model.utils.RandomModules.given_RandomModule_Int
 
@@ -11,7 +12,7 @@ trait TemporaryDie:
   def addFaces(addedFaces: Effect*): Unit
 
 trait DiceThrow:
-  def initiateDiceRoll(dice: Seq[(Player, Seq[TemporaryDie])]):
+  def initiateDiceRoll(dice: Seq[(Player, Seq[Die])]):
     (Seq[(Player, CopyEffect)], Seq[(Player, Effect)])
   def sortEffects(effects: Seq[(Player, Effect)]): Seq[(Player, OptionEffect)]
   def resolveAll(effects: Seq[(Player, Effect)]): Unit
@@ -26,7 +27,7 @@ object DiceThrow:
     private var nonCopyEffects: Seq[(Player, Effect)] = Seq.empty
     private var nonOptionEffects: Seq[(Player, Effect)] = Seq.empty
     
-    override def initiateDiceRoll(dice: Seq[(Player, Seq[TemporaryDie])]):
+    override def initiateDiceRoll(dice: Seq[(Player, Seq[Die])]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
       val (copyEffects, resourceEffects) = dice
         .sortBy((p, _) => if orderCheck(p) then 1 else -1)

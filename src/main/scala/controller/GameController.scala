@@ -5,6 +5,7 @@ import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
+import model.dice.Die
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.resource.SunCrystal
@@ -85,7 +86,7 @@ trait GameController:
    */
   def diceThrowManager: DiceThrowManager
 
-  def playerDice(player: PlayerDTO): Seq[TemporaryDie]
+  def playerDice(player: PlayerDTO): Seq[Die]
 
   def endDiceThrow(): Unit
   /**
@@ -94,9 +95,9 @@ trait GameController:
   def canTakeAction: Boolean
 
   def canBuyExtraAction: Boolean
-  
+
   def canEndSupportPhase: Boolean
-  
+
   def endSupportPhase(): Unit
 
   def buyExtraAction(): Unit
@@ -166,19 +167,18 @@ object GameController:
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
     override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
-    
+
     override def canEndSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
 
     override def endSupportPhase(): Unit = gameMatch.executeAction(EndSupport)
-    
-    override def playerDice(player: PlayerDTO): Seq[TemporaryDie] = {
+
+    override def playerDice(player: PlayerDTO): Seq[Die] =
       val diceMap = gameMatch.players.map(p =>
         if gameMatch.players.indexOf(p) != 0
         then (PlayerDTO(p), Seq(mockCopyDie))
         else (PlayerDTO(p), Seq(mockOptionDie))
       ).toMap
       diceMap(player)
-    }
 
     override def endDiceThrow(): Unit =
       gameMatch.executeAction(CompleteDiceThrow)
@@ -186,7 +186,7 @@ object GameController:
     override def canTakeAction: Boolean = !gameMatch.isActionAvailable(StandardAction)
 
     override def canBuyExtraAction: Boolean = gameMatch.isActionAvailable(BuyExtraAction)
-    
+
     override def buyExtraAction(): Unit = gameMatch.executeAction(BuyExtraAction)
 
     override def turnStep: String = gameMatch.currentTurnStep.toString

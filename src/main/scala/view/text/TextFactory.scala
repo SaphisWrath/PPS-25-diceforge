@@ -1,9 +1,11 @@
 package view.text
 
 import scalafx.geometry.Insets
+import scalafx.scene.Node
 import scalafx.scene.paint.Color.{Black, Cyan, DarkRed, Peru, Red, White}
 import scalafx.scene.paint.{Color, LinearGradient, Paint, Stops}
 import scalafx.scene.text.Text
+import scalafx.stage.Popup
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.theme.JfxTheme
 

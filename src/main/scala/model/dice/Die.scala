@@ -1,28 +1,35 @@
 package model.dice
 
+import model.effects.Effect
 import model.utils.RandomModule
 
-import scala.util.Random
-
 trait Die:
-  def maxFaces: Int
+  def roll(using randomModule: RandomModule[Int]): Effect
 
-  def roll(using randomModule: RandomModule[Int]): Face
+  def addFace(newFace: Effect, replacedFace: Option[Effect] = None): Unit
 
-  def addFaces(addedFaces: Face*): Unit
+  def faces: Seq[Effect]
 
-class BaseDie(numFaces: Int) extends Die:
-  override def maxFaces: Int = numFaces
+object Die:
+  private class BaseDie(numFaces: Int) extends Die:
+    private var _faces: Seq[Effect] = Seq.empty
+    private val maxFaces: Int = numFaces
 
-  var faces: List[Face] = List()
+    private def isFull: Boolean = numFaces == _faces.length
 
-  def isFull: Boolean = numFaces == faces.length
+    override def roll(using randomModule: RandomModule[Int]): Effect =
+      _faces(randomModule.randomIndex(maxFaces))
 
-  private def addFace(face: Face): Unit =
-    if !isFull then faces = face :: faces
+    override def faces: Seq[Effect] = _faces
 
-  override def addFaces(addedFaces: Face*): Unit =
-    addedFaces.foreach(f => this.addFace(f))
+    override def addFace(newFace: Effect, replacedFace: Option[Effect]): Unit =
+      if !isFull then
+        _faces = _faces.+:(newFace)
+      else
+        replacedFace match
+          case Some(oldFace) =>
+            _faces = _faces.diff(Seq(oldFace))
+            addFace(newFace)
+          case _ => throw IllegalStateException("Max number of faces was reached but no replacedFace was provided.")
 
-  override def roll(using randomModule: RandomModule[Int]): Face =
-    faces(randomModule.randomIndex(maxFaces))
+  def apply(numFaces: Int): Die = new BaseDie(numFaces)

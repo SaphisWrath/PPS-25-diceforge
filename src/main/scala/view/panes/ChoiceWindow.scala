@@ -4,13 +4,13 @@ import controller.PlayerChoice
 import model.Players.Player
 import scalafx.scene.control.{Button, Label}
 import scalafx.geometry.Pos.Center
-import scalafx.scene.Node
+import scalafx.scene.{Node, Scene}
 import scalafx.scene.layout.{BorderPane, HBox, Pane, VBox}
+import scalafx.stage.{Modality, Stage, StageStyle}
 import view.buttons.ButtonFactory.makeChoiceButton
 
 trait ChoiceWindow[A]:
-  def pane: Pane
-  def setMapper(map: A => Node): Unit
+  def show(mapper: A => Node): Unit
   def buttonsAvailable: Boolean
   def forceNext(): Unit
 
@@ -21,36 +21,41 @@ object ChoiceWindowChain:
                                     orElse: Seq[(Player, A)] => Unit) extends ChoiceWindow[A]:
 
     private val playerChoice = playerChoices.head
-    private var mapper: A => Node = _ => ???
 
-    private def someFun(currentResults: Seq[(Player, A)]): () => Unit =
+    private def buttonCallback(currentResults: Seq[(Player, A)], closeCall: () => Unit): () => Unit =
       () => {
         if playerChoices.tail.isEmpty
         then orElse(currentResults)
         else next(currentResults, playerChoices.tail)
+        closeCall()
       }
 
-    override def pane: Pane =
-      val buttons: Seq[Button] = playerChoice._2.map(option =>
-        makeChoiceButton(mapper(option), someFun(results.concat(Seq((playerChoice._1, option)))))
-      )
+    override def show(mapper: A => Node): Unit =
+      val popupStage = new Stage {
+        initStyle(StageStyle.Undecorated)
+        initModality(Modality.ApplicationModal)
 
-      new BorderPane {
-        center = new VBox {
-          alignment = Center
-          children = Seq(
-            Label(playerChoice._1.name + ", scegli fra le seguenti opzioni"),
-            new HBox {
-              alignment = Center
-              children = buttons
-            }
-          )
+        scene = new Scene(500, 300) {
+          root = new VBox {
+            alignment = Center
+            children = Seq(
+              Label(playerChoice._1.name + ", scegli fra le seguenti opzioni"),
+              new HBox {
+                alignment = Center
+                children = playerChoice._2.map(option => makeChoiceButton(
+                  mapper(option),
+                  buttonCallback(results.concat(Seq((playerChoice._1, option))), close))
+                )
+              }
+            )
+          }
         }
       }
 
-    override def setMapper(map: A => Node): Unit = mapper = map
+      popupStage.showAndWait()
+
     override def buttonsAvailable: Boolean = playerChoice._2.nonEmpty
-    override def forceNext(): Unit = someFun(results)()
+    override def forceNext(): Unit = buttonCallback(results, println)()
 
   def apply[A](playerChoices: Seq[PlayerChoice[A]],
                results: Seq[(Player, A)],

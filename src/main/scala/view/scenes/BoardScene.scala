@@ -10,6 +10,9 @@ import model.utils.TemporaryDie
 import utils.Publishers.{Publisher, Subscriber}
 import controller.dto.PlayerDTO
 import scalafx.beans.property.{BooleanProperty, ObjectProperty, StringProperty}
+import controller.{ControllerStage, GameController, ViewPublishers}
+import model.dice.Die
+import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.{Group, Node}
@@ -119,7 +122,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => !controller.canBuyExtraAction
   )
 
-  private def throwDice(dice: Seq[(Player, Seq[TemporaryDie])]): Unit =
+  private def throwDice(dice: Seq[(Player, Seq[Die])]): Unit =
     val diceThrowManager = controller.diceThrowManager
     manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
       manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
@@ -131,19 +134,18 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     )
 
   private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
-    def fun(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
-      val popup = ChoiceWindowChain(playerChoices, results, fun, orElse)
-      popup.setMapper {
+    def nextChoiceWindow(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
+      val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
+      popup.show({
         case effect: OptionEffect  => EffectWrapperPane("", EffectDTO(effect), JfxTheme.primaryBorder)
         case effect: Effect => EffectPane(EffectDTO(effect))
         case _ => throw IllegalStateException("Choice element is not an effect")
-      }
-      this.mainPane.left = popup.pane
+      })
       if !popup.buttonsAvailable then popup.forceNext()
 
     if choices.isEmpty
       then orElse(Seq.empty)
-    else fun(Seq.empty, choices)
+    else nextChoiceWindow(Seq.empty, choices)
 
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
     new VBox {
