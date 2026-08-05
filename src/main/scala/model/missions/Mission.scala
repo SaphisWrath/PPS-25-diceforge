@@ -15,21 +15,21 @@ trait Mission:
 
   def canGet(receiverProducer: Target => Seq[Player]): Boolean
 
-  def available: Boolean = count > 0
+  def availableForPurchase: Boolean = purchaseCount > 0
 
-  def count: Int
+  def purchaseCount: Int
 
-  def startCount: Int
+  def startingPurchaseCount: Int
 
 object Mission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
-case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 0) extends Mission:
-  var count: Int = startCount
+case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startingPurchaseCount: Int = 0) extends Mission:
+  var purchaseCount: Int = startingPurchaseCount
 
   override def get(receiverProducer: Target => Seq[Player]): Unit =
     if canGet(receiverProducer) then
-      count = count - 1
+      purchaseCount = purchaseCount - 1
       cost.foreach(r => {
         r.setModule(model.utils.ResourceEffectModules.SubtractResource)
         r.resolve(receiverProducer(r.target))
@@ -39,7 +39,7 @@ case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: Str
   protected def obtainReward(receiverProducer: Target => Seq[Player]): Unit = {}
 
   override def canGet(receiverProducer: Target => Seq[Player]): Boolean = {
-    available &&
+    availableForPurchase &&
     cost.forall { e =>
       val players = receiverProducer(e.target)
       players.nonEmpty && players.forall(_.board.canSpend(e.resource))

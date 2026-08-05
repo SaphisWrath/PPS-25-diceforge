@@ -2,8 +2,7 @@ package view.panes
 
 import controller.dto.MissionDTO
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.{BottomRight, Center, TopRight}
-import scalafx.scene.Node
+import scalafx.geometry.Pos.Center
 import scalafx.scene.control.{Button, Tooltip}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
@@ -20,7 +19,7 @@ import controller.dto.MissionType.*
 object MissionPanes:
   class MissionPane(missionDTO: MissionDTO) extends VBox:
     private def getCorrectColor(disabledColor: Color, supportColor: Color, defaultColor: Color): Color =
-      if missionDTO.startingCount != 0 && missionDTO.count == 0
+      if missionDTO.startingPurchaseCount != 0 && missionDTO.purchaseCount == 0
       then disabledColor
       else
         missionDTO.missionType match
@@ -42,8 +41,8 @@ object MissionPanes:
       rewards,
       button
     ).concat(Seq(missionDTO).flatMap(m =>
-      if m.startingCount > 0
-      then Seq(new Text(s"${missionDTO.count}/ ${missionDTO.startingCount}"))
+      if m.startingPurchaseCount > 0
+      then Seq(new Text(s"${missionDTO.purchaseCount}/ ${missionDTO.startingPurchaseCount}"))
       else Seq.empty
     ))
 
@@ -58,7 +57,7 @@ object MissionPanes:
 
     protected def name: Text = {
       val nameText = TextFactory.makeMissionName(missionDTO.id)
-      Tooltip.install(nameText, new Tooltip(MissionDescriptions.getDescription(missionDTO.id)))
+      Tooltip.install(nameText, new Tooltip(MissionDescriptions.getDescription(missionDTO)))
       nameText
     }
 

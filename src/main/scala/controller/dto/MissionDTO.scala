@@ -21,8 +21,8 @@ case class MissionDTO(
   clickable: () => Boolean,
   onClick: () => Unit,
   missionType: MissionType,
-  count: Int,
-  startingCount: Int
+  purchaseCount: Int,
+  startingPurchaseCount: Int
 )
 
 object MissionDTO:
@@ -43,6 +43,6 @@ object MissionDTO:
       clickable,
       onClick,
       MissionType(mission),
-      mission.count,
-      mission.startCount
+      mission.purchaseCount,
+      mission.startingPurchaseCount
     )
