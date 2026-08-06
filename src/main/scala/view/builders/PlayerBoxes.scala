@@ -28,6 +28,7 @@ object PlayerBoxes:
   object PlayerBoxStyle:
     val Standard = PlayerBoxStyle(10, 10, BorderStrokeStyle.Solid, Color.Black, 3, Color.Transparent)
     val Small = PlayerBoxStyle(5, 6, BorderStrokeStyle.Dashed, Color.Black, 2, Color.Transparent)
+    val Tiny = PlayerBoxStyle(3, 3, BorderStrokeStyle.Dotted, Color.Black, 1, Color.Transparent)
 
   case class PlayerBoxBuilder(
                                private val boxStyle: PlayerBoxStyle,

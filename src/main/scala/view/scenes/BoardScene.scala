@@ -63,7 +63,10 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private val centralPane: MultiPane = MultiPane(
     {
       case Start => startPane
-      case Missions => MissionBoardPane(controller.missions)
+      case Missions => MissionBoardPane(
+        controller.missions,
+        controller.playerPositions.map((i, p) => (i, playerDirectors(p).onlyToken))
+      )
       case ObtainedMissions => obtainedMissionsPane()
     },
     Set(Start, Missions, ObtainedMissions)
