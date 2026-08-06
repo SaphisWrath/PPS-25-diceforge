@@ -5,8 +5,21 @@ import model.ModelPublisher
 import model.Players.Player
 import model.effects.*
 
+/**
+ * A manager that attempts to solve every effect given
+ * Stores partial results when it needs user input, then attempts to solve again with the new info
+ */
 trait EffectManager:
+  /**
+   * Tries to solve all effects and succeeds immediately when no user input is required
+   * @param effects the effects it tries to resolve
+   */
   def attemptSolve(effects: Seq[(Player, Effect)]): Unit
+
+  /**
+   *
+   * @return the effects that require user input to solve further
+   */
   def effectsToSolve: Seq[(Player, OptionEffect)]
 
 object EffectManager:
