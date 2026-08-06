@@ -16,13 +16,13 @@ trait ChoiceWindow[A]:
 
 object ChoiceWindowChain:
   private class ChoiceWindowChainImpl[A](playerChoices: Seq[PlayerChoice[A]],
-                                         results: Seq[(PlayerDTO, A)],
-                                         next: (Seq[(PlayerDTO, A)], Seq[PlayerChoice[A]]) => Unit,
-                                         orElse: Seq[(PlayerDTO, A)] => Unit) extends ChoiceWindow[A]:
+                                         results: Seq[Int],
+                                         next: (Seq[Int], Seq[PlayerChoice[A]]) => Unit,
+                                         orElse: Seq[Int] => Unit) extends ChoiceWindow[A]:
 
     private val playerChoice = playerChoices.head
 
-    private def buttonCallback(currentResults: Seq[(PlayerDTO, A)], closeCall: () => Unit): () => Unit =
+    private def buttonCallback(currentResults: Seq[Int], closeCall: () => Unit): () => Unit =
       () => {
         if playerChoices.tail.isEmpty
         then orElse(currentResults)
@@ -44,7 +44,7 @@ object ChoiceWindowChain:
                 alignment = Center
                 children = playerChoice._2.map(option => makeChoiceButton(
                   mapper(option),
-                  buttonCallback(results.concat(Seq((playerChoice._1, option))), close))
+                  buttonCallback(results.concat(Seq(playerChoice._2.indexOf(option))), close))
                 )
               }
             )
@@ -57,8 +57,8 @@ object ChoiceWindowChain:
     override def buttonsAvailable: Boolean = playerChoice._2.nonEmpty
     override def forceNext(): Unit = buttonCallback(results, println)()
 
-  def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(PlayerDTO, A)] => Unit, mapper: A => Node): Unit =
-    def nextChoiceWindow(results: Seq[(PlayerDTO, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
+  def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[Int] => Unit, mapper: A => Node): Unit =
+    def nextChoiceWindow(results: Seq[Int], playerChoices: Seq[PlayerChoice[A]]): Unit =
       val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
       popup.show(mapper)
       if !popup.buttonsAvailable then popup.forceNext()
@@ -68,6 +68,6 @@ object ChoiceWindowChain:
     else nextChoiceWindow(Seq.empty, choices)
 
   def apply[A](playerChoices: Seq[PlayerChoice[A]],
-               results: Seq[(PlayerDTO, A)],
-               next: (Seq[(PlayerDTO, A)], Seq[PlayerChoice[A]]) => Unit,
-               orElse: Seq[(PlayerDTO, A)] => Unit): ChoiceWindow[A] = ChoiceWindowChainImpl[A](playerChoices, results, next, orElse)
+               results: Seq[Int],
+               next: (Seq[Int], Seq[PlayerChoice[A]]) => Unit,
+               orElse: Seq[Int] => Unit): ChoiceWindow[A] = ChoiceWindowChainImpl[A](playerChoices, results, next, orElse)

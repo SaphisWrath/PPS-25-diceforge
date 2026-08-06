@@ -21,4 +21,4 @@ trait ChoiceController[A]:
    * Continues the previously stopped operation
    * @param results from the user's choices, used for the following phase of the operation
    */
-  def resumeAfterChoices(results: Seq[(PlayerDTO, A)]): Unit
+  def resumeAfterChoices(results: Seq[Int]): Unit
