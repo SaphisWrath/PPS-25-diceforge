@@ -4,13 +4,14 @@ import model.Players.Player
 
 trait MapManager:
   def playerPositions: Map[Int, Player]
+
   def playerInPosition(position: Int): Option[Player]
+
   def movePlayer(player: Player, newPosition: Int): Unit
 
 object MapManager:
-  private class MapManagerImpl(players: Seq[Player], onThrowOut: Player => Unit) extends MapManager:
-    private val startingPosition: Int = -1
-    private var map: Map[Int, Player] = players.map((startingPosition, _)).toMap
+  private class MapManagerImpl(onThrowOut: Player => Unit) extends MapManager:
+    private var map: Map[Int, Player] = Map.empty
 
     override def playerPositions: Map[Int, Player] = map
 
@@ -18,13 +19,10 @@ object MapManager:
 
     override def movePlayer(player: Player, newPosition: Int): Unit =
       playerInPosition(newPosition) match
-        case Some(p) =>
-          onThrowOut(p)
-          changePosition(p, startingPosition)
+        case Some(playerToBeRemoved) =>
+          onThrowOut(playerToBeRemoved)
+          map = map.filter((_, p) => p != playerToBeRemoved)
         case _ =>
-      changePosition(player, newPosition)
-
-    private def changePosition(player: Player, newPosition: Int): Unit =
       map = map.filter((_, p) => p != player).updated(newPosition, player)
-  
-  def apply(players: Seq[Player], onThrowOut: Player => Unit): MapManager = MapManagerImpl(players, onThrowOut)
+
+  def apply(onThrowOut: Player => Unit): MapManager = MapManagerImpl(onThrowOut)
