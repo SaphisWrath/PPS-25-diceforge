@@ -2,11 +2,15 @@ package model
 
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
+import model.dice.Die
+import model.effects.Effect
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.{Gold, PlayerBoard}
-import model.turn.TurnManagers.TurnAction.EndSupport
-import model.turn.TurnManagers.TurnStep.{MainActionStep, StartStep, SupportStep}
+import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndSupport}
+import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
+import model.utils.EffectManager
+import model.utils.RandomModules.given_RandomModule_Int
 
 import scala.util.Random
 
@@ -36,6 +40,12 @@ trait GameMatch:
   def executeAction(turnAction: TurnAction): Unit
 
   def currentTurnStep: TurnStep
+
+  def startDiceThrow(): Unit
+
+  def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit
+
+  def getDiceResults: Seq[(Player, Effect)]
 
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
@@ -82,7 +92,10 @@ object GameMatch:
       case _ => true
 
     private def otherActions(turnAction: TurnAction): Unit = turnAction match
-      case TurnAction.EndTurn => nextTurn()
+      case TurnAction.EndTurn =>
+        nextTurn()
+        startDiceThrow()
+        this.executeAction(CompleteDiceThrow)
       case TurnAction.CompleteDiceThrow => if activePlayer.missions.isEmpty then this.executeAction(EndSupport)
       case _ =>
 
@@ -96,5 +109,11 @@ object GameMatch:
       
     override def currentTurnStep: TurnStep = turnManager.currentStep
 
+    override def getDiceResults: Seq[(Player, Effect)] = players.flatMap(p => p.dice.map(d => (p, d.lastEffect.get)))
+
+    override def startDiceThrow(): Unit = startDiceThrow(players.map(p => (p, p.dice)))
+
+    override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
+      EffectManager().attemptSolve(playerDice.flatMap((p, d) => d.map(die => (p, die.roll))))
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

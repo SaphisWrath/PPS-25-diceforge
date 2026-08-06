@@ -1,11 +1,11 @@
 package view.panes
 
 import controller.PlayerChoice
-import model.Players.Player
-import scalafx.scene.control.{Button, Label}
+import controller.dto.PlayerDTO
+import scalafx.scene.control.Label
 import scalafx.geometry.Pos.Center
 import scalafx.scene.{Node, Scene}
-import scalafx.scene.layout.{BorderPane, HBox, Pane, VBox}
+import scalafx.scene.layout.{HBox, VBox}
 import scalafx.stage.{Modality, Stage, StageStyle}
 import view.buttons.ButtonFactory.makeChoiceButton
 
@@ -16,13 +16,13 @@ trait ChoiceWindow[A]:
 
 object ChoiceWindowChain:
   private class ChoiceWindowChainImpl[A](playerChoices: Seq[PlayerChoice[A]],
-                                    results: Seq[(Player, A)],
-                                    next: (Seq[(Player, A)], Seq[PlayerChoice[A]]) => Unit,
-                                    orElse: Seq[(Player, A)] => Unit) extends ChoiceWindow[A]:
+                                         results: Seq[(PlayerDTO, A)],
+                                         next: (Seq[(PlayerDTO, A)], Seq[PlayerChoice[A]]) => Unit,
+                                         orElse: Seq[(PlayerDTO, A)] => Unit) extends ChoiceWindow[A]:
 
     private val playerChoice = playerChoices.head
 
-    private def buttonCallback(currentResults: Seq[(Player, A)], closeCall: () => Unit): () => Unit =
+    private def buttonCallback(currentResults: Seq[(PlayerDTO, A)], closeCall: () => Unit): () => Unit =
       () => {
         if playerChoices.tail.isEmpty
         then orElse(currentResults)
@@ -57,7 +57,17 @@ object ChoiceWindowChain:
     override def buttonsAvailable: Boolean = playerChoice._2.nonEmpty
     override def forceNext(): Unit = buttonCallback(results, println)()
 
+  def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(PlayerDTO, A)] => Unit, mapper: A => Node): Unit =
+    def nextChoiceWindow(results: Seq[(PlayerDTO, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
+      val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
+      popup.show(mapper)
+      if !popup.buttonsAvailable then popup.forceNext()
+
+    if choices.isEmpty
+    then orElse(Seq.empty)
+    else nextChoiceWindow(Seq.empty, choices)
+
   def apply[A](playerChoices: Seq[PlayerChoice[A]],
-               results: Seq[(Player, A)],
-               next: (Seq[(Player, A)], Seq[PlayerChoice[A]]) => Unit,
-               orElse: Seq[(Player, A)] => Unit): ChoiceWindow[A] = ChoiceWindowChainImpl[A](playerChoices, results, next, orElse)
+               results: Seq[(PlayerDTO, A)],
+               next: (Seq[(PlayerDTO, A)], Seq[PlayerChoice[A]]) => Unit,
+               orElse: Seq[(PlayerDTO, A)] => Unit): ChoiceWindow[A] = ChoiceWindowChainImpl[A](playerChoices, results, next, orElse)
