@@ -12,7 +12,7 @@ object EffectSolveController:
 
     override def pendingChoices: Seq[PlayerChoice[EffectDTO]] =
       choiceList = effectManager.effectsToSolve.map((p, opt) => (p, opt.effects))
-      effectManager.effectsToSolve.map((p, opt) => (PlayerDTO(p), opt.effects.map(EffectDTO(_))))
+      choiceList.map((p, effects) => (PlayerDTO(p), effects.map(EffectDTO(_))))
 
     override def resumeAfterChoices(results: Seq[Int]): Unit =
       effectManager.attemptSolve(results.zip(choiceList).map((index, choice) => (choice._1, choice._2(index))))
