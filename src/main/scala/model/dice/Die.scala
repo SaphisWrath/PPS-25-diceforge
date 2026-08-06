@@ -10,15 +10,19 @@ trait Die:
 
   def faces: Seq[Effect]
 
+  def lastEffect: Option[Effect]
+
 object Die:
   private class BaseDie(numFaces: Int) extends Die:
     private var _faces: Seq[Effect] = Seq.empty
     private val maxFaces: Int = numFaces
+    private var _lastEffect: Option[Effect] = Option.empty
 
     private def isFull: Boolean = numFaces == _faces.length
 
     override def roll(using randomModule: RandomModule[Int]): Effect =
-      _faces(randomModule.randomIndex(maxFaces))
+      _lastEffect = Option(_faces(randomModule.randomIndex(maxFaces)))
+      _lastEffect.get
 
     override def faces: Seq[Effect] = _faces
 
@@ -31,6 +35,8 @@ object Die:
             _faces = _faces.diff(Seq(oldFace))
             addFace(newFace)
           case _ => throw IllegalStateException("Max number of faces was reached but no replacedFace was provided.")
+
+    override def lastEffect: Option[Effect] = _lastEffect
 
   def apply(numFaces: Int): Die = new BaseDie(numFaces)
   
