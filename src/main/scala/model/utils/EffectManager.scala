@@ -1,10 +1,9 @@
 package model.utils
 
 import model.ModelPublisher.ModelContext.{ChoiceContext, ResourceContext}
-import model.{GameMatch, ModelPublisher}
+import model.ModelPublisher
 import model.Players.Player
 import model.effects.*
-import model.utils.RandomModules.given_RandomModule_Int
 
 trait EffectManager:
   def attemptSolve(effects: Seq[(Player, Effect)]): Unit

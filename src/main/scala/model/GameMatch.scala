@@ -1,6 +1,6 @@
 package model
 
-import model.ModelPublisher.ModelContext.{ChoiceContext, TurnEndContext, TurnStepContext}
+import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
 import model.effects.Effect

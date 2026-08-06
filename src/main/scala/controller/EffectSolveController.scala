@@ -1,19 +1,9 @@
 package controller
 
 import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
-import model.GameMatch
 import model.Players.Player
-import model.dice.Die
 import model.effects.Effect
 import model.utils.EffectManager
-
-type PlayerChoice[A] = (PlayerDTO, Seq[A])
-object PlayerChoice:
-  def apply[A](player: PlayerDTO, options: Seq[A]): PlayerChoice[A] = (player, options)
-
-trait EffectSolveController[A]:
-  def pendingChoices: Seq[PlayerChoice[A]]
-  def resumeAfterChoices(results: Seq[(PlayerDTO, A)]): Unit
 
 object EffectSolveController:
   private def asPlayer(playerList: Seq[Player])(playerDTO: PlayerDTO): Player =
@@ -31,7 +21,7 @@ object EffectSolveController:
       case (e1: EffectDTO, e2: EffectDTO) => equalEffects(e1,e2)
     ).get
 
-  private class EffectSolveControllerImpl extends EffectSolveController[EffectDTO]:
+  private class EffectSolveControllerImpl extends ChoiceController[EffectDTO]:
     private val effectManager = EffectManager()
     private var effectList: Seq[(Player, Effect)] = Seq.empty
 
@@ -43,5 +33,5 @@ object EffectSolveController:
       effectManager.attemptSolve(
         results.map((pDTO, eDTO) => (asPlayer(effectList.map(_._1))(pDTO), asEffect(effectList.map(_._2))(eDTO)))
       )
-  
-  def apply(): EffectSolveController[EffectDTO] = EffectSolveControllerImpl()
+
+  def apply(): ChoiceController[EffectDTO] = EffectSolveControllerImpl()

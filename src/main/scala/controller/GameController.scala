@@ -81,7 +81,7 @@ trait GameController:
 
   def endDiceThrow(): Unit
   
-  def solveController: EffectSolveController[EffectDTO]
+  def solveController: ChoiceController[EffectDTO]
 
   /**
    * @return true if the player already took his action, false otherwise
@@ -176,7 +176,7 @@ object GameController:
 
     override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
 
-    override def solveController: EffectSolveController[EffectDTO] = EffectSolveController()
+    override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
