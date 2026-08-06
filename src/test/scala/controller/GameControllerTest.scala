@@ -43,7 +43,7 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     gameController.canGoToNextTurn should be (false)
     gameController.nextTurn()
     gameController.activePlayer should be (activePlayer)
-    gameController.endDiceThrow()
+    gameController.endDiceThrow(Seq.empty)
     gameController.canGoToNextTurn should be (true)
     gameController.nextTurn()
     gameController.activePlayer should not be activePlayer
@@ -55,7 +55,7 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
     gameController.currentRound should not be oldRound
 
   private def goToNextTurn(): Unit =
-    gameController.endDiceThrow()
+    gameController.endDiceThrow(Seq.empty)
     gameController.nextTurn()
 
   it should "end when the maximum number of rounds is reached" in :

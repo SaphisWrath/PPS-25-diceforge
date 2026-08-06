@@ -33,3 +33,8 @@ object Die:
           case _ => throw IllegalStateException("Max number of faces was reached but no replacedFace was provided.")
 
   def apply(numFaces: Int): Die = new BaseDie(numFaces)
+  
+  def apply(faces: Seq[Effect]): Die =
+    val die = BaseDie(faces.size)
+    faces.foreach(die.addFace(_, Option.empty))
+    die

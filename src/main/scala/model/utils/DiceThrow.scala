@@ -1,6 +1,7 @@
 package model.utils
 
-import model.GameMatch
+import model.ModelPublisher.ModelContext.ResourceContext
+import model.{GameMatch, ModelPublisher}
 import model.Players.Player
 import model.dice.Die
 import model.effects.*
@@ -59,5 +60,6 @@ object DiceThrow:
             case _ =>
           e.resolve(correctPlayerDestination(p))
         )
+      ModelPublisher().notify(ResourceContext)
       
   def apply(gameMatch: GameMatch): DiceThrow = DiceThrowImpl(gameMatch)

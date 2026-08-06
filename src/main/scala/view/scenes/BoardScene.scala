@@ -1,10 +1,9 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, PlayerChoice, ViewPublisher}
-import model.dice.Die
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
@@ -116,17 +115,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.buyExtraAction(),
     () => !controller.canBuyExtraAction
   )
-
-  private def throwDice(dice: Seq[(PlayerDTO, Seq[Die])]): Unit =
-    val diceThrowManager = controller.diceThrowManager
-    manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
-      manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
-        diceThrowManager.endRoll(solvedOptionEffects)
-        ViewPublisher().notify(ResourceContext)
-        controller.endDiceThrow()
-      )
-    )
-
+  
   private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(PlayerDTO, A)] => Unit): Unit =
     def nextChoiceWindow(results: Seq[(PlayerDTO, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
       val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
@@ -189,6 +178,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
-      throwDice(controller.players.map(p => (p, controller.playerDice(p))))
     case TurnStepChangeContext => turnStep() = controller.turnStep
+    case PlayerChoiceContext => manageChoices(controller.pendingChoices, controller.resumeAfterChoices)
     case _ =>

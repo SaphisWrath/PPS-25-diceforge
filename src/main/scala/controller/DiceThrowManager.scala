@@ -1,6 +1,7 @@
 package controller
 
-import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
+import controller.ViewPublisher.ViewContext.PlayerChoiceContext
+import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
 import model.dice.Die
@@ -12,7 +13,7 @@ object PlayerChoice:
   def apply[A](player: PlayerDTO, options: Seq[A]): PlayerChoice[A] = (player, options)
 
 trait DiceThrowManager:
-  def copyEffectsFromRoll(dice: Seq[(PlayerDTO, Seq[Die])]): Seq[PlayerChoice[EffectDTO]]
+  def copyEffectsFromRoll(dice: Seq[(Player, Seq[Die])]): Seq[PlayerChoice[EffectDTO]]
   def optionEffectsFromRoll(solvedCopyEffects: Seq[(PlayerDTO, EffectDTO)]): Seq[PlayerChoice[EffectDTO]]
   def endRoll(solvedOptionEffects: Seq[(PlayerDTO, EffectDTO)]): Unit
   def allRawEffects: Seq[(PlayerDTO, EffectDTO)]
@@ -31,7 +32,6 @@ object DiceThrowManager:
       case (CompoundEffectDTO(effects_1), CompoundEffectDTO(effects_2)) =>
         effects_1.zip(effects_2).forall((e1, e2) => equalEffects(e1, e2))
       case (e1: EffectDTO, e2: EffectDTO) => equalEffects(e1,e2)
-      case _ => false
     ).get
 
   private class DiceThrowManagerImpl(gameMatch: GameMatch) extends DiceThrowManager:
@@ -40,8 +40,8 @@ object DiceThrowManager:
     private var effectsInLastChoice: Seq[Effect] = Seq.empty
     var allRawEffects: Seq[(PlayerDTO, EffectDTO)] = Seq.empty
 
-    override def copyEffectsFromRoll(dice: Seq[(PlayerDTO, Seq[Die])]): Seq[PlayerChoice[EffectDTO]] =
-      val (copyEffects, otherEffects) = diceThrowHelper.initiateDiceRoll(dice.map((p, d) => (toPlayer(p), d)))
+    override def copyEffectsFromRoll(dice: Seq[(Player, Seq[Die])]): Seq[PlayerChoice[EffectDTO]] =
+      val (copyEffects, otherEffects) = diceThrowHelper.initiateDiceRoll(dice)
       allRawEffects = copyEffects.concat(otherEffects).map((p, e) => (PlayerDTO(p), EffectDTO(e)))
       effectsInLastChoice = otherEffects.map(_._2)
       copyEffects.map((p, e) =>
