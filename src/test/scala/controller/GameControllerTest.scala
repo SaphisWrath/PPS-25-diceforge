@@ -40,27 +40,19 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
   it should "let you go to the next after dice are thrown" in :
     val players = initGame(2)
     val activePlayer = gameController.activePlayer
-    gameController.canGoToNextTurn should be (false)
-    gameController.nextTurn()
     gameController.activePlayer should be (activePlayer)
-    gameController.endDiceThrow(Seq.empty)
-    gameController.canGoToNextTurn should be (true)
     gameController.nextTurn()
     gameController.activePlayer should not be activePlayer
 
   it should "go to the next round after everybody took a turn" in :
     val players = initGame(2)
     val oldRound = gameController.currentRound
-    players.foreach(_ => goToNextTurn())
+    players.foreach(_ => gameController.nextTurn())
     gameController.currentRound should not be oldRound
-
-  private def goToNextTurn(): Unit =
-    gameController.endDiceThrow(Seq.empty)
-    gameController.nextTurn()
 
   it should "end when the maximum number of rounds is reached" in :
     val players = initGame(2)
     Range(0, gameController.maxNumberOfRounds).foreach(_ =>
-      players.foreach(_ => goToNextTurn())
+      players.foreach(_ => gameController.nextTurn())
     )
     gameController.isGameEnded should be(true)

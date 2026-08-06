@@ -3,7 +3,7 @@ package controller
 import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{DieDTO, EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
@@ -79,17 +79,12 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-  def startDiceThrow(): Unit
-
-  def startDiceThrow(playerDice: Seq[(PlayerDTO, Seq[DieDTO])]): Unit
-
-  def endDiceThrow(resolvedChoices: Seq[(PlayerDTO, EffectDTO)]): Unit
+  def endDiceThrow(): Unit
   
   def pendingChoices[A]: Seq[PlayerChoice[A]]
 
   def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit
-  
-  def getDiceResults: Seq[(PlayerDTO, EffectDTO)]
+
   /**
    * @return true if the player already took his action, false otherwise
    */
@@ -114,11 +109,13 @@ object GameController:
       case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
       case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
+      case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
       ViewPublisher().notify(TurnStepChangeContext)
-      startDiceThrow()
+      gameMatch.startDiceThrow()
+      endDiceThrow()
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
@@ -159,9 +156,7 @@ object GameController:
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
     override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
-    override def nextTurn(): Unit =
-      gameMatch.executeAction(EndTurn)
-      startDiceThrow()
+    override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
@@ -173,35 +168,7 @@ object GameController:
 
     override def endSupportPhase(): Unit = gameMatch.executeAction(EndSupport)
 
-    private val diceThrowManager = DiceThrowManager(gameMatch)
-    private var _pendingChoices: Seq[PlayerChoice[Any]] = Seq.empty
-    private var resultCallback: Seq[(PlayerDTO, Any)] => Unit = _ => {}
-    def getDiceResults: Seq[(PlayerDTO, EffectDTO)] = diceThrowManager.allRawEffects
-    
-    override def startDiceThrow(playerDice: Seq[(PlayerDTO, Seq[DieDTO])]): Unit =
-      val dice = gameMatch.players
-        .filter(p => playerDice.exists(_._1.name == p.name))
-        .map(p => (p, playerDice
-          .filter((pDTO, _) => p.name == pDTO.name)
-          .map((_, diceDTO) => diceDTO.map(d => p.dice(d.index)))
-          .head
-        ))
-
-      _pendingChoices = diceThrowManager.copyEffectsFromRoll(dice)
-      resultCallback = r => continueDiceThrow(r.asInstanceOf[Seq[(PlayerDTO, EffectDTO)]])
-      ViewPublisher().notify(PlayerChoiceContext)
-
-    override def startDiceThrow(): Unit =
-      startDiceThrow(gameMatch.players.map(p => (PlayerDTO(p), p.dice.map(d => DieDTO(d, p.dice.indexOf(d))))))
-
-    private def continueDiceThrow(resolvedChoices: Seq[(PlayerDTO, EffectDTO)]): Unit =
-      _pendingChoices = diceThrowManager.optionEffectsFromRoll(resolvedChoices)
-      resultCallback = r => endDiceThrow(r.asInstanceOf[Seq[(PlayerDTO, EffectDTO)]])
-      ViewPublisher().notify(PlayerChoiceContext)
-
-    override def endDiceThrow(resolvedChoices: Seq[(PlayerDTO, EffectDTO)]): Unit =
-      diceThrowManager.endRoll(resolvedChoices)
-      gameMatch.executeAction(CompleteDiceThrow)
+    override def endDiceThrow(): Unit = gameMatch.executeAction(CompleteDiceThrow)
 
     override def canTakeAction: Boolean = !gameMatch.isActionAvailable(StandardAction)
 
@@ -211,9 +178,9 @@ object GameController:
 
     override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
 
-    override def pendingChoices[A]: Seq[PlayerChoice[A]] = _pendingChoices.asInstanceOf[Seq[PlayerChoice[A]]]
+    override def pendingChoices[A]: Seq[PlayerChoice[A]] = gameMatch.pendingChoices
 
-    override def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit = resultCallback(results)
+    override def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit = gameMatch.resumeAfterChoices(results)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

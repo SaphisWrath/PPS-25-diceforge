@@ -1,11 +1,14 @@
 package model
 
-import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
+import controller.{DiceThrowManager, PlayerChoice}
+import controller.dto.{EffectDTO, PlayerDTO}
+import model.ModelPublisher.ModelContext.{ChoiceContext, TurnEndContext, TurnStepContext}
 import model.Players.Player
+import model.dice.Die
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.{Gold, PlayerBoard}
-import model.turn.TurnManagers.TurnAction.EndSupport
-import model.turn.TurnManagers.TurnStep.{MainActionStep, StartStep, SupportStep}
+import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndSupport}
+import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 
 import scala.util.Random
@@ -36,6 +39,16 @@ trait GameMatch:
   def executeAction(turnAction: TurnAction): Unit
 
   def currentTurnStep: TurnStep
+
+  def startDiceThrow(): Unit
+
+  def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit
+
+  def pendingChoices[A]: Seq[PlayerChoice[A]]
+
+  def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit
+
+  def getDiceResults: Seq[(PlayerDTO, EffectDTO)]
 
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
@@ -82,7 +95,10 @@ object GameMatch:
       case _ => true
 
     private def otherActions(turnAction: TurnAction): Unit = turnAction match
-      case TurnAction.EndTurn => nextTurn()
+      case TurnAction.EndTurn =>
+        nextTurn()
+        startDiceThrow()
+        this.executeAction(CompleteDiceThrow)
       case TurnAction.CompleteDiceThrow => if activePlayer.missions.isEmpty then this.executeAction(EndSupport)
       case _ =>
 
@@ -96,5 +112,25 @@ object GameMatch:
       
     override def currentTurnStep: TurnStep = turnManager.currentStep
 
+    private val diceThrowManager = DiceThrowManager(this)
+    private var _pendingChoices: Seq[PlayerChoice[Any]] = Seq.empty
+    private var resultCallback: Seq[(PlayerDTO, Any)] => Unit = _ => {}
+    override def getDiceResults: Seq[(PlayerDTO, EffectDTO)] = diceThrowManager.allRawEffects
+
+    override def startDiceThrow(): Unit = startDiceThrow(players.map(p => (p, p.dice)))
+
+    override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
+      _pendingChoices = diceThrowManager.copyEffectsFromRoll(playerDice)
+      resultCallback = r => continueDiceThrow(r.asInstanceOf[Seq[(PlayerDTO, EffectDTO)]])
+      ModelPublisher().notify(ChoiceContext)
+
+    private def continueDiceThrow(resolvedChoices: Seq[(PlayerDTO, EffectDTO)]): Unit =
+      _pendingChoices = diceThrowManager.optionEffectsFromRoll(resolvedChoices)
+      resultCallback = r => diceThrowManager.endRoll(r.asInstanceOf[Seq[(PlayerDTO, EffectDTO)]])
+      ModelPublisher().notify(ChoiceContext)
+
+    override def pendingChoices[A]: Seq[PlayerChoice[A]] = _pendingChoices.asInstanceOf[Seq[PlayerChoice[A]]]
+
+    override def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit = resultCallback(results)
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

@@ -1,11 +1,10 @@
 package controller
 
-import controller.ViewPublisher.ViewContext.PlayerChoiceContext
-import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
+import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
 import model.GameMatch
 import model.Players.Player
 import model.dice.Die
-import model.effects.{Effect, EffectWrapper, ResourceEffect}
+import model.effects.Effect
 import model.utils.DiceThrow
 
 type PlayerChoice[A] = (PlayerDTO, Seq[A])

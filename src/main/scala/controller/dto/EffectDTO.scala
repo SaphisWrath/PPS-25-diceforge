@@ -19,7 +19,11 @@ object EffectDTO:
 
   def apply(effect: Effect): EffectDTO =
     effect match
-      case CompoundEffect(effects) => CompoundEffectDTO(effects.map(EffectDTO(_)), Option.empty)
+      case e : CompoundEffect => CompoundEffectDTO(e.effects.map(EffectDTO(_)), e match
+        case sum: SumEffect => Some("+")
+        case opt: OptionEffect => Some("?")
+        case _ => Option.empty
+      )
       case ResourceEffect(resource, _, _) => EffectDTO(
         findImagePath(resource),
         Some(resource.amount.toString)
