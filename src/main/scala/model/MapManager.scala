@@ -10,7 +10,7 @@ trait MapManager:
   def movePlayer(player: Player, newPosition: Int): Unit
 
 object MapManager:
-  private class MapManagerImpl(onThrowOut: Player => Unit) extends MapManager:
+  private class MapManagerImpl(onMove: () => Unit, onThrowOut: Player => Unit) extends MapManager:
     private var map: Map[Int, Player] = Map.empty
 
     override def playerPositions: Map[Int, Player] = map
@@ -24,5 +24,6 @@ object MapManager:
           map = map.filter((_, p) => p != playerToBeRemoved)
         case _ =>
       map = map.filter((_, p) => p != player).updated(newPosition, player)
+      onMove()
 
-  def apply(onThrowOut: Player => Unit): MapManager = MapManagerImpl(onThrowOut)
+  def apply(onMove: () => Unit, onThrowOut: Player => Unit): MapManager = MapManagerImpl(onMove, onThrowOut)

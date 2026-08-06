@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, PlayerChoice, ViewPublisher}
@@ -60,13 +60,17 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     Label(turnStep())
   }
 
+  private val missionPane: Redrawable = Redrawable{ () =>
+    MissionBoardPane(
+      controller.missions,
+      controller.playerPositions.map((i, p) => (i, playerDirectors(p).onlyToken))
+    )
+  }
+
   private val centralPane: MultiPane = MultiPane(
     {
       case Start => startPane
-      case Missions => MissionBoardPane(
-        controller.missions,
-        controller.playerPositions.map((i, p) => (i, playerDirectors(p).onlyToken))
-      )
+      case Missions => missionPane()
       case ObtainedMissions => obtainedMissionsPane()
     },
     Set(Start, Missions, ObtainedMissions)
@@ -197,4 +201,5 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       activePlayer() = controller.activePlayer
       throwDice(controller.players.map(p => (p.toPlayer, controller.playerDice(p))))
     case TurnStepChangeContext => turnStep() = controller.turnStep
+    case PlayerMovedContext => missionPane.redraw()
     case _ =>

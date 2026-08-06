@@ -55,9 +55,8 @@ object GameMatch:
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
     private var turnManager: TurnManager = TurnManager(StartStep)
     private val mapManager: MapManager = MapManager(
-      player =>
-        //TODO fai il lancio dei dadi
-        ModelPublisher().notify(ModelContext.PlayerMovedContext)
+      () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
+      player => {}//TODO fai il lancio dei dadi
     )
     export mapManager.*
 
