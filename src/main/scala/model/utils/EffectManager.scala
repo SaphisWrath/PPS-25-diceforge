@@ -34,7 +34,9 @@ object EffectManager:
             effectCache = nonOptionEffects
             _effectsToSolve = optionEffects
             ModelPublisher().notify(ChoiceContext)
-        else resolveAll(nonOptionEffects)
+        else
+          effectCache = Seq.empty
+          resolveAll(nonOptionEffects)
 
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
