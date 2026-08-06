@@ -51,8 +51,8 @@ object DiceThrowManager:
     override def optionEffectsFromRoll(solvedCopyEffects: Seq[(PlayerDTO, EffectDTO)]): Seq[PlayerChoice[EffectDTO]] =
       val optionEffects = diceThrowHelper
         .sortEffects(solvedCopyEffects.map((p, e) => (toPlayer(p), asEffect(effectsInLastChoice)(e))))
-      effectsInLastChoice = optionEffects.flatMap(_._2.options)
-      optionEffects.map((p, e) => PlayerChoice(PlayerDTO(p), e.options.map(EffectDTO(_))))
+      effectsInLastChoice = optionEffects.flatMap(_._2.effects)
+      optionEffects.map((p, e) => PlayerChoice(PlayerDTO(p), e.effects.map(EffectDTO(_))))
 
     override def endRoll(solvedOptionEffects: Seq[(PlayerDTO, EffectDTO)]): Unit =
       diceThrowHelper.resolveAll(solvedOptionEffects.map((p, e) => (toPlayer(p), asEffect(effectsInLastChoice)(e))))

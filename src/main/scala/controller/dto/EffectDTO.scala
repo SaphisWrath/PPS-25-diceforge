@@ -2,7 +2,7 @@ package controller.dto
 
 import controller.converters.ResourceConverters.stringToResourceBuilder
 import controller.dto.pathfinders.ImagePathFinders.{findImagePath, given}
-import model.effects.{Effect, MultiplyEffect, OptionEffect, ResourceEffect}
+import model.effects.*
 import model.resource.Resource
 import view.LanguageStrings
 
@@ -19,7 +19,7 @@ object EffectDTO:
 
   def apply(effect: Effect): EffectDTO =
     effect match
-      case OptionEffect(options) => CompoundEffectDTO(options.map(EffectDTO(_)), Option.empty)
+      case CompoundEffect(effects) => CompoundEffectDTO(effects.map(EffectDTO(_)), Option.empty)
       case ResourceEffect(resource, _, _) => EffectDTO(
         findImagePath(resource),
         Some(resource.amount.toString)
