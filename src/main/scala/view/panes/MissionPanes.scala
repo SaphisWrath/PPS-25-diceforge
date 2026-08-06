@@ -1,7 +1,7 @@
 package view.panes
 
 import controller.dto.{MissionDTO, PlayerDTO}
-import scalafx.geometry.Insets
+import scalafx.geometry.{Insets, Pos}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.{Button, Tooltip}
 import scalafx.scene.layout.*
@@ -15,7 +15,8 @@ import view.theme.JfxTheme
 import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
 import controller.dto.MissionType.*
-import scalafx.scene.Node
+import scalafx.scene.shape.Circle
+import scalafx.scene.{Group, Node}
 import view.builders.PlayerGUIComponentFactory
 
 object MissionPanes:
@@ -70,11 +71,17 @@ object MissionPanes:
       missionDTO.clickable
     )
   
-  private class MissionCell(missions: Seq[MissionDTO], playerToken: Option[Node] = Option.empty, vertical: Boolean = false) extends HBox:
+  private class MissionCell(missions: Seq[MissionDTO], playerToken: Option[Node] = Option.empty) extends VBox:
     border = makeBorder(JfxTheme.primaryBorder)
-    padding = Insets(15)
-    spacing = 10
-    children = missions.map(m => MissionPane(m)).concat(playerToken)
+    padding = Insets(5)
+    alignment = Pos.Center
+    children = Seq(
+      new HBox {
+        spacing = 10
+        children = missions.map(MissionPane(_))
+      },
+      playerToken.getOrElse(Circle(10, Color.Transparent))
+    )
 
   class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]], playerTokens: Map[Int, Node]) extends BorderPane:
     private val contentSpacing: Double = 20
@@ -95,7 +102,7 @@ object MissionPanes:
         MissionCell(missions(3), playerTokens.get(3)),
         MissionCell(missions(4), playerTokens.get(4)),
         MissionCell(missions(5), playerTokens.get(5)),
-        MissionCell(missions(6), playerTokens.get(6), vertical =  true)
+        MissionCell(missions(6), playerTokens.get(6))
       )
     }
     
