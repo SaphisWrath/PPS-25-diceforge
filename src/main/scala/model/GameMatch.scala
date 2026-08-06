@@ -1,5 +1,6 @@
 package model
 
+import model.ModelPublisher.ModelContext
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.missions.{Mission, MissionMapBuilder}
@@ -37,6 +38,12 @@ trait GameMatch:
 
   def currentTurnStep: TurnStep
 
+  def playerPositions: Map[Int, Player]
+
+  def playerInPosition(position: Int): Option[Player]
+
+  def movePlayer(player: Player, newPosition: Int): Unit
+
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] =
@@ -47,6 +54,13 @@ object GameMatch:
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
     private var turnManager: TurnManager = TurnManager(StartStep)
+    private val mapManager: MapManager = MapManager(
+      players,
+      player =>
+        //TODO fai il lancio dei dadi
+        ModelPublisher().notify(ModelContext.PlayerMovedContext)
+    )
+    export mapManager.*
 
     def missions: Map[Int, Seq[Mission]] = _missions
 

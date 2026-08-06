@@ -8,6 +8,7 @@ object ModelPublisher:
     case MissionContext
     case TurnEndContext
     case TurnStepContext
+    case PlayerMovedContext
     
   trait ModelSubscriber extends Subscriber[ModelContext]
   

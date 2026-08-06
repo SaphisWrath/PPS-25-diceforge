@@ -26,3 +26,5 @@ object MapManager:
 
     private def changePosition(player: Player, newPosition: Int): Unit =
       map = map.filter((_, p) => p != player).updated(newPosition, player)
+  
+  def apply(players: Seq[Player], onThrowOut: Player => Unit): MapManager = MapManagerImpl(players, onThrowOut)
