@@ -165,9 +165,10 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
     case TurnStepChangeContext => turnStep() = controller.turnStep
-    case PlayerChoiceContext => manageChoices(controller.pendingChoices, controller.resumeAfterChoices, {
-      case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
-      case effectDTO: EffectDTO => EffectPane(effectDTO)
-      case _ => throw IllegalStateException("Choice element is not an effect")
-    })
+    case PlayerChoiceContext =>
+      val choiceController = controller.solveController
+      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, {
+        case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
+        case effectDTO: EffectDTO => EffectPane(effectDTO)
+      })
     case _ =>

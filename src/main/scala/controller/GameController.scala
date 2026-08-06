@@ -3,7 +3,7 @@ package controller
 import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
@@ -81,9 +81,7 @@ trait GameController:
 
   def endDiceThrow(): Unit
   
-  def pendingChoices[A]: Seq[PlayerChoice[A]]
-
-  def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit
+  def solveController: EffectSolveController[EffectDTO]
 
   /**
    * @return true if the player already took his action, false otherwise
@@ -178,9 +176,7 @@ object GameController:
 
     override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
 
-    override def pendingChoices[A]: Seq[PlayerChoice[A]] = gameMatch.pendingChoices
-
-    override def resumeAfterChoices[A](results: Seq[(PlayerDTO, A)]): Unit = gameMatch.resumeAfterChoices(results)
+    override def solveController: EffectSolveController[EffectDTO] = EffectSolveController()
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
