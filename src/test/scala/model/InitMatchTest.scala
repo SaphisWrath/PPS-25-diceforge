@@ -1,6 +1,5 @@
 package model
 
-import controller.{MatchBuilder, MatchBuilderImpl}
 import model.Players.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

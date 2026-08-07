@@ -9,6 +9,7 @@ object ViewPublisher:
     case MissionBoughtContext
     case TurnChangeContext
     case TurnStepChangeContext
+    case PlayerMovedContext
     case PlayerChoiceContext
 
   trait ViewSubscriber extends Subscriber[ViewContext]

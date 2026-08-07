@@ -1,5 +1,6 @@
 package model
 
+import model.ModelPublisher.ModelContext
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
@@ -13,7 +14,7 @@ import model.utils.EffectManager
 import model.utils.RandomModules.given_RandomModule_Int
 
 import scala.util.Random
-
+//TODO: Add ScalaDoc
 trait GameMatch:
   def missions: Map[Int, Seq[Mission]]
 
@@ -41,22 +42,33 @@ trait GameMatch:
 
   def currentTurnStep: TurnStep
 
+  def playerPositions: Map[Int, Player]
+
+  def playerInPosition(position: Int): Option[Player]
+
+  def movePlayer(player: Player, newPosition: Int): Unit
+
   def startDiceThrow(): Unit
 
   def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit
 
   def getDiceResults: Seq[(Player, Effect)]
 
+//TODO Refactor
 object GameMatch:
+
+  private def initializePlayerList(playerList: Seq[Player]): Seq[Player] =
+    val list = Random.shuffle(playerList)
+    list.foreach(p => p.board.gold = p.board.gold + Gold(3 - list.indexOf(p)))
+    list
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
-    val players: Seq[Player] =
-      val list = Random.shuffle(playerList)
-      list.foreach(p => p.board.gold = p.board.gold + Gold(3-list.indexOf(p)))
-      list
-    private var turn: Int = 0
-    private var round: Int = 0
+    val players: Seq[Player] = initializePlayerList(playerList)
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
-    private var turnManager: TurnManager = TurnManager(StartStep)
+    private val mapManager: MapManager = MapManager(
+      () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
+      player => startDiceThrow(Seq((player, player.dice)))
+    )
+    export mapManager.*
 
     def missions: Map[Int, Seq[Mission]] = _missions
 
@@ -76,27 +88,29 @@ object GameMatch:
 
     override def isGameEnded: Boolean = round >= maxNumberOfRounds
 
+    private var turn: Int = 0
+    private var round: Int = 0
+    private var turnManager: TurnManager = TurnManager(
+      StartStep,
+      {
+        case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
+      },
+      {
+        case TurnAction.EndTurn =>
+          nextTurn()
+          startDiceThrow()
+          TurnAction.CompleteDiceThrow
+        case TurnAction.CompleteDiceThrow if activePlayer.missions.isEmpty => TurnAction.EndSupport
+      }
+    )
+
     override def isActionAvailable(turnAction: TurnAction): Boolean =
-      turnManager.isActionAvailable(turnAction) && otherParameters(turnAction)
+      turnManager.isActionAvailable(turnAction)
 
     override def executeAction(turnAction: TurnAction): Unit = turnManager.executeAction(turnAction) match
       case Some(tm) =>
-        if otherParameters(turnAction) then
-          turnManager = tm
-          otherActions(turnAction)
-          ModelPublisher().notify(TurnStepContext)
-      case _ =>
-      
-    private def otherParameters(turnAction: TurnAction): Boolean = turnAction match
-      case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
-      case _ => true
-
-    private def otherActions(turnAction: TurnAction): Unit = turnAction match
-      case TurnAction.EndTurn =>
-        nextTurn()
-        startDiceThrow()
-        this.executeAction(CompleteDiceThrow)
-      case TurnAction.CompleteDiceThrow => if activePlayer.missions.isEmpty then this.executeAction(EndSupport)
+        turnManager = tm
+        ModelPublisher().notify(TurnStepContext)
       case _ =>
 
     private def nextTurn(): Unit =

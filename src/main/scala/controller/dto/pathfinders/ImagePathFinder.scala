@@ -7,8 +7,7 @@ import scalafx.scene.layout.BackgroundImage
 import java.io.File
 
 trait ImagePathFinder[T]:
-  val systemSeparator: String = System.getProperty("file.separator")
-  val assetCommonPath: String = "src" + systemSeparator + "main" + systemSeparator + "resources" + systemSeparator
+  val systemSeparator: String = "/"
 
   /**
    *
@@ -22,7 +21,7 @@ object ImagePathFinders:
   def findImagePath[T: ImagePathFinder](element: T): String = summon[ImagePathFinder[T]].getPath(element)
 
   given ImagePathFinder[Resource] with
-    private val spritePath = assetCommonPath + "sprites" + systemSeparator
+    private val spritePath = systemSeparator + "sprites" + systemSeparator
 
     override def getPath(element: Resource): String = element match
       case Gold(_) => spritePath + "gold.png"
@@ -32,7 +31,7 @@ object ImagePathFinders:
       case _ => spritePath + "placeholder.png"
 
   given ImagePathFinder[Effect] with
-    private val spritePath = assetCommonPath + "sprites" + systemSeparator
+    private val spritePath = "sprites" + systemSeparator
 
     override def getPath(element: Effect): String = element match
       case ResourceEffect(resource, _, _) => summon[ImagePathFinder[Resource]].getPath(resource)

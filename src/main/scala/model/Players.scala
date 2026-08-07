@@ -6,12 +6,13 @@ import model.missions.Obtained
 import model.resource.PlayerBoard
 
 object Players:
+//TODO Make more expandible
   enum Color(string: String):
     case Orange extends Color("Orange")
     case Green extends Color("Green")
     case Black extends Color("Black")
     case Blue extends Color("Blue")
-
+//TODO Complete Scala Doc
   trait Player:
 
     /**
