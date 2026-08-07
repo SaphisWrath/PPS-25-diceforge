@@ -63,10 +63,7 @@ object GameMatch:
     list
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] = initializePlayerList(playerList)
-    private var turn: Int = 0
-    private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
-    private var turnManager: TurnManager = TurnManager(StartStep)
     private val mapManager: MapManager = MapManager(
       () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
       player => startDiceThrow(Seq((player, player.dice)))
@@ -91,21 +88,25 @@ object GameMatch:
 
     override def isGameEnded: Boolean = round >= maxNumberOfRounds
 
+    private var turn: Int = 0
+    private var round: Int = 0
+    private var turnManager: TurnManager = TurnManager(
+      StartStep,
+      {
+        case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
+      }
+    )
+    
     override def isActionAvailable(turnAction: TurnAction): Boolean =
-      turnManager.isActionAvailable(turnAction) && otherParameters(turnAction)
+      turnManager.isActionAvailable(turnAction)
 
     override def executeAction(turnAction: TurnAction): Unit = turnManager.executeAction(turnAction) match
       case Some(tm) =>
-        if otherParameters(turnAction) then
-          turnManager = tm
-          otherActions(turnAction)
-          ModelPublisher().notify(TurnStepContext)
+        turnManager = tm
+        otherActions(turnAction)
+        ModelPublisher().notify(TurnStepContext)
       case _ =>
-      
-    private def otherParameters(turnAction: TurnAction): Boolean = turnAction match
-      case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
-      case _ => true
-
+    
     private def otherActions(turnAction: TurnAction): Unit = turnAction match
       case TurnAction.EndTurn =>
         nextTurn()

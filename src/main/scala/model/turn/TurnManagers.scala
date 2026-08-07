@@ -24,11 +24,15 @@ object TurnManagers:
     case ExtraActionStep
     case PostExtraActionStep
 
-  case class TurnManager(currentStep: TurnStep):
+  case class TurnManager(
+                          currentStep: TurnStep,
+                          private val actionRequirements: PartialFunction[TurnAction, Boolean] = _ => true
+                        ):
     def executeAction(turnAction: TurnAction): Option[TurnManager] =
       if isActionAvailable(turnAction) then
         Option(this.copy(turnAction.getTransition(currentStep).get))
       else
         Option.empty
 
-    def isActionAvailable(turnAction: TurnAction): Boolean = turnAction.isAvailable(currentStep)
+    def isActionAvailable(turnAction: TurnAction): Boolean =
+      turnAction.isAvailable(currentStep) && actionRequirements.applyOrElse(turnAction, _ => true)
