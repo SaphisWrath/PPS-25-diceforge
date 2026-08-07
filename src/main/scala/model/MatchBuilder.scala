@@ -1,5 +1,6 @@
-package controller
+package model
 
+import controller.MatchBuilder
 import model.GameMatch
 import model.Players.*
 

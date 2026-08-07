@@ -1,6 +1,6 @@
 package controller
 
-import model.GameMatch
+import model.{GameMatch, MatchBuilder, MatchBuilderImpl}
 import view.ViewComponents.{MainStage, ViewSceneFactory}
 
 trait ControllerManager:
