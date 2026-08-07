@@ -19,7 +19,7 @@ object MapManager:
 
     override def movePlayer(player: Player, newPosition: Int): Unit =
       playerInPosition(newPosition) match
-        case Some(playerToBeRemoved) =>
+        case Some(playerToBeRemoved) if player != playerToBeRemoved =>
           onThrowOut(playerToBeRemoved)
           map = map.filter((_, p) => p != playerToBeRemoved)
         case _ =>
