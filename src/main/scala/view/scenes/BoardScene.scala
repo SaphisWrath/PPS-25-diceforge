@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{PlayerChoiceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{PlayerMovedContext, PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, ViewPublisher}
@@ -57,10 +57,17 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     Label(turnStep())
   }
 
+  private val missionPane: Redrawable = Redrawable{ () =>
+    MissionBoardPane(
+      controller.missions,
+      controller.playerPositions.map((i, p) => (i, playerDirectors(p).onlyToken))
+    )
+  }
+
   private val centralPane: MultiPane = MultiPane(
     {
       case Start => startPane
-      case Missions => MissionBoardPane(controller.missions)
+      case Missions => missionPane()
       case ObtainedMissions => obtainedMissionsPane()
     },
     Set(Start, Missions, ObtainedMissions)
@@ -171,4 +178,5 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
         case effectDTO: EffectDTO => EffectPane(effectDTO)
       })
+    case PlayerMovedContext => missionPane.redraw()
     case _ =>
