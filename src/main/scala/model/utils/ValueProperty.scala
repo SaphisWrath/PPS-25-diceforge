@@ -1,5 +1,5 @@
 package model.utils
-
+//TODO: Understand if still useful
 trait ValueProperty[T]:
   /**
    * A getter for the wrapped value
