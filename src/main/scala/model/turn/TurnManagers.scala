@@ -1,7 +1,8 @@
 package model.turn
 
-import model.turn.TurnManagers.TurnStep.{ExtraActionStep, MainActionStep, PostExtraActionStep, PostMainActionStep, StartStep, SupportStep}
-//TODO Refactor
+import model.turn.TurnManagers.TurnStep.*
+
+
 object TurnManagers:
   enum TurnAction(private val transitions: Map[TurnStep, TurnStep]):
     case CompleteDiceThrow extends TurnAction(Map(StartStep -> SupportStep))
@@ -10,11 +11,11 @@ object TurnManagers:
     case EndSupport extends TurnAction(Map(SupportStep -> MainActionStep))
     case BuyExtraAction extends TurnAction(Map(PostMainActionStep -> ExtraActionStep))
     case EndTurn extends TurnAction(TurnStep.values.filter(_ != StartStep).map((_, StartStep)).toMap)
-    
+
     def isAvailable(step: TurnStep): Boolean = transitions.contains(step)
-    
+
     def getTransition(step: TurnStep): Option[TurnStep] = transitions.get(step)
-    
+
   enum TurnStep:
     case StartStep
     case SupportStep
@@ -29,8 +30,8 @@ object TurnManagers:
         Option(this.copy(turnAction.getTransition(currentStep).get))
       else
         Option.empty
-      
+
     def isActionAvailable(turnAction: TurnAction): Boolean = turnAction.isAvailable(currentStep)
-    
+
     extension (step: TurnStep)
-      private def move(): TurnManager = this.copy(currentStep= step)
+      private def move(): TurnManager = this.copy(currentStep = step)
