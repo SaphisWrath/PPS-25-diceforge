@@ -56,18 +56,20 @@ trait GameMatch:
 
 //TODO Refactor
 object GameMatch:
+
+  private def initializePlayerList(playerList: Seq[Player]): Seq[Player] =
+    val list = Random.shuffle(playerList)
+    list.foreach(p => p.board.gold = p.board.gold + Gold(3 - list.indexOf(p)))
+    list
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
-    val players: Seq[Player] =
-      val list = Random.shuffle(playerList)
-      list.foreach(p => p.board.gold = p.board.gold + Gold(3-list.indexOf(p)))
-      list
+    val players: Seq[Player] = initializePlayerList(playerList)
     private var turn: Int = 0
     private var round: Int = 0
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
     private var turnManager: TurnManager = TurnManager(StartStep)
     private val mapManager: MapManager = MapManager(
       () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
-      player => {}//TODO fai il lancio dei dadi
+      player => startDiceThrow(Seq((player, player.dice)))
     )
     export mapManager.*
 
