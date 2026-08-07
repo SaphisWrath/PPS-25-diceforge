@@ -7,9 +7,10 @@ import model.resource.{Gold, MoonCrystal, SunCrystal}
 import org.scalatest.flatspec.AnyFlatSpec
 
 class EffectTest extends AnyFlatSpec:
-  private val player = Player("Mario", Orange)
+  private def newPlayer: Player = Player("Mario", Orange)
 
   "A ResourceEffect" should "increase or decrease the player's resources by the given amount" in:
+    val player = newPlayer
     val amount = 20
     val resourceEffect = ResourceEffect(Gold(amount), Self)
     resourceEffect.resolve(player)
@@ -25,7 +26,21 @@ class EffectTest extends AnyFlatSpec:
     resourceEffect.resolve(player)
     assert(player.board.gold.amount == (if expectedSub >= 0 then expectedSub else 0))
 
+  "A SumEffect" should "resolve each inner effect" in:
+    val player = newPlayer
+    val goldAmount = 3
+    val moonCrystalAmount = 4
+    val sumEffect = SumEffect(Seq(
+      ResourceEffect(Gold(goldAmount), Self),
+      ResourceEffect(MoonCrystal(moonCrystalAmount), Self)
+    ))
+
+    sumEffect.resolve(player)
+    assert(player.board.gold.amount == goldAmount)
+    assert(player.board.moonCrystals.amount == moonCrystalAmount)
+
   "An OptionEffect" should "only update its current effect to one of its available options" in:
+    val player = newPlayer
     val amount = 2
     val options = Seq(ResourceEffect(Gold(3), Self), ResourceEffect(SunCrystal(amount), Self))
     val optionEffect = OptionEffect(options)
@@ -43,6 +58,7 @@ class EffectTest extends AnyFlatSpec:
     assert(optionEffect.currentEffect == options.head)
 
   "A MultiplyEffect" should "increase or decrease the player's resources by the multiplied amount" in:
+    val player = newPlayer
     val amount = 2
     val resourceEffect = ResourceEffect(Gold(amount), Self)
     val multiplyEffect = MultiplyEffect(3)
@@ -59,6 +75,7 @@ class EffectTest extends AnyFlatSpec:
     assert(player.board.gold.amount == 0)
 
   "A MultiplyEffect" should "not be used more than once without setting its current effect again" in:
+    val player = newPlayer
     val amount = 2
     val resourceEffect = ResourceEffect(Gold(amount), Self)
     val multiplyEffect = MultiplyEffect(3)

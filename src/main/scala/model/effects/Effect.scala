@@ -26,7 +26,15 @@ trait EffectWrapper extends Effect:
   def currentEffect_=(effect: Effect): Unit
   override def resolve(receiver: Player): Unit = currentEffect.resolve(receiver)
 
-case class OptionEffect(options: Seq[Effect]) extends Effect with EffectWrapper:
+abstract case class CompoundEffect(effects: Seq[Effect]) extends Effect
+
+object CompoundEffect:
+  def unapply(compoundEffect: CompoundEffect): Option[Seq[Effect]] = Some(compoundEffect.effects)
+
+class SumEffect(effects: Seq[Effect]) extends CompoundEffect(effects):
+  override def resolve(receiver: Player): Unit = effects.foreach(_.resolve(receiver))
+
+class OptionEffect(options: Seq[Effect]) extends CompoundEffect(options) with EffectWrapper:
   private var _currentEffect: Effect = options.head
   override def currentEffect: Effect = _currentEffect
   override def currentEffect_=(effect: Effect): Unit = if options.contains(effect) then _currentEffect = effect

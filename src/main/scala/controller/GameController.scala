@@ -3,12 +3,10 @@ package controller
 import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.dice.Die
-import model.dice.DieFactory.{mockCopyDie, mockOptionDie}
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
@@ -83,14 +81,10 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-  /**
-   * @return the DiceThrowManager
-   */
-  def diceThrowManager: DiceThrowManager
-
-  def playerDice(player: PlayerDTO): Seq[Die]
-
   def endDiceThrow(): Unit
+
+  def solveController: ChoiceController[EffectDTO]
+
   /**
    * @return true if the player already took his action, false otherwise
    */
@@ -116,10 +110,13 @@ object GameController:
       case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
+      case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
       ViewPublisher().notify(TurnStepChangeContext)
+      gameMatch.startDiceThrow()
+      endDiceThrow()
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
@@ -171,22 +168,11 @@ object GameController:
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
-    override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
-
     override def canEndSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
 
     override def endSupportPhase(): Unit = gameMatch.executeAction(EndSupport)
 
-    override def playerDice(player: PlayerDTO): Seq[Die] =
-      val diceMap = gameMatch.players.map(p =>
-        if gameMatch.players.indexOf(p) != 0
-        then (PlayerDTO(p), Seq(mockCopyDie))
-        else (PlayerDTO(p), Seq(mockOptionDie))
-      ).toMap
-      diceMap(player)
-
-    override def endDiceThrow(): Unit =
-      gameMatch.executeAction(CompleteDiceThrow)
+    override def endDiceThrow(): Unit = gameMatch.executeAction(CompleteDiceThrow)
 
     override def canTakeAction: Boolean = !gameMatch.isActionAvailable(StandardAction)
 
@@ -195,6 +181,8 @@ object GameController:
     override def buyExtraAction(): Unit = gameMatch.executeAction(BuyExtraAction)
 
     override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
+
+    override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
