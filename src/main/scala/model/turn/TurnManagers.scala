@@ -32,6 +32,3 @@ object TurnManagers:
         Option.empty
 
     def isActionAvailable(turnAction: TurnAction): Boolean = turnAction.isAvailable(currentStep)
-
-    extension (step: TurnStep)
-      private def move(): TurnManager = this.copy(currentStep = step)
