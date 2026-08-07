@@ -26,11 +26,16 @@ object TurnManagers:
 
   case class TurnManager(
                           currentStep: TurnStep,
-                          private val actionRequirements: PartialFunction[TurnAction, Boolean] = _ => true
+                          private val actionRequirements: PartialFunction[TurnAction, Boolean] = PartialFunction.empty,
+                          private val consecutiveActions: PartialFunction[TurnAction, TurnAction]  = PartialFunction.empty,
                         ):
     def executeAction(turnAction: TurnAction): Option[TurnManager] =
       if isActionAvailable(turnAction) then
-        Option(this.copy(turnAction.getTransition(currentStep).get))
+        val newTm = this.copy(turnAction.getTransition(currentStep).get)
+        if consecutiveActions.isDefinedAt(turnAction) then
+          newTm.executeAction(consecutiveActions(turnAction))
+        else
+          Option(newTm)
       else
         Option.empty
 

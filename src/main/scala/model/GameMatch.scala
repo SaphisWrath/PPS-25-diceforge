@@ -94,25 +94,23 @@ object GameMatch:
       StartStep,
       {
         case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
+      },
+      {
+        case TurnAction.EndTurn =>
+          nextTurn()
+          startDiceThrow()
+          TurnAction.CompleteDiceThrow
+        case TurnAction.CompleteDiceThrow if activePlayer.missions.isEmpty => TurnAction.EndSupport
       }
     )
-    
+
     override def isActionAvailable(turnAction: TurnAction): Boolean =
       turnManager.isActionAvailable(turnAction)
 
     override def executeAction(turnAction: TurnAction): Unit = turnManager.executeAction(turnAction) match
       case Some(tm) =>
         turnManager = tm
-        otherActions(turnAction)
         ModelPublisher().notify(TurnStepContext)
-      case _ =>
-    
-    private def otherActions(turnAction: TurnAction): Unit = turnAction match
-      case TurnAction.EndTurn =>
-        nextTurn()
-        startDiceThrow()
-        this.executeAction(CompleteDiceThrow)
-      case TurnAction.CompleteDiceThrow => if activePlayer.missions.isEmpty then this.executeAction(EndSupport)
       case _ =>
 
     private def nextTurn(): Unit =
