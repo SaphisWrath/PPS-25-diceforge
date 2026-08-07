@@ -32,10 +32,9 @@ object TurnManagers:
     def executeAction(turnAction: TurnAction): Option[TurnManager] =
       if isActionAvailable(turnAction) then
         val newTm = this.copy(turnAction.getTransition(currentStep).get)
-        if consecutiveActions.isDefinedAt(turnAction) then
-          newTm.executeAction(consecutiveActions(turnAction))
-        else
-          Option(newTm)
+        consecutiveActions.lift(turnAction) match
+          case Some(ta) if newTm.isActionAvailable(ta) => newTm.executeAction(ta)
+          case _ => Option(newTm)
       else
         Option.empty
 
