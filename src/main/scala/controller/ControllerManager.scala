@@ -3,13 +3,37 @@ package controller
 import model.GameMatch
 import view.ViewComponents.{MainStage, ViewSceneFactory}
 
-trait ControllerManager():
+trait ControllerManager:
+  /** Creates the controller of the game
+   *
+   * Gives access to every information useful for the game representation and management
+   *
+   * @return The corresponding [[GameController]] instance
+   */
   def gameController: GameController
 
+  /** Creates the controller of the stage
+   *
+   * Gives access to the state of the view and to the method necessary to change it
+   *
+   * @return The corresponding [[ControllerStage]] instance
+   */
   def stageController: ControllerStage
 
+  /** Creates the controller responsible for the game initialization
+   *
+   * Gives access to the methods used for the game creation
+   *
+   * @return The corresponding [[ControllerMatchInit]] instance
+   */
   def matchInitController: ControllerMatchInit
 
+  /** Creates the controller used to represent an ended game
+   *
+   * Gives access to the method used to represent the stats of an ended Game
+   *
+   * @return The corresponding [[ControllerMatchEnd]] instance
+   */
   def matchEndController: ControllerMatchEnd
 
 object ControllerManager:
