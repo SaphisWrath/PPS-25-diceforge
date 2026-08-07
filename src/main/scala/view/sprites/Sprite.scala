@@ -26,8 +26,7 @@ trait Sprite:
 object Sprite:
   private class BaseSprite(path: String) extends Sprite:
     override def getSpriteAsImage: Image =
-      val file = File(path)
-      Image(FileInputStream(file))
+      Image(getClass.getResource(path).toString)
 
     override def getSpriteAsBackground: Background =
       Background(Array(BackgroundImage(getSpriteAsImage, NoRepeat, NoRepeat, BackgroundPosition.Center, BackgroundSize.Default)))
