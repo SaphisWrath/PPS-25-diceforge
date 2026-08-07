@@ -31,10 +31,10 @@ trait ControllerStage:
   def currentViewState: ViewState
 
 object ControllerStage:
-  private class ControllerStageImpl(navigator: Navigator) extends ControllerStage:
-    private var viewState: ViewState = MainMenu
+  private class ControllerStageImpl(private val navigator: Navigator, startingState: ViewState) extends ControllerStage:
+    private var viewState: ViewState = startingState
 
-    override def init(): Unit = changeScene(MainMenu)
+    override def init(): Unit = changeScene(viewState)
 
     override def changeScene(newState: ViewState): Unit =
       newState match
@@ -46,4 +46,4 @@ object ControllerStage:
 
     override def currentViewState: ViewState = viewState
 
-  def apply(navigator: Navigator): ControllerStage = ControllerStageImpl(navigator)
+  def apply(navigator: Navigator, startingState: ViewState): ControllerStage = ControllerStageImpl(navigator, startingState)

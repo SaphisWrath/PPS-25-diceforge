@@ -44,7 +44,7 @@ object ControllerManager:
     private var gameMatch: Option[GameMatch] = Option.empty
     private val matchBuilder: MatchBuilder = MatchBuilderImpl()
     override val stageController: ControllerStage =
-      ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)))
+      ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)), ViewState.MainMenu)
 
     override def matchInitController: ControllerMatchInit = ControllerMatchInit(matchBuilder)
 
