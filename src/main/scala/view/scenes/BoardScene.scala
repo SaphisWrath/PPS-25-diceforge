@@ -1,12 +1,9 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{PlayerMovedContext, PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.dto.{EffectDTO, PlayerDTO}
-import controller.{ControllerStage, GameController, PlayerChoice, ViewPublisher}
-import model.Players.Player
-import model.dice.Die
-import model.effects.{Effect, OptionEffect}
+import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
+import controller.{ControllerStage, GameController, ViewPublisher}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
@@ -16,7 +13,7 @@ import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
-import view.panes.ChoiceWindowChain
+import view.panes.ChoiceWindowChain.manageChoices
 import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
@@ -126,31 +123,6 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => !controller.canBuyExtraAction
   )
 
-  private def throwDice(dice: Seq[(Player, Seq[Die])]): Unit =
-    val diceThrowManager = controller.diceThrowManager
-    manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
-      manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
-        diceThrowManager.endRoll(solvedOptionEffects)
-        this.mainPane.left = null
-        ViewPublisher().notify(ResourceContext)
-        controller.endDiceThrow()
-      )
-    )
-
-  private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
-    def nextChoiceWindow(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
-      val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
-      popup.show({
-        case effect: OptionEffect => EffectWrapperPane("", EffectDTO(effect), JfxTheme.primaryBorder)
-        case effect: Effect => EffectPane(EffectDTO(effect))
-        case _ => throw IllegalStateException("Choice element is not an effect")
-      })
-      if !popup.buttonsAvailable then popup.forceNext()
-
-    if choices.isEmpty
-    then orElse(Seq.empty)
-    else nextChoiceWindow(Seq.empty, choices)
-
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
     new VBox {
       children = Seq(
@@ -199,7 +171,12 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
-      throwDice(controller.players.map(p => (p.toPlayer, controller.playerDice(p))))
     case TurnStepChangeContext => turnStep() = controller.turnStep
+    case PlayerChoiceContext =>
+      val choiceController = controller.solveController
+      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, {
+        case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
+        case effectDTO: EffectDTO => EffectPane(effectDTO)
+      })
     case PlayerMovedContext => missionPane.redraw()
     case _ =>
