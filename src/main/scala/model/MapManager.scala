@@ -1,7 +1,7 @@
 package model
 
 import model.Players.Player
-
+//TODO Add ScalaDoc
 trait MapManager:
   def playerPositions: Map[Int, Player]
 

@@ -1,7 +1,7 @@
 package model.turn
 
 import model.turn.TurnManagers.TurnStep.{ExtraActionStep, MainActionStep, PostExtraActionStep, PostMainActionStep, StartStep, SupportStep}
-
+//TODO Refactor
 object TurnManagers:
   enum TurnAction(private val transitions: Map[TurnStep, TurnStep]):
     case CompleteDiceThrow extends TurnAction(Map(StartStep -> SupportStep))

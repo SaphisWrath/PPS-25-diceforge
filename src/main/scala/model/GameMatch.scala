@@ -10,7 +10,7 @@ import model.turn.TurnManagers.TurnStep.{MainActionStep, StartStep, SupportStep}
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 
 import scala.util.Random
-
+//TODO: Add ScalaDoc
 trait GameMatch:
   def missions: Map[Int, Seq[Mission]]
 
@@ -43,7 +43,7 @@ trait GameMatch:
   def playerInPosition(position: Int): Option[Player]
 
   def movePlayer(player: Player, newPosition: Int): Unit
-
+//TODO Refactor
 object GameMatch:
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] =
