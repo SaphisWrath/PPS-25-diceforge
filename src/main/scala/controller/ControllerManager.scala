@@ -52,7 +52,9 @@ object ControllerManager:
       gameMatch = Option(matchBuilder.build())
       GameController(gameMatch.get)
 
-    override def matchEndController: ControllerMatchEnd = ControllerMatchEnd(gameMatch.get)
+    override def matchEndController: ControllerMatchEnd = gameMatch match
+      case Some(gM) => ControllerMatchEnd(gM)
+      case _ => throw IllegalStateException("No game match has been initialized")
 
   def apply[T](
                 mainStageProducer: () => MainStage[T],
