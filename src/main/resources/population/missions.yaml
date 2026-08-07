@@ -1,0 +1,4 @@
+missions:
+  - mission:
+      id: "ferryman"
+      cost:
