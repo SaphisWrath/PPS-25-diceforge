@@ -34,3 +34,11 @@ lazy val root = project
       "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s",
     )
   )
+
+assembly / assemblyMergeStrategy := {
+  case PathList("module-info.class") => MergeStrategy.discard
+  case x if x.endsWith("/module-info.class") => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    oldStrategy(x)
+}

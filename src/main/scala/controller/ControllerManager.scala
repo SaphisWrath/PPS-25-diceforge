@@ -1,15 +1,39 @@
 package controller
 
-import model.GameMatch
+import model.{GameMatch, MatchBuilder, MatchBuilderImpl}
 import view.ViewComponents.{MainStage, ViewSceneFactory}
 
-trait ControllerManager():
+trait ControllerManager:
+  /** Creates the controller of the game
+   *
+   * Gives access to every information useful for the game representation and management
+   *
+   * @return The corresponding [[GameController]] instance
+   */
   def gameController: GameController
 
+  /** Creates the controller of the stage
+   *
+   * Gives access to the state of the view and to the method necessary to change it
+   *
+   * @return The corresponding [[ControllerStage]] instance
+   */
   def stageController: ControllerStage
 
+  /** Creates the controller responsible for the game initialization
+   *
+   * Gives access to the methods used for the game creation
+   *
+   * @return The corresponding [[ControllerMatchInit]] instance
+   */
   def matchInitController: ControllerMatchInit
 
+  /** Creates the controller used to represent an ended game
+   *
+   * Gives access to the method used to represent the stats of an ended Game
+   *
+   * @return The corresponding [[ControllerMatchEnd]] instance
+   */
   def matchEndController: ControllerMatchEnd
 
 object ControllerManager:
@@ -20,7 +44,7 @@ object ControllerManager:
     private var gameMatch: Option[GameMatch] = Option.empty
     private val matchBuilder: MatchBuilder = MatchBuilderImpl()
     override val stageController: ControllerStage =
-      ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)))
+      ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)), ViewState.MainMenu)
 
     override def matchInitController: ControllerMatchInit = ControllerMatchInit(matchBuilder)
 
@@ -28,7 +52,9 @@ object ControllerManager:
       gameMatch = Option(matchBuilder.build())
       GameController(gameMatch.get)
 
-    override def matchEndController: ControllerMatchEnd = ControllerMatchEnd(gameMatch.get)
+    override def matchEndController: ControllerMatchEnd = gameMatch match
+      case Some(gM) => ControllerMatchEnd(gM)
+      case _ => throw IllegalStateException("No game match has been initialized")
 
   def apply[T](
                 mainStageProducer: () => MainStage[T],

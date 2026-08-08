@@ -24,12 +24,11 @@ object MultiPanes:
                  ) extends ViewComponent:
     private val container: StackPane = StackPane()
     private val state: ObjectProperty[MultiPaneState] = ObjectProperty(MultiPaneState.empty)
-//    state.onChange((_, _, newVal) => container.children = nodeProducer(newVal))
+    state.onChange((_, _, newVal) => container.children = nodeProducer(newVal))
 
     def setState(multiPaneState: MultiPaneState): Unit =
       if acceptedStates.contains(multiPaneState) then
         state() = multiPaneState
-        container.children = nodeProducer(multiPaneState)
       else
         throw IllegalArgumentException(s"${multiPaneState.id} doesn't correspond to any known state")
         

@@ -19,6 +19,8 @@ trait GameController:
    */
   def players: Seq[PlayerDTO]
 
+  def playerPositions: Map[Int, PlayerDTO]
+
   /**
    * @return the missions in play, already sorted into their respective cells
    */
@@ -80,7 +82,7 @@ trait GameController:
   def maxNumberOfRounds: Int
 
   def endDiceThrow(): Unit
-  
+
   def solveController: ChoiceController[EffectDTO]
 
   /**
@@ -107,6 +109,7 @@ object GameController:
       case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
       case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
+      case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
       case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
 
     override def startGame(): Unit =
@@ -120,6 +123,7 @@ object GameController:
         m,
         () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
         () => {
+          gameMatch.movePlayer(gameMatch.activePlayer, i)
           m.get(extractTarget)
           gameMatch.executeAction(StandardAction)
         }
@@ -142,6 +146,8 @@ object GameController:
       case Others => gameMatch.nonActivePlayers
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
+
+    override def playerPositions: Map[Int, PlayerDTO] = gameMatch.playerPositions.map((i, p) => (i, PlayerDTO(p)))
 
     override def activePlayer: PlayerDTO = PlayerDTO(gameMatch.activePlayer)
 

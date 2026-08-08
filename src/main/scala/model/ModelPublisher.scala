@@ -8,8 +8,9 @@ object ModelPublisher:
     case MissionContext
     case TurnEndContext
     case TurnStepContext
+    case PlayerMovedContext
     case ChoiceContext
-    
+
   trait ModelSubscriber extends Subscriber[ModelContext]
   
   private val publisher = Publisher[ModelContext]()
