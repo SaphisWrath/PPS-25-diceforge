@@ -102,7 +102,8 @@ Dice forge è un gioco dove i giocatori competono per ottenere il maggior numero
         - Minotauro: \[3 Cristalli solari] => \[8 Punti vittoria, Tutti gli altri giocatori tirano i propri dadi e ne applicano gli effetti, ma nel caso in cui dovessero ottenere risorse(inclusi punti vittoria) invece ne perdono lo stesso ammontare]
         - Specchio dell'abisso: \[5 Cristalli lunari] => \[10 Punti vittoria, Il giocatore ottiene una faccia "Copia" da applicare ad uno dei propri dadi]
         - Sfinge: \[6 Cristalli solari] => \[10 Punti vittoria, Il giocatore attivo tira uno dei propri dadi 4 volte di fila e ne ottiene i risultati]
-    - Effetto di Rinforzo: Oltre al fornire punti vittoria non hanno altri effetti appena vengono acquistati, ma il giocatore le ottiene e può attivarne l'effetto durante la fase di rinforzo. Vengono riportarte nel seguente modo \[Costo] => \[Punti Vittoria, \[Eventuale Costo di Rinforzo] => \[Ricompensa del Rinforzo]]
+    - Effetto di Rinforzo: Oltre al fornire punti vittoria non hanno altri effetti appena vengono acquistati, ma il giocatore le ottiene e può attivarne l'effetto durante la fase di rinforzo. 
+    Vengono riportarte nel seguente modo \[Costo] => \[Punti Vittoria, \[Eventuale Costo di Rinforzo] => \[Ricompensa del Rinforzo]]
         - Martello del fabbro: \[1 Cristallo lunare] => \[0 Punti Vittoria, \[12 Oro] => \[20 Punti vittoria]]
         - Cerva d'argento: \[2 Cristalli lunari] => \[2 Punti Vittoria, \[] => \[Il giocatore tira uno dei propri dadi e ne applica gli effetti]]
         - Anziano: \[1 Cristallo solare] => \[0 Punti Vittoria, \[3 Oro] => \[ 4 Punti Vittoria]]
