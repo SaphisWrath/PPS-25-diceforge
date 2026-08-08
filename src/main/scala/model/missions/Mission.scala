@@ -61,11 +61,11 @@ trait InstantRewards extends Mission:
         res.resolve(receiverProducer(res.target))
     }
 
-trait SupportRewards(supportCost: List[ResourceEffect]) extends Mission:
+trait SupportRewards(supportReward: List[Effect], supportCost: List[ResourceEffect]) extends Mission:
   abstract override def applyEffects(receiverProducer: Target => scala.Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
     val player = receiverProducer(Target.Self).head
-    player.addMission(ObtainedMission(reward, supportCost, player, id))
+    player.addMission(ObtainedMission(supportReward, supportCost, player, id))
 
 trait Obtained extends Mission:
   private var _obtained: Boolean = false
@@ -80,8 +80,15 @@ trait Obtained extends Mission:
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
   extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount)
 
-class SupportMission(reward: List[Effect], supportCost: List[ResourceEffect], missionCost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
-  extends BaseMission(reward, missionCost, id) with SupportRewards(supportCost) with LimitedPurchase(startCount)
+class SupportMission(
+                      missionReward: List[Effect],
+                      missionCost: List[ResourceEffect],
+                      supportReward: List[Effect],
+                      supportCost: List[ResourceEffect],
+                      id: String = "placeholder",
+                      startCount: Int = 4
+                    )
+  extends BaseMission(missionReward, missionCost, id) with SupportRewards(supportReward, supportCost) with LimitedPurchase(startCount)
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained
