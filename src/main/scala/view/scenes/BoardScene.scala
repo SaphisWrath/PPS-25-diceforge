@@ -1,10 +1,9 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{MissionBoughtContext, PlayerChoiceContext, TurnChangeContext, TurnStepChangeContext}
-import controller.ViewPublisher.ViewContext.{PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{ItemBoughtContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
-import controller.{ControllerStage, GameController, ViewPublisher}
+import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
+import controller.{ControllerStage, FaceSwapController, GameController, ViewPublisher}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
@@ -204,5 +203,17 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
         case effectDTO: EffectDTO => EffectPane(effectDTO)
       })
+    case ItemBoughtContext =>
+      manageChoices[DieDTO](
+        Seq((controller.activePlayer, controller.dice(controller.activePlayer))),
+        results => {
+          val faceSwapController = controller.faceSwapController(results.head)
+          manageChoices[EffectDTO](faceSwapController.pendingChoices, faceSwapController.resumeAfterChoices, {
+            case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
+            case effectDTO: EffectDTO => EffectPane(effectDTO)
+          })
+        },
+        dieDTO => EffectWrapperPane("", dieDTO.faces, JfxTheme.primaryBorder)
+      )
     case PlayerMovedContext | MissionBoughtContext => missionPane.redraw()
     case _ =>

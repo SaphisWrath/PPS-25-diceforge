@@ -3,7 +3,8 @@ package controller
 import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.FaceSwapController
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
@@ -101,6 +102,10 @@ trait GameController:
   def turnStep: String
 
   def shopItems: Seq[ItemDTO]
+  
+  def dice(playerDTO: PlayerDTO): Seq[DieDTO]
+  
+  def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO]
 
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
@@ -113,6 +118,7 @@ object GameController:
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
       case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
+      case ModelContext.EffectBoughtContext => ViewPublisher().notify(ItemBoughtContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
@@ -197,6 +203,16 @@ object GameController:
           () => true)
         )
     }
+
+    override def dice(playerDTO: PlayerDTO): Seq[DieDTO] =
+      gameMatch.playerFrom(playerDTO.name).get.dice.map(DieDTO(_))
+
+    override def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO] =
+      FaceSwapController(
+        gameMatch.activePlayer,
+        gameMatch.activePlayer.dice(dieIndex),
+        gameMatch.shop.lastItemBought.get
+      )
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

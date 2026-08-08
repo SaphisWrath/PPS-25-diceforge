@@ -10,6 +10,7 @@ object ModelPublisher:
     case TurnStepContext
     case PlayerMovedContext
     case ChoiceContext
+    case EffectBoughtContext
 
   trait ModelSubscriber extends Subscriber[ModelContext]
   
