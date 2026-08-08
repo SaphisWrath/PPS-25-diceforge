@@ -6,8 +6,8 @@ import model.Players.Player
 import model.dice.Die
 import model.effects.Effect
 import model.missions.{Mission, MissionMapBuilder}
-import model.resource.{Gold, PlayerBoard}
-import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndSupport}
+import model.resource.{Gold, PlayerBoard, Resource}
+import model.shop.{EffectShop, Shop}
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.EffectManager
@@ -53,6 +53,8 @@ trait GameMatch:
   def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit
 
   def getDiceResults: Seq[(Player, Effect)]
+
+  def shop: Shop[Effect]
 
 //TODO Refactor
 object GameMatch:
@@ -129,5 +131,7 @@ object GameMatch:
 
     override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
       EffectManager().attemptSolve(playerDice.flatMap((p, d) => d.map(die => (p, die.roll))))
+
+    override val shop = EffectShop()
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

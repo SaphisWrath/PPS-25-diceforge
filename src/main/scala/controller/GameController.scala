@@ -7,9 +7,10 @@ import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.effects.Target
+import model.effects.{ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
+import view.panes.ItemDTO
 
 trait GameController:
 
@@ -100,6 +101,8 @@ trait GameController:
 
   def turnStep: String
 
+  def shopItems: Seq[ItemDTO]
+
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
     this.setPublisher(ModelPublisher())
@@ -183,6 +186,18 @@ object GameController:
     override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
 
     override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
+
+    override def shopItems: Seq[ItemDTO] = {
+      val shop = gameMatch.shop
+      shop.items
+        .map(i => (i, shop.getPrice(i)))
+        .map((item, cost) => ItemDTO(
+          EffectDTO(item),
+          EffectDTO(ResourceEffect(cost, Target.Self)),
+          () => shop.buy(item, gameMatch.activePlayer),
+          () => true)
+        )
+    }
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
