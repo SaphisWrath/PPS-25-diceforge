@@ -36,8 +36,11 @@ object Mission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
 case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") extends Mission:
+  override protected def applyEffects(receiverProducer: Target => Seq[Player]): Unit = {}
 
-  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+trait Notification extends Mission:
+  abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+    super.applyEffects(receiverProducer)
     ModelPublisher().notify(ResourceContext)
     ModelPublisher().notify(MissionContext)
 
@@ -78,7 +81,7 @@ trait Obtained extends Mission:
   def reset(): Unit = _obtained = false
 
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
-  extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount)
+  extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount) with Notification
 
 class SupportMission(
                       missionReward: List[Effect],
@@ -88,7 +91,8 @@ class SupportMission(
                       id: String = "placeholder",
                       startCount: Int = 4
                     )
-  extends BaseMission(missionReward, missionCost, id) with SupportRewards(supportReward, supportCost) with LimitedPurchase(startCount)
+  extends BaseMission(missionReward, missionCost, id)
+    with InstantRewards with SupportRewards(supportReward, supportCost) with LimitedPurchase(startCount) with Notification
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
-  extends BaseMission(rewards, cost, id) with InstantRewards with Obtained
+  extends BaseMission(rewards, cost, id) with InstantRewards with Obtained with Notification
