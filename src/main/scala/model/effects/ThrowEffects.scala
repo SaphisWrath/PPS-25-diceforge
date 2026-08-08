@@ -24,13 +24,8 @@ object ThrowEffects:
     override def throwDice(receiver: Player): Unit =
       results = results.concat(receiver.dice.map(d => (receiver, d.roll)))
 
-
     override def resolve(receiver: Player): Unit =
-      Array.range(0, times).foreach(_ =>
-        throwDice(receiver)
-        EffectManager().attemptSolve(results)
-        results = Seq.empty
-      )
+      resolve(Seq(receiver))
 
     override def resolve(receivers: Seq[Player]): Unit =
       Array.range(0, times).foreach(_ =>
