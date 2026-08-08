@@ -1,0 +1,50 @@
+missions:
+  instant:
+    - mission:
+        id: "ferryman"
+        cost:
+          - resource_effect:
+              type: "moon"
+              amount: 4
+        reward:
+          - resource_effect:
+              type: "glory"
+              amount: 12
+    - mission:
+        id: "gorgon"
+        cost:
+          - resource_effect:
+              type: "sun"
+              amount: 4
+        reward:
+          - resource_effect:
+              type: "glory"
+              amount: 14
+    - mission:
+        id: "hydra"
+        cost:
+          - resource_effect:
+              type: "sun"
+              amount: 5
+          - resource_effect:
+              type: "moon"
+              amount: 5
+        reward:
+          - resource_effect:
+              type: "glory"
+              amount: 24
+  support:
+    - mission:
+        id: "smith"
+        m_cost:
+          - resource_effect:
+              type: "moon"
+              amount: 1
+        s_cost:
+          - resource_effect:
+              type: "gold"
+              amount: 12
+        reward:
+          - resource_effect:
+              type: "glory"
+              amount: 12
