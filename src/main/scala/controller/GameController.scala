@@ -3,14 +3,13 @@ package controller
 import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
 import model.effects.{ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
-import view.panes.ItemDTO
 
 trait GameController:
 

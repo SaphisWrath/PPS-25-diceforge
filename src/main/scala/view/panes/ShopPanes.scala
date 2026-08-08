@@ -1,19 +1,16 @@
 package view.panes
 
-import controller.dto.EffectDTO
+import controller.dto.ItemDTO
 import scalafx.scene.control.Button
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import view.buttons.ButtonFactory.makeBoardButton
 import view.panes.EffectPanes.*
 
-//  TODO: Sposta in controller
-case class ItemDTO(item: EffectDTO, cost: EffectDTO, onClick: () => Unit, clickable: () => Boolean)
-
 object ShopPanes:
   private class ItemPane(itemDTO: ItemDTO) extends VBox:
     private def buyItemButton(itemDTO: ItemDTO): Button =
       //  TODO: Aggiungi a LanguageStrings
-      makeBoardButton("Compra", itemDTO.onClick, itemDTO.clickable)
+      makeBoardButton("Compra", itemDTO.onClick, () => !itemDTO.clickable())
 
     children = Seq(
       EffectPane(itemDTO.item),

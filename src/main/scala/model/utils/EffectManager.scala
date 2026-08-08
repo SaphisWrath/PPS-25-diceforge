@@ -49,6 +49,7 @@ object EffectManager:
         else
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)
+          ModelPublisher().notify(ResourceContext)
 
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
@@ -77,7 +78,6 @@ object EffectManager:
             case _ =>
           e.resolve(p)
         )
-      ModelPublisher().notify(ResourceContext)
       
   private val effectManager = EffectManagerImpl()    
   

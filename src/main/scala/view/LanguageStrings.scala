@@ -21,6 +21,8 @@ object LanguageStrings:
   object BoardScreenStrings:
     val nextTurnButtonText = "Prossimo Turno"
     val buyExtraActionButton = "Buy extra action(2 SunCrystals)"
+    val visitShopButton = "Visita il negozio"
+    val leaveShopButton = "Ritorna alla mappa"
     val actionTakenText = "Hai eseguito la tua azione"
     val actionNotTakenText = "Esegui la tua azione"
     val showObtainedMissionsButton = "Mostra i rinforzi"

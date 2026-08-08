@@ -4,9 +4,9 @@ import model.ModelPublisher.ModelContext
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
-import model.effects.Effect
+import model.effects.{Effect, ResourceEffect, Target}
 import model.missions.{Mission, MissionMapBuilder}
-import model.resource.{Gold, PlayerBoard, Resource}
+import model.resource.{Gold, MoonCrystal, PlayerBoard, Resource, SunCrystal}
 import model.shop.{EffectShop, Shop}
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
@@ -132,6 +132,11 @@ object GameMatch:
     override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
       EffectManager().attemptSolve(playerDice.flatMap((p, d) => d.map(die => (p, die.roll))))
 
-    override val shop = EffectShop()
+    override val shop = EffectShop(
+      (ResourceEffect(MoonCrystal(1), Target.Self), Gold(2)),
+      (ResourceEffect(Gold(3), Target.Self), Gold(2)),
+      (ResourceEffect(SunCrystal(1), Target.Self), Gold(3)),
+      (ResourceEffect(Gold(4), Target.Self), Gold(3))
+    )
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

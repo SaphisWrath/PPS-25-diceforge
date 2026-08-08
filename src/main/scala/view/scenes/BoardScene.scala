@@ -1,7 +1,7 @@
 package view.scenes
 
 import controller.ViewPublisher.ViewContext.{MissionBoughtContext, PlayerChoiceContext, TurnChangeContext, TurnStepChangeContext}
-import controller.ViewPublisher.ViewContext.{PlayerMovedContext, PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, ViewPublisher}
@@ -18,6 +18,7 @@ import view.panes.ChoiceWindowChain.manageChoices
 import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
+import view.panes.ShopPanes.ShopPane
 import view.scenes.CentralPaneStates.ObtainedMissions
 import view.theme.JfxTheme
 import view.{Redrawable, scenes}
@@ -65,12 +66,16 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     )
   }
 
+  private val shopPane: Redrawable = Redrawable { () =>
+    ShopPane(controller.shopItems)
+  }
+
   private val centralPane: MultiPane = MultiPane(
     {
       case Start => startPane
       case Missions => missionPane()
       case ObtainedMissions => obtainedMissionsPane()
-      case Shop => ???
+      case Shop => shopPane()
     },
     Set(Start, Missions, ObtainedMissions, Shop)
   )
@@ -110,8 +115,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private def menuSection: Node = VBox(
     turnPhaseSection(),
     buyExtraActionButton,
+    visitShopButton(),
     nextTurnButton,
-    obtainedMissionsButton(),
+    obtainedMissionsButton()
   )
 
   private val nextTurnButton: Node = ButtonFactory.makeBoardButton(
@@ -124,6 +130,24 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.buyExtraAction(),
     () => !controller.canBuyExtraAction
   )
+
+  private val visitShopButton: Redrawable = Redrawable { () =>
+    new FlowPane {
+      children = centralPane.currentState match
+        case Shop => ButtonFactory.makeBoardButton(
+          BSStrings.leaveShopButton,
+          () =>
+            centralPane.setState(Missions)
+            visitShopButton.redraw()
+        )
+        case _ => ButtonFactory.makeBoardButton(
+          BSStrings.visitShopButton,
+          () =>
+            centralPane.setState(Shop)
+            visitShopButton.redraw()
+        )
+    }
+  }
 
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
     new VBox {
@@ -180,6 +204,5 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
         case effectDTO: EffectDTO => EffectPane(effectDTO)
       })
-    case PlayerMovedContext => missionPane.redraw()
-    case MissionBoughtContext => missionPane.redraw()
+    case PlayerMovedContext | MissionBoughtContext => missionPane.redraw()
     case _ =>
