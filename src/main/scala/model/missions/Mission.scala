@@ -13,69 +13,69 @@ trait Mission:
 
   def id: String
 
-  def get(receiverProducer: Target => Seq[Player]): Unit
+  def canGet(receiverProducer: Target => Seq[Player]): Boolean =
+    cost.forall { e =>
+      val players = receiverProducer(e.target)
+      players.nonEmpty && players.forall(_.board.canSpend(e.resource))
+    }
 
-  def canGet(receiverProducer: Target => Seq[Player]): Boolean
+  final def get(receiverProducer: Target => Seq[Player]): Unit =
+    if canGet(receiverProducer) then
+      payCost(receiverProducer)
+      applyEffects(receiverProducer)
+
+  protected def payCost(receiverProducer: Target => Seq[Player]): Unit =
+    cost.foreach(r => {
+      r.setModule(model.utils.ResourceEffectModules.SubtractResource)
+      r.resolve(receiverProducer(r.target))
+    })
+
+  protected def applyEffects(receiverProducer: Target => Seq[Player]): Unit
 
 object Mission:
   def unapply(mission: Mission): (List[Effect], List[ResourceEffect], String) = (mission.reward, mission.cost, mission.id)
 
 case class BaseMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder") extends Mission:
 
-  override def get(receiverProducer: Target => Seq[Player]): Unit =
-    if canGet(receiverProducer) then
-      cost.foreach(r => {
-        r.setModule(model.utils.ResourceEffectModules.SubtractResource)
-        r.resolve(receiverProducer(r.target))
-      })
-      obtainReward(receiverProducer)
-      ModelPublisher().notify(ResourceContext)
-      ModelPublisher().notify(MissionContext)
-
-  protected def obtainReward(receiverProducer: Target => Seq[Player]): Unit = {}
-
-  override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
-    cost.forall { e =>
-      val players = receiverProducer(e.target)
-      players.nonEmpty && players.forall(_.board.canSpend(e.resource))
-    }
+  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+    ModelPublisher().notify(ResourceContext)
+    ModelPublisher().notify(MissionContext)
 
 trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
   private var _purchaseCount = startingPurchaseCount
   private def availableForPurchase: Boolean = _purchaseCount > 0
   def purchaseCount: Int = _purchaseCount
   def startingPurchaseCount: Int = _startingPurchaseCount
-  abstract override def get(receiverProducer: Target => Seq[Player]): Unit =
-    if this.canGet(receiverProducer)
-    then
-      super.get(receiverProducer)
-      _purchaseCount = _purchaseCount - 1
+  abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+    super.applyEffects(receiverProducer)
+    _purchaseCount = _purchaseCount - 1
 
   abstract override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
     availableForPurchase && super.canGet(receiverProducer)
 
-trait InstantRewards extends BaseMission:
-  override def obtainReward(receiverProducer: Target => Seq[Player]): Unit =
-    super.obtainReward(receiverProducer)
+trait InstantRewards extends Mission:
+  abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+    super.applyEffects(receiverProducer)
     reward.foreach {
       case res@ResourceEffect(_, _, _) =>
         res.resolve(receiverProducer(res.target))
     }
 
-trait SupportRewards(supportCost: List[ResourceEffect]) extends BaseMission:
-  override def obtainReward(receiverProducer: Target => scala.Seq[Player]): Unit =
-    super.obtainReward(receiverProducer)
+trait SupportRewards(supportCost: List[ResourceEffect]) extends Mission:
+  abstract override def applyEffects(receiverProducer: Target => scala.Seq[Player]): Unit =
+    super.applyEffects(receiverProducer)
     val player = receiverProducer(Target.Self).head
     player.addMission(ObtainedMission(reward, supportCost, player, id))
 
-trait Obtained extends BaseMission:
+trait Obtained extends Mission:
   private var _obtained: Boolean = false
-  def isObtained: Boolean = _obtained
-  override def canGet(receiverProducer: Target => Seq[Player]): Boolean = !isObtained && super.canGet(receiverProducer)
-  override def obtainReward(receiverProducer: Target => Seq[Player]): Unit = 
-    super.obtainReward(receiverProducer)
+  private def isObtained: Boolean = _obtained
+  abstract override def canGet(receiverProducer: Target => Seq[Player]): Boolean =
+    !isObtained && super.canGet(receiverProducer)
+  abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+    super.applyEffects(receiverProducer)
     _obtained = true
-  def reset: Unit = _obtained = false
+  def reset(): Unit = _obtained = false
 
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
   extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount)
