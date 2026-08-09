@@ -26,10 +26,10 @@ object MissionMapBuilder:
     List(
       0 -> List(builder.makeSpirits, builder.makeElder),
       1 -> List(builder.makeOwl, builder.makeMinotaur),
-      2 -> List(builder.makeGorgon, builder.makeGorgon), //TODO make right mission
+      2 -> List(builder.makeGorgon, builder.makeMirror),
       3 -> List(builder.makeSmithHammer, builder.makeSmithChest),
       4 -> List(builder.makeSilverDoe, builder.makeSatyr),
       5 -> List(builder.makeFerryman, builder.makeHelmet),
-      6 -> List(builder.makeSphinx, builder.makeMirror, builder.makeHydra)
+      6 -> List(builder.makeSphinx, builder.makeScorpion, builder.makeHydra)
     ).toMap
   }

@@ -1,7 +1,7 @@
 package model.missions
 
 import model.effects.Target.Self
-import model.effects.ThrowEffects.ThrowSubtractEffect
+import model.effects.ThrowEffects.{ThrowAllDice, ThrowSubtractEffect}
 import model.effects.{OptionEffect, ResourceEffect, Target, UpdateCapacityEffect}
 import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
 
@@ -72,6 +72,13 @@ object MissionFactory:
         ThrowSubtractEffect()
       ),
       id = "minotaur",
+      startCount = startCount
+    )
+
+    def makeScorpion: Mission = new InstantMission(
+      cost = List(ResourceEffect(MoonCrystal(3), Self)),
+      reward = List(ThrowAllDice(2)),
+      id = "scorpion",
       startCount = startCount
     )
 
