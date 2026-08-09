@@ -130,7 +130,7 @@ object GameMatch:
     override def startDiceThrow(): Unit = startDiceThrow(players.map(p => (p, p.dice)))
 
     override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
-      EffectManager().attemptSolve(playerDice.flatMap((p, d) => d.map(die => (p, die.roll))))
+      EffectManager().attemptSolve(playerDice.flatMap((p, d) => d.map(die => (p, die.roll))), true)
 
     override val shop = EffectShop(
       (ResourceEffect(MoonCrystal(1), Target.Self), Gold(2)),
