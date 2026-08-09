@@ -10,6 +10,7 @@ import controller.ViewPublisher.ViewContext.*
 
 object DicePanes:
   class DicePane(effects: () => Seq[Option[EffectDTO]], colorHex: String) extends HBox with ViewSubscriber:
+    setPublisher(ViewPublisher())
     private def updateChildren(): Unit =
       if !effects().contains(None) then
         children = EffectWrapperPane("", effects().map(e => e.get), Color.valueOf(colorHex))
