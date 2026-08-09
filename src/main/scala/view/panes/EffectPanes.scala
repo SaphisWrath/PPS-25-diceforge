@@ -20,7 +20,7 @@ object EffectPanes:
       case _ =>
 
   trait EffectWrapperPane extends Node
-  
+
   object EffectWrapperPane:
     private class EffectWrapperPaneImpl(title: String,
                                         effectDTOs: Seq[EffectDTO],
@@ -47,9 +47,10 @@ object EffectPanes:
           }
         else gridPane
       )
-      
+
     def apply(title: String, effectDTOs: Seq[EffectDTO], color: Color): EffectWrapperPane =
       EffectWrapperPaneImpl(title, effectDTOs, color, None)
 
-    def apply(title: String, compoundEffectDTO: CompoundEffectDTO, color: Color): EffectWrapperPane =
-      EffectWrapperPaneImpl(title, compoundEffectDTO.effects, color, compoundEffectDTO.label)
+    def apply(title: String, effectDTO: EffectDTO, color: Color): EffectWrapperPane = effectDTO match
+      case c: CompoundEffectDTO => EffectWrapperPaneImpl(title, c.effects, color, c.label)
+      case _ => EffectWrapperPane(title, Seq(effectDTO), color)
