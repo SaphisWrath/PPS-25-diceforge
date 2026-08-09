@@ -14,6 +14,7 @@ import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
+import view.panes.DiePanes.DiePane
 import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
@@ -213,7 +214,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
             case effectDTO: EffectDTO => EffectPane(effectDTO)
           })
         },
-        dieDTO => EffectWrapperPane("", dieDTO.faces, JfxTheme.primaryBorder) //  TODO: Implement DiePane
+        DiePane(_)
       )
     case PlayerMovedContext | MissionBoughtContext => missionPane.redraw()
     case _ =>
