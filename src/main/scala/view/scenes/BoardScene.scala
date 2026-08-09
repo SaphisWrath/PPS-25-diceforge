@@ -200,19 +200,21 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case TurnStepChangeContext => turnStep() = controller.turnStep
     case PlayerChoiceContext =>
       val choiceController = controller.solveController
-      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, {
-        case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO, JfxTheme.primaryBorder)
-        case effectDTO: EffectDTO => EffectPane(effectDTO)
-      })
+      manageChoices[EffectDTO](
+        choiceController.pendingChoices,
+        choiceController.resumeAfterChoices,
+        EffectWrapperPane("", _, JfxTheme.primaryBorder)
+      )
     case ItemBoughtContext =>
       manageChoices[DieDTO](
         Seq((controller.activePlayer, controller.dice(controller.activePlayer))),
         results => {
           val faceSwapController = controller.faceSwapController(results.head)
-          manageChoices[EffectDTO](faceSwapController.pendingChoices, faceSwapController.resumeAfterChoices, {
-            case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO, JfxTheme.primaryBorder)
-            case effectDTO: EffectDTO => EffectPane(effectDTO)
-          })
+          manageChoices[EffectDTO](
+            faceSwapController.pendingChoices,
+            faceSwapController.resumeAfterChoices,
+            EffectWrapperPane("", _, JfxTheme.primaryBorder)
+          )
         },
         DiePane(_)
       )
