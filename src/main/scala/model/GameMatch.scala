@@ -125,7 +125,7 @@ object GameMatch:
       
     override def currentTurnStep: TurnStep = turnManager.currentStep
 
-    override def getDiceResults: Seq[(Player, Effect)] = players.flatMap(p => p.dice.map(d => (p, d.lastEffect.get)))
+    override def getDiceResults: Seq[(Player, Effect)] = players.flatMap(p => p.dice.map(d => (p, d.lastRolledEffect.get)))
 
     override def startDiceThrow(): Unit = startDiceThrow(players.map(p => (p, p.dice)))
 

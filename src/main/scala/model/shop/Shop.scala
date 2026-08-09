@@ -23,5 +23,3 @@ trait Shop[T]:
    * @return the full list of items in stock
    */
   def items: Seq[T]
-
-  def lastItemBought: Option[T]

@@ -210,8 +210,7 @@ object GameController:
     override def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO] =
       FaceSwapController(
         gameMatch.activePlayer,
-        gameMatch.activePlayer.dice(dieIndex),
-        gameMatch.shop.lastItemBought.get
+        gameMatch.activePlayer.dice(dieIndex)
       )
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
