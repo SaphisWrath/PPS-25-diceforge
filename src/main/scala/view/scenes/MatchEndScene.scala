@@ -13,6 +13,7 @@ import scalafx.scene.Node
 import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
 import view.ViewComponents.ViewScene
 import view.buttons.ButtonFactory.makeMenuButton
+import view.sprites.Sprite
 
 class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val newMatchButton = makeMenuButton(
@@ -32,7 +33,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
       children = nodes
     }
 
-  private def setupPlayerRanking(players: Seq[(PlayerDTO, Int)]): Seq[HBox] = {
+  private def setupPlayerRanking(players: Seq[(PlayerDTO, Int)], resPath: String): Seq[HBox] = {
     def samePlacement(player: (PlayerDTO, Int), previousPlayer: Option[(PlayerDTO, Int)]): Boolean =
       previousPlayer.isEmpty || previousPlayer.get._2 == player._2
 
@@ -44,7 +45,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
         minHeight = sizeY
       }
 
-    var labelSizeX = 200
+    var labelSizeX = 140
     var labelSizeY = 100
     var fontSize = 20
     var placement = 1
@@ -62,7 +63,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
           fontSize = 15
         val placementLabel = buildLabel(s"$placement.", 20, labelSizeY, fontSize)
         val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
-        val pointLabel = buildLabel(s"${points} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
+        val pointLabel = buildLabel(s"$points ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
 
         nameLabel.alignment = Center
         nameLabel.alignmentInParent = Center
@@ -72,7 +73,12 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
           CornerRadii.Empty,
           Insets.Empty
         )))
-        val returnBox = makeRowWith(Seq(placementLabel, nameLabel, pointLabel))
+        val returnBox = makeRowWith(Seq(
+          placementLabel,
+          nameLabel,
+          pointLabel,
+          Sprite(resPath).getSpriteAsImageView
+        ))
         returnBox.setMinSize(labelSizeX, labelSizeY)
         returnBox
       )
@@ -83,6 +89,6 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     spacing = 20
     alignment = Center
     alignmentInParent = Center
-    val playerRanking: Seq[HBox] = setupPlayerRanking(controller.getSortedPlayers)
+    val playerRanking: Seq[HBox] = setupPlayerRanking(controller.sortedPlayers, controller.gloryPointPath)
     children = playerRanking.appended(makeRowWith(Seq(newMatchButton, endGameButton)))
   }
