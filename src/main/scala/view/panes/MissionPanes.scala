@@ -58,7 +58,7 @@ object MissionPanes:
       EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
 
     protected def name: Text = {
-      val nameText = TextFactory.makeMissionName(missionDTO.id)
+      val nameText = TextFactory.makeMissionName(MissionDescriptions.getTitle(missionDTO))
       Tooltip.install(nameText, new Tooltip(MissionDescriptions.getDescription(missionDTO)))
       nameText
     }
