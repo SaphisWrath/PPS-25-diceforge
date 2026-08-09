@@ -1,7 +1,7 @@
 package model.missions
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{MissionContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{FaceObtainedContext, MissionContext, ResourceContext}
 import model.Players.Player
 import model.effects.{Effect, ResourceEffect, Target}
 import model.resource.PlayerBoard
@@ -46,7 +46,7 @@ trait Notification extends Mission:
 
 trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
   private var _purchaseCount = startingPurchaseCount
-  private def availableForPurchase: Boolean = _purchaseCount > 0
+  private var availableForPurchase: Boolean = true
   def purchaseCount: Int = _purchaseCount
   def startingPurchaseCount: Int = _startingPurchaseCount
   abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
@@ -96,3 +96,18 @@ class SupportMission(
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained with Notification
+
+class GrantFaceMission(reward: List[Effect],
+                       cost: List[ResourceEffect],
+                       newFace: Effect,
+                       id: String = "placeholder",
+                       startCount: Int = 4)
+  extends InstantMission(reward, cost, id, startCount):
+  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
+    super.applyEffects(receiverProducer)
+    receiverProducer(reward
+      .flatMap {
+        case e: ResourceEffect => Seq(e.target)
+        case _ => Seq.empty
+      }.head).foreach(_.dice.foreach(_.setQueueFace(newFace)))
+    ModelPublisher().notify(FaceObtainedContext)

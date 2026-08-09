@@ -15,12 +15,15 @@ object LanguageStrings:
     val playerColorLabelText = "Colore Del Giocatore"
     val playerAddedConfirmationText = "Giocatore aggiunto con successo!"
     val playerAddingErrorText = "Il colore o il nome sono già stati selezionati"
+    val absentNameErrorText = "Il nome non è stato specificato"
     val gameReadyConfirmationText = "Pronti per iniziare!"
     val startButtonText = "Iniziamo!"
 
   object BoardScreenStrings:
     val nextTurnButtonText = "Prossimo Turno"
     val buyExtraActionButton = "Buy extra action(2 SunCrystals)"
+    val visitShopButton = "Visita il negozio"
+    val leaveShopButton = "Ritorna alla mappa"
     val actionTakenText = "Hai eseguito la tua azione"
     val actionNotTakenText = "Esegui la tua azione"
     val showObtainedMissionsButton = "Mostra i rinforzi"
@@ -49,3 +52,8 @@ object LanguageStrings:
     val support = "Fase di Rinforzo"
     val action = "Fase Azione"
     val actionDone = "Azione Eseguita"
+
+  object ShopStrings:
+    val purchase = "Compra"
+    val cost = "Costo"
+    val item = "Faccia dado"

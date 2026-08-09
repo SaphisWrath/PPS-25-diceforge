@@ -13,8 +13,9 @@ trait EffectManager:
   /**
    * Tries to solve all effects and succeeds immediately when no user input is required
    * @param effects the effects it tries to resolve
+   * @param updateTurnEffects whether all the saved effects should be replaced by the incoming effects or not
    */
-  def attemptSolve(effects: Seq[(Player, Effect)]): Unit
+  def attemptSolve(effects: Seq[(Player, Effect)], updateTurnEffects: Boolean = false): Unit
 
   /**
    *
@@ -22,20 +23,42 @@ trait EffectManager:
    */
   def effectsToSolve: Seq[(Player, OptionEffect)]
 
+  /**
+   * Sets the current turn's effects rolled by the player's dice
+   * @param turnEffects the newly rolled effects that must replace the older ones
+   */
+  def updateTurnEffects(turnEffects: Seq[(Player, Effect, Int)]): Unit
+
 object EffectManager:
   private class EffectManagerImpl extends EffectManager:
     private var effectCache: Seq[(Player, Effect)] = Seq.empty
     private var _effectsToSolve: Seq[(Player, OptionEffect)] = Seq.empty
-    
+    private var _currentTurnEffects: Seq[(Player, Effect)] = Seq.empty
+
     override def effectsToSolve: Seq[(Player, OptionEffect)] = _effectsToSolve
-    
-    override def attemptSolve(effects: Seq[(Player, Effect)]): Unit =
+
+    override def updateTurnEffects(newEffects: Seq[(Player, Effect, Int)]): Unit =
+      var count: Int = 0
+      var lastPlayer = _currentTurnEffects.head._1
+      _currentTurnEffects = _currentTurnEffects
+        .map((p, e) =>
+          if lastPlayer.name != p.name
+          then
+            count = 0
+            lastPlayer = p
+          count = count + 1
+          (p, e, count - 1)
+        ).map((p, e, i) => newEffects.find((_p, _, _i) => p.name == _p.name && i == _i).getOrElse((p, e, i)))
+        .map((p, e, i) => (p, e))
+
+    override def attemptSolve(effects: Seq[(Player, Effect)], updateTurnEffects: Boolean): Unit =
+      if updateTurnEffects then _currentTurnEffects = effects
       val (copyEffects, otherEffects) = splitCopyEffects(effects.concat(effectCache))
       if copyEffects.nonEmpty
         then
           effectCache = otherEffects
           _effectsToSolve = copyEffects
-            .map((p, ce) => (p, OptionEffect(otherEffects.flatMap((otherP, otherE) =>
+            .map((p, ce) => (p, OptionEffect(_currentTurnEffects.flatMap((otherP, otherE) =>
               if otherP.name == p.name then Seq.empty else Seq(otherE)
             ))))
           ModelPublisher().notify(ChoiceContext)
@@ -49,6 +72,7 @@ object EffectManager:
         else
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)
+          ModelPublisher().notify(ResourceContext)
 
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
@@ -77,7 +101,6 @@ object EffectManager:
             case _ =>
           e.resolve(p)
         )
-      ModelPublisher().notify(ResourceContext)
       
   private val effectManager = EffectManagerImpl()    
   

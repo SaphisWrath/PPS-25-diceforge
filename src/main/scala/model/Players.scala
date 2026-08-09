@@ -38,7 +38,7 @@ object Players:
       private var _missions: Seq[Obtained] = Seq.empty
       override val board: PlayerBoard = PlayerBoard.emptyBoard
       
-      override val dice: Seq[Die] = Seq(mockOptionDie)
+      override val dice: Seq[Die] = Seq(mockOptionDie, mockGoldDie)
 
       override def missions: Seq[Obtained] = _missions
 

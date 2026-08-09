@@ -1,6 +1,6 @@
 package view.panes
 
-import controller.dto.{MissionDTO, PlayerDTO}
+import controller.dto.MissionDTO
 import scalafx.geometry.{Insets, Pos}
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.{Button, Tooltip}
@@ -16,8 +16,7 @@ import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
 import controller.dto.MissionType.*
 import scalafx.scene.shape.Circle
-import scalafx.scene.{Group, Node}
-import view.builders.PlayerGUIComponentFactory
+import scalafx.scene.Node
 
 object MissionPanes:
   class MissionPane(missionDTO: MissionDTO) extends VBox:
@@ -30,8 +29,8 @@ object MissionPanes:
           case _ => defaultColor
 
     import JfxTheme.*
-    private val fillColor: Color = getCorrectColor(errorContainer, tertiaryContainer, primaryContainer)
-    private val borderColor: Color = getCorrectColor(errorBorder, tertiaryBorder, primaryBorder)
+    private val fillColor: Color = getCorrectColor(secondaryContainer, tertiaryContainer, primaryContainer)
+    private val borderColor: Color = getCorrectColor(secondaryBorder, tertiaryBorder, primaryBorder)
 
     border = makeBorder(borderColor)
     background = makeBackgroundFill(fillColor)
@@ -53,10 +52,10 @@ object MissionPanes:
       ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
 
     protected def rewards =
-      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards, borderColor)
+      EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards, borderColor)
 
     protected def cost =
-      new EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
+      EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
 
     protected def name: Text = {
       val nameText = TextFactory.makeMissionName(missionDTO.id)

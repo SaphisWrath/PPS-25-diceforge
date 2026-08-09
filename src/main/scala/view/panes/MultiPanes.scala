@@ -3,6 +3,7 @@ package view.panes
 import scalafx.beans.property.ObjectProperty
 import scalafx.scene.Node
 import scalafx.scene.layout.{BorderPane, Pane, StackPane}
+import view.Redrawable
 import view.scenes.ViewComponent
 
 

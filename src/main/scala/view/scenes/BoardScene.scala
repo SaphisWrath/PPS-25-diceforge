@@ -1,9 +1,9 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{PlayerMovedContext, PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
-import controller.{ControllerStage, GameController, ViewPublisher}
+import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
+import controller.{ControllerStage, FaceSwapController, GameController, ViewPublisher}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
@@ -14,9 +14,11 @@ import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
+import view.panes.DiePanes.DiePane
 import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
+import view.panes.ShopPanes.ShopPane
 import view.scenes.CentralPaneStates.ObtainedMissions
 import view.theme.JfxTheme
 import view.{Redrawable, scenes}
@@ -64,13 +66,18 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     )
   }
 
+  private val shopPane: Redrawable = Redrawable { () =>
+    ShopPane(controller.shopItems)
+  }
+
   private val centralPane: MultiPane = MultiPane(
     {
       case Start => startPane
       case Missions => missionPane()
       case ObtainedMissions => obtainedMissionsPane()
+      case Shop => shopPane()
     },
-    Set(Start, Missions, ObtainedMissions)
+    Set(Start, Missions, ObtainedMissions, Shop)
   )
 
   private def startPane: Node = new BorderPane {
@@ -108,8 +115,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private def menuSection: Node = VBox(
     turnPhaseSection(),
     buyExtraActionButton,
+    visitShopButton(),
     nextTurnButton,
-    obtainedMissionsButton(),
+    obtainedMissionsButton()
   )
 
   private val nextTurnButton: Node = ButtonFactory.makeBoardButton(
@@ -122,6 +130,24 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     () => controller.buyExtraAction(),
     () => !controller.canBuyExtraAction
   )
+
+  private val visitShopButton: Redrawable = Redrawable { () =>
+    new FlowPane {
+      children = centralPane.currentState match
+        case Shop => ButtonFactory.makeBoardButton(
+          BSStrings.leaveShopButton,
+          () =>
+            centralPane.setState(Missions)
+            visitShopButton.redraw()
+        )
+        case _ => ButtonFactory.makeBoardButton(
+          BSStrings.visitShopButton,
+          () =>
+            centralPane.setState(Shop)
+            visitShopButton.redraw()
+        )
+    }
+  }
 
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
     new VBox {
@@ -174,9 +200,23 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case TurnStepChangeContext => turnStep() = controller.turnStep
     case PlayerChoiceContext =>
       val choiceController = controller.solveController
-      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, {
-        case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
-        case effectDTO: EffectDTO => EffectPane(effectDTO)
-      })
-    case PlayerMovedContext => missionPane.redraw()
+      manageChoices[EffectDTO](
+        choiceController.pendingChoices,
+        choiceController.resumeAfterChoices,
+        EffectWrapperPane("", _, JfxTheme.primaryBorder)
+      )
+    case ItemObtainedContext =>
+      manageChoices[DieDTO](
+        Seq((controller.activePlayer, controller.dice(controller.activePlayer))),
+        results => {
+          val faceSwapController = controller.faceSwapController(results.head)
+          manageChoices[EffectDTO](
+            faceSwapController.pendingChoices,
+            faceSwapController.resumeAfterChoices,
+            EffectWrapperPane("", _, JfxTheme.primaryBorder)
+          )
+        },
+        DiePane(_)
+      )
+    case PlayerMovedContext | MissionBoughtContext => missionPane.redraw()
     case _ =>
