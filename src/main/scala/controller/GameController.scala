@@ -118,7 +118,7 @@ object GameController:
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
       case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
-      case ModelContext.EffectBoughtContext => ViewPublisher().notify(ItemBoughtContext)
+      case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)

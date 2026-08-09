@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ItemBoughtContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, FaceSwapController, GameController, ViewPublisher}
@@ -205,7 +205,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         choiceController.resumeAfterChoices,
         EffectWrapperPane("", _, JfxTheme.primaryBorder)
       )
-    case ItemBoughtContext =>
+    case ItemObtainedContext =>
       manageChoices[DieDTO](
         Seq((controller.activePlayer, controller.dice(controller.activePlayer))),
         results => {

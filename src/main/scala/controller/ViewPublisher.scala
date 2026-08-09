@@ -11,7 +11,7 @@ object ViewPublisher:
     case TurnStepChangeContext
     case PlayerMovedContext
     case PlayerChoiceContext
-    case ItemBoughtContext
+    case ItemObtainedContext
 
   trait ViewSubscriber extends Subscriber[ViewContext]
 

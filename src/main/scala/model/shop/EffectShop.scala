@@ -1,6 +1,6 @@
 package model.shop
 
-import model.ModelPublisher.ModelContext.{EffectBoughtContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{FaceObtainedContext, ResourceContext}
 import model.{ModelPublisher, Players}
 import model.effects.Effect
 import model.resource.Resource
@@ -22,7 +22,7 @@ class EffectShop(initialItems: (Effect, Resource)*) extends Shop[Effect]:
         _items = _items.diff(Seq(item))
         player.dice.foreach(_.setQueueFace(item))
         ModelPublisher().notify(ResourceContext)
-        ModelPublisher().notify(EffectBoughtContext)
+        ModelPublisher().notify(FaceObtainedContext)
       else throw IllegalStateException(s"Player ${player.name} bought shop item without the necessary funds")
     else throw IllegalStateException("Bought shop item that wasn't in stock.")
 
