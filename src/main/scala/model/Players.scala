@@ -32,10 +32,15 @@ object Players:
     def missions: Seq[Obtained]
 
     def addMission(mission: Obtained): Unit
+    
+    def pendingRolls: Int
+    
+    def pendingRolls_=(rollsLeft: Int): Unit
 
   object Player:
     private case class PlayerImpl(name: String, color: Color) extends Player:
       private var _missions: Seq[Obtained] = Seq.empty
+      var pendingRolls = 0
       override val board: PlayerBoard = PlayerBoard.emptyBoard
       
       override val dice: Seq[Die] = Seq(mockOptionDie, mockGoldDie)
