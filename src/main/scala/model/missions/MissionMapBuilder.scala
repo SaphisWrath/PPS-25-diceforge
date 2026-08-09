@@ -20,3 +20,16 @@ object MissionMapBuilder:
       5 -> List(placeholderMission, placeholderMission),
       6 -> List(placeholderMission, placeholderInstant, placeholderInstant)
     ).toMap
+
+  def makeStandardMissions(startCount: Int): Map[Int, List[Mission]] = {
+    val builder = MissionFactory(startCount)
+    List(
+      0 -> List(builder.makeSpirits, builder.makeElder),
+      1 -> List(builder.makeOwl, builder.makeMinotaur),
+      2 -> List(builder.makeGorgon, builder.makeGorgon), //TODO make right mission
+      3 -> List(builder.makeSmithHammer, builder.makeSmithChest),
+      4 -> List(builder.makeSilverDoe, builder.makeSatyr),
+      5 -> List(builder.makeFerryman, builder.makeHelmet),
+      6 -> List(builder.makeSphinx, builder.makeMirror, builder.makeHydra)
+    ).toMap
+  }

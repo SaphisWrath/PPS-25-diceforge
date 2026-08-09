@@ -1,7 +1,6 @@
 package model
 
 import model.dice.{Die, DieFactory}
-import model.dice.DieFactory.*
 import model.missions.Obtained
 import model.resource.PlayerBoard
 
