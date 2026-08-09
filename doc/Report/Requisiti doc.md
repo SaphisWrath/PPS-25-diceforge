@@ -136,7 +136,7 @@ Dice forge è un gioco dove i giocatori competono per ottenere il maggior numero
 		- 1 faccia Somma oro e lunare
 		- 1 faccia Oro da 6
 		- 1 faccia Opzione a tre da 1
-		- 1 faccia Somma punti vittoria e lunari
+		- 1 faccia Somma punti vittoria e solare
 	- Costo 5:
 		- 4 facce Opzione oro o punti vittoria
 	- Costo 6:
