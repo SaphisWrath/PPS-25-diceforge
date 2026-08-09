@@ -30,8 +30,8 @@ object MissionPanes:
           case _ => defaultColor
 
     import JfxTheme.*
-    private val fillColor: Color = getCorrectColor(errorContainer, tertiaryContainer, primaryContainer)
-    private val borderColor: Color = getCorrectColor(errorBorder, tertiaryBorder, primaryBorder)
+    private val fillColor: Color = getCorrectColor(secondaryContainer, tertiaryContainer, primaryContainer)
+    private val borderColor: Color = getCorrectColor(secondaryBorder, tertiaryBorder, primaryBorder)
 
     border = makeBorder(borderColor)
     background = makeBackgroundFill(fillColor)
