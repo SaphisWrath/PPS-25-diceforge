@@ -9,7 +9,8 @@ case class MockPlayer(
                        name: String,
                        color: Color,
                        var board: PlayerBoard = PlayerBoard.emptyBoard,
-                       private var _missions: Seq[Obtained] = Seq.empty
+                       private var _missions: Seq[Obtained] = Seq.empty,
+                       var dice: Seq[Die] = Seq.empty
                      ) extends Player:
   override def addMission(mission: Obtained): Unit =
     _missions = _missions.appended(mission)
@@ -19,5 +20,3 @@ case class MockPlayer(
   def resetMissions(): Unit = _missions = Seq.empty
   
   def resetPlayerBoard(): Unit = board = PlayerBoard.emptyBoard
-  
-  def dice: Seq[Die] = Seq.empty

@@ -2,7 +2,7 @@ package controller.dto
 
 import controller.converters.ResourceConverters.stringToResourceBuilder
 import controller.dto.pathfinders.ImagePathFinders.{findImagePath, given}
-import model.effects.*
+import model.effects.{UpdateCapacityEffect, *}
 import model.resource.Resource
 import view.LanguageStrings
 
@@ -28,8 +28,12 @@ object EffectDTO:
         findImagePath(resource),
         Some(resource.amount.toString)
       )
-      case m @ MultiplyEffect(multiplier) => EffectDTO (
+      case UpdateCapacityEffect(resource) => EffectDTO(
+        findImagePath(resource),
+        Some("+" + resource.amount.toString)
+      )
+      case MultiplyEffect(multiplier) => EffectDTO (
         findImagePath(effect),
-        Some(m.multiplier.toString)
+        Some(multiplier.toString)
       )
       case _ => EffectDTO(findImagePath(effect), Option.empty)

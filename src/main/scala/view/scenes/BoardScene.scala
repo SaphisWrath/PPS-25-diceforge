@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{PlayerMovedContext, PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, ViewPublisher}
@@ -14,7 +14,7 @@ import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
-import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
+import view.panes.EffectPanes.{CompoundEffectPane, EffectPane, EffectWrapperPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.scenes.CentralPaneStates.ObtainedMissions
@@ -33,7 +33,11 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   import CentralPaneStates.*
 
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
-    controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
+    controller.players.map(p => p -> PlayerGUIComponentFactory(
+      p, 
+      controller.playerBoard(p),
+      () => controller.recentDiceResults(p.name)
+    )).toMap
   private val activePlayerPropertyName = "activePlayer"
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>
@@ -175,7 +179,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case PlayerChoiceContext =>
       val choiceController = controller.solveController
       manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, {
-        case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
+        case effectDTO: CompoundEffectDTO => CompoundEffectPane(effectDTO, JfxTheme.primaryBorder)
         case effectDTO: EffectDTO => EffectPane(effectDTO)
       })
     case PlayerMovedContext => missionPane.redraw()
