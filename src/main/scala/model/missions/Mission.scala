@@ -103,9 +103,5 @@ class GrantFaceMission(reward: List[Effect],
   extends InstantMission(reward, cost, id, startCount):
   override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    receiverProducer(reward
-      .flatMap {
-        case e: ResourceEffect => Seq(e.target)
-        case _ => Seq.empty
-      }.head).foreach(_.dice.foreach(_.setQueueFace(newFace)))
+    receiverProducer(Target.Self).foreach(_.dice.foreach(_.setQueueFace(newFace)))
     ModelPublisher().notify(FaceObtainedContext)
