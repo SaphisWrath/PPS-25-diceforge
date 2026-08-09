@@ -3,8 +3,11 @@ package model.missions
 import model.ModelPublisher
 import model.ModelPublisher.ModelContext.{FaceObtainedContext, MissionContext, ResourceContext}
 import model.Players.Player
-import model.effects.{Effect, ResourceEffect, Target}
+import model.effects.Target.*
+import model.effects.{CopyEffect, Effect, ResourceEffect, Target}
 import model.resource.PlayerBoard
+import model.utils.EffectManager
+import model.utils.RandomModules.given_RandomModule_Int
 
 trait Mission:
   def reward: List[Effect]
@@ -46,7 +49,7 @@ trait Notification extends Mission:
 
 trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
   private var _purchaseCount = startingPurchaseCount
-  private var availableForPurchase: Boolean = true
+  private def availableForPurchase: Boolean = _purchaseCount > 0
   def purchaseCount: Int = _purchaseCount
   def startingPurchaseCount: Int = _startingPurchaseCount
   abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
@@ -101,13 +104,25 @@ class GrantFaceMission(reward: List[Effect],
                        cost: List[ResourceEffect],
                        newFace: Effect,
                        id: String = "placeholder",
-                       startCount: Int = 4)
-  extends InstantMission(reward, cost, id, startCount):
+                       startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
   override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    receiverProducer(reward
-      .flatMap {
-        case e: ResourceEffect => Seq(e.target)
-        case _ => Seq.empty
-      }.head).foreach(_.dice.foreach(_.setQueueFace(newFace)))
+    receiverProducer(Self).foreach(_.dice.foreach(_.setQueueFace(newFace)))
     ModelPublisher().notify(FaceObtainedContext)
+
+class CopyOtherEffectsMission(reward: List[Effect],
+          cost: List[ResourceEffect],
+          newFace: Effect,
+          id: String = "placeholder",
+          startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
+  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit = {
+    super.applyEffects(receiverProducer)
+    EffectManager().updateTurnEffects(
+      receiverProducer(Others).flatMap(p => p.dice.zipWithIndex.map((d, i) => (p, d.roll, i)))
+    )
+    EffectManager().attemptSolve(
+      LazyList
+        .continually((receiverProducer(Self).head, CopyEffect()))
+        .take(2)
+    )
+  }
