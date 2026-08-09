@@ -1,7 +1,7 @@
-package model.utils
+package model.effects
 
-import model.ModelPublisher.ModelContext.{ChoiceContext, ResourceContext}
 import model.ModelPublisher
+import model.ModelPublisher.ModelContext.{ChoiceContext, ResourceContext}
 import model.Players.Player
 import model.effects.*
 

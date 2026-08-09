@@ -26,7 +26,7 @@ object Die:
     private def isFull: Boolean = numFaces == _faces.length
 
     override def roll(using randomModule: RandomModule[Int]): Effect =
-      _lastEffect = Option(_faces(randomModule.randomIndex(maxFaces)))
+      _lastEffect = Option(_faces(randomModule.randomIndex(_faces.length)))
       _lastEffect.get
 
     override def faces: Seq[Effect] = _faces
