@@ -31,7 +31,7 @@ object ImagePathFinders:
       case _ => spritePath + "placeholder.png"
 
   given ImagePathFinder[Effect] with
-    private val spritePath = "sprites" + systemSeparator
+    private val spritePath = systemSeparator + "sprites" + systemSeparator
 
     override def getPath(element: Effect): String = element match
       case ResourceEffect(resource, _, _) => summon[ImagePathFinder[Resource]].getPath(resource)

@@ -2,8 +2,7 @@ package controller
 
 import controller.dto.{EffectDTO, PlayerDTO}
 import model.Players.Player
-import model.effects.Effect
-import model.utils.EffectManager
+import model.effects.{Effect, EffectManager}
 
 object EffectSolveController:
   private class EffectSolveControllerImpl extends ChoiceController[EffectDTO]:

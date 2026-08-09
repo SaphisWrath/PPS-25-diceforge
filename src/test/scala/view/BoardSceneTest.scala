@@ -6,7 +6,6 @@ import controller.ViewState.Board
 import model.GameMatch
 import model.Players.Color.{Blue, Orange}
 import model.Players.Player
-import model.resource.Gold
 import scalafx.application.JFXApp3
 import view.scenes.BoardScene
 

@@ -10,14 +10,21 @@ trait Shop[T]:
    * @param item the requested item
    * @return the price of the item
    */
-  def getPrice(item: T): Resource
+  def getPrice(item: T): Option[Resource]
+
+  /**
+   * @param item the item whose availability we want to check
+   * @return the number of available item copies
+   */
+  def getStocked(item: T): Option[Int]
 
   /**
    * Buy the selected item
    * @param item the item the player bought
    * @param player the player who wants to buy it
+   * @return true if player bought item, false if not
    */
-  def buy(item: T, player: Player): Unit
+  def buy(item: T, player: Player): Boolean
 
   /**
    * @return the full list of items in stock

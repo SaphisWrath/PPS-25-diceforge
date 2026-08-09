@@ -38,7 +38,7 @@ object TextFactory:
   def makeEffectText(label: String): Text =
     new Text {
       text = label
-      style = "-fx-font: normal bolder 25pt sans-serif"
+      style = "-fx-font: normal bolder 20pt sans-serif"
       fill = White
       stroke = Black
     }

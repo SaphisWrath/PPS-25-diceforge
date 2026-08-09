@@ -4,13 +4,12 @@ import model.ModelPublisher.ModelContext
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
-import model.effects.Effect
+import model.effects.{Effect, EffectManager}
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.{Gold, PlayerBoard}
 import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndSupport}
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
-import model.utils.EffectManager
 import model.utils.RandomModules.given_RandomModule_Int
 
 import scala.util.Random
@@ -63,7 +62,7 @@ object GameMatch:
     list
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] = initializePlayerList(playerList)
-    private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
+    private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makeStandardMissions(players.length)
     private val mapManager: MapManager = MapManager(
       () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
       player => startDiceThrow(Seq((player, player.dice)))
@@ -114,7 +113,7 @@ object GameMatch:
       case _ =>
 
     private def nextTurn(): Unit =
-      activePlayer.missions.foreach(_.reset)
+      activePlayer.missions.foreach(_.reset())
       turn = turn + 1
       if turn == playerList.length then
         turn = 0

@@ -88,25 +88,26 @@ Dice forge è un gioco dove i giocatori competono per ottenere il maggior numero
 	- 1 missione da 2 cristalli lunari e 1 missione da 3 cristalli lunari
 	- 1 missione da 4 cristalli lunari e 1 missione da 5 cristalli lunari
 	- 1 missione da 6 cristalli solari, 1 missione da 6 cristalli lunari e 1 missione da 5 cristalli solari e 5 cristalli lunari
-- Nel gioco sono presenti 15 missioni suddivise in tre categorie:
-	- Nessun effetto: il giocatore ottiene solo i punti vittoria.
-		- Traghettatore: costa 4 Cristalli lunari e fornisce 12 punti vittoria.
-		- Gorgone: costa 4 Cristalli solari e fornisce 14 punti vittoria.
-		- Idra: costa 5 Cristalli solari e 5 Cristalli lunari e fornisce 26 punti vittoria.
-	- Effetto immediato: applicano il proprio effetto appena vengono completate.
-		- Forziere del fabbro: costa 1 Cristallo lunare, fornisce 2 punti vittoria e aumenta la capacità massima delle risorse del giocatore.
-		- Satiri: costa 3 Cristalli lunari e fornisce 6 punti vittoria. Tutti gli altri giocatori tirano i propri dadi, ma non ne applicano gli effetti. Il giocatore attivo sceglie due facce tra tutte quelle ottenute dai suoi avversari e ne applica gli effetti.
-		- Elmo dell'invisibilità: costa 5 Cristalli lunari e fornisce 4 punti vittoria.  Il giocatore ottiene una faccia "Risultato per 3" da applicare ad uno dei propri dadi
-		- Cancro: costa 6 Cristalli lunari e fornisce 8 punti vittoria. Il giocatore effettua due tiri di entrambi i propri dadi.
-		- Spiriti Selvaggi: costa 1 Cristallo solare, fornisce 2 punti vittoria, 3 Oro e 3 Cristalli lunari
-		- Minotauro: costa 3 Cristalli solari e fornisce 8 punti vittoria. Tutti gli altri giocatori tirano i propri dadi e ne applicano gli effetti, ma nel caso in cui dovessero ottenere risorse(inclusi punti vittoria) invece ne perdono lo stesso ammontare.
-		- Specchio dell'abisso: costa 5 Cristalli solari e fornisce 10 punti vittoria. Il giocatore ottiene una faccia "Copia" da applicare ad uno dei propri dadi.
-		- Sfinge: costa 6 cristalli solari e fornisce 10 punti vittoria. Il giocatore attivo tira uno dei propri dadi 4 volte di fila e ne ottiene i risultati.
-	- Effetto di Rinforzo: Non hanno effetti appena vengono completate, ma possono applicare il proprio effetto durante ogni fase di rinforzo del giocatore attivo.
-        - Martello del fabbro: costa 1 Cristallo Lunare. Il giocatore può spendere 12 oro per ottenere 12 punti vittoria.
-		- Cerva d'argento: costa 2 Cristalli lunari e fornisce 2 punti vittoria. Il giocatore può tirare uno dei propri dadi e applicarne i risultati.
-		- Anziano: costa 1 Cristallo solare e fornisce 0 punti vittoria. Il giocatore può spendere 3 Oro per ottenere 4 punti vittoria.
-		- Gufo del guardiano: costa 2 cristalli solari e fornisce 4 punti vittoria. Il giocatore attivo può ottenere 1 risorsa a scelta tra Oro, Cristalli solari e Cristalli lunari.
+- Nel gioco sono presenti 15 missioni suddivise in tre categorie,
+  riportate secondo la seguente struttura: Nome: \[Costo] => \[Ricompensa]
+    - Nessun effetto: il giocatore ottiene solo i punti vittoria.
+        - Traghettatore: \[4 Cristalli lunari] => \[12 Punti vittoria]
+        - Gorgone: \[4 Cristalli solari] => \[14 Punti vittoria]
+        - Idra: \[5 Cristalli solari, 5 Cristalli lunari] => \[26 Punti vittoria]
+    - Effetto immediato: applicano il proprio effetto appena vengono completate.
+        - Forziere del fabbro: \[1 Cristallo lunare] => \[2 punti vittoria, +4 Capacità massima di Oro, + 3 Capacità massima di Cristalli solari e lunari]
+        - Satiri: \[3 Cristalli lunari] => \[6 Punti vittoria,  Tutti gli altri giocatori tirano i propri dadi, ma non ne applicano gli effetti. Il giocatore attivo sceglie due facce tra tutte quelle ottenute dai suoi avversari e ne applica gli effetti]
+        - Elmo dell'invisibilità: \[5 Cristalli lunari] => \[4 Punti vittoria, Il giocatore ottiene una faccia "Risultato per 3" da applicare ad uno dei propri dadi]
+        - Spiriti Selvaggi: \[1 Cristallo solare] => \[2 Punti vittoria, 3 Oro, 3 Cristalli lunari]
+        - Minotauro: \[3 Cristalli solari] => \[8 Punti vittoria, Tutti gli altri giocatori tirano i propri dadi e ne applicano gli effetti, ma nel caso in cui dovessero ottenere risorse(inclusi punti vittoria) invece ne perdono lo stesso ammontare]
+        - Specchio dell'abisso: \[5 Cristalli solari] => \[10 Punti vittoria, Il giocatore ottiene una faccia "Copia" da applicare ad uno dei propri dadi]
+        - Sfinge: \[6 Cristalli solari] => \[10 Punti vittoria, Il giocatore attivo tira uno dei propri dadi 4 volte di fila e ne ottiene i risultati]
+    - Effetto di Rinforzo: Oltre al fornire punti vittoria non hanno altri effetti appena vengono acquistati, ma il giocatore le ottiene e può attivarne l'effetto durante la fase di rinforzo. 
+    Vengono riportarte nel seguente modo \[Costo] => \[Punti Vittoria, \[Eventuale Costo di Rinforzo] => \[Ricompensa del Rinforzo]]
+        - Martello del fabbro: \[1 Cristallo lunare] => \[0 Punti Vittoria, \[12 Oro] => \[20 Punti vittoria]]
+        - Cerva d'argento: \[2 Cristalli lunari] => \[2 Punti Vittoria, \[] => \[Il giocatore tira uno dei propri dadi e ne applica gli effetti]]
+        - Anziano: \[1 Cristallo solare] => \[0 Punti Vittoria, \[3 Oro] => \[ 4 Punti Vittoria]]
+        - Gufo del guardiano: \[2 Cristalli solari] => \[4 Punti Vittoria, \[] => \[Il giocatore ottiene 1 di una risorsa a scelta tra Oro, Cristalli solari e Cristalli lunari]]
 - Ogni missione può essere completata un numero di volte pari al numero di giocatori.
 - I giocatori possono personalizzare i propri dadi con le facce che ottengono durante il gioco. Queste si dividono in tre categorie:
 	- Standard: forniscono un tipo di risorsa o punti vittoria.
@@ -135,7 +136,7 @@ Dice forge è un gioco dove i giocatori competono per ottenere il maggior numero
 		- 1 faccia Somma oro e lunare
 		- 1 faccia Oro da 6
 		- 1 faccia Opzione a tre da 1
-		- 1 faccia Somma punti vittoria e lunari
+		- 1 faccia Somma punti vittoria e solare
 	- Costo 5:
 		- 4 facce Opzione oro o punti vittoria
 	- Costo 6:
