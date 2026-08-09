@@ -4,7 +4,7 @@ import model.ModelPublisher
 import model.ModelPublisher.ModelContext.{FaceObtainedContext, MissionContext, ResourceContext}
 import model.Players.Player
 import model.effects.Target.*
-import model.effects.{CopyEffect, Effect, EffectManager, ResourceEffect, Target}
+import model.effects.*
 import model.resource.PlayerBoard
 import model.utils.RandomModules.given_RandomModule_Int
 
@@ -61,10 +61,7 @@ trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
 trait InstantRewards extends Mission:
   abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    reward.foreach {
-      case res@ResourceEffect(_, _, _) =>
-        res.resolve(receiverProducer(res.target))
-    }
+    reward.foreach(_.resolve(receiverProducer(Self)))
 
 trait SupportRewards(supportReward: List[Effect], supportCost: List[ResourceEffect]) extends Mission:
   abstract override def applyEffects(receiverProducer: Target => scala.Seq[Player]): Unit =
@@ -106,7 +103,7 @@ class GrantFaceMission(reward: List[Effect],
                        startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
   override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    receiverProducer(Self).foreach(_.dice.foreach(_.setQueueFace(newFace)))
+    receiverProducer(Target.Self).foreach(_.dice.foreach(_.setQueueFace(newFace)))
     ModelPublisher().notify(FaceObtainedContext)
 
 class CopyOtherEffectsMission(reward: List[Effect],

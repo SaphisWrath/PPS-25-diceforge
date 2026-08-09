@@ -8,49 +8,62 @@ import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.sprites.Sprite
 import view.text.TextFactory
+import view.theme.JfxTheme
 import view.utils.ViewUtils.makeBorder
 
+import scala.annotation.tailrec
+
 object EffectPanes:
-  class EffectPane(effectDTO: EffectDTO) extends StackPane:
+  class EffectPane(effectDTO: EffectDTO, spriteDim: Option[Double] = None) extends StackPane:
+    private val sprite = Sprite(effectDTO.sprite).getSpriteAsImageView
+    spriteDim match
+      case Some(dim) =>
+        sprite.fitWidth = dim
+        sprite.fitHeight = dim
+      case _ =>
+
     alignment = Center
     width <= height
-    children = Sprite(effectDTO.sprite).getSpriteAsImageView
+    children = sprite
     effectDTO.label match
       case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
       case _ =>
 
-  trait EffectWrapperPane extends Node
-
-  object EffectWrapperPane:
-    private class EffectWrapperPaneImpl(title: String,
-                                        effectDTOs: Seq[EffectDTO],
-                                        color: Color,
-                                        extraLabel: Option[String]) extends VBox with EffectWrapperPane:
-      private val gridPane = new GridPane()
-      gridPane.maxWidth = 5
-      effectDTOs.zipWithIndex.foreach((e, i) =>
-        gridPane.add(
-          EffectPane(e),
-          i % 2,
-          i / 2
-        )
+  class CompoundEffectPane(compoundEffectDTO: CompoundEffectDTO, color: Color) extends StackPane:
+    compoundEffectDTO.effects.foreach(e => println(e.sprite))
+    children ++= Seq(
+      EffectGridPane(compoundEffectDTO.effects, color)
+    )
+    border = makeBorder(color)
+    compoundEffectDTO.label match
+      case Some(s) => children ++= Seq(TextFactory.makeCompoundEffectText(s))
+      case _ =>
+  
+  private class EffectGridPane(
+                                effectDTOs: Seq[EffectDTO],
+                                color: Color,
+                                spriteDim: Option[Double] = None) extends GridPane:
+    effectDTOs.zipWithIndex.foreach((e, i) =>
+      add(
+        e match
+          case c: CompoundEffectDTO =>  CompoundEffectPane(c, color)
+          case _ => EffectPane(e, spriteDim),
+        i % 2,
+        i / 2
       )
-      border = makeBorder(color)
-      padding = Insets(10)
-      alignment = CenterLeft
-      children = Seq(
-        TextFactory.makeMissionLabel(title),
-        if extraLabel.isDefined
-        then
-          new StackPane {
-            children = Seq(gridPane, TextFactory.makeEffectText(extraLabel.get))
-          }
-        else gridPane
-      )
+    )
 
-    def apply(title: String, effectDTOs: Seq[EffectDTO], color: Color): EffectWrapperPane =
-      EffectWrapperPaneImpl(title, effectDTOs, color, None)
+  class EffectWrapperPane(title: String,
+                          effectDTOs: Seq[EffectDTO],
+                          color: Color) extends VBox:
+    border = makeBorder(color)
+    padding = Insets(10)
+    alignment = CenterLeft
+    children = Seq(
+      TextFactory.makeMissionLabel(title),
+      EffectGridPane(effectDTOs, color),
+    )
 
-    def apply(title: String, effectDTO: EffectDTO, color: Color): EffectWrapperPane = effectDTO match
-      case c: CompoundEffectDTO => EffectWrapperPaneImpl(title, c.effects, color, c.label)
-      case _ => EffectWrapperPane(title, Seq(effectDTO), color)
+  def effectPane(effectDTO: EffectDTO): StackPane = effectDTO match
+    case e: CompoundEffectDTO => CompoundEffectPane(e, JfxTheme.primaryBorder)
+    case e: EffectDTO => EffectPane(e)

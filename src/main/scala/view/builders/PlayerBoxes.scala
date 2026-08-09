@@ -1,5 +1,6 @@
 package view.builders
 
+import controller.dto.EffectDTO
 import scalafx.Includes.hex2sfxColor
 import utils.Publishers.Publisher
 import scalafx.geometry.Insets
@@ -9,6 +10,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
 import scalafx.scene.{Group, Node}
 import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
+import view.panes.EffectPanes.EffectWrapperPane
 
 import scala.language.postfixOps
 
@@ -79,8 +81,17 @@ object PlayerBoxes:
         }
       )
 
-    def withDiceSection(): PlayerBoxBuilder = this //TODO
-
+    def withDiceSection(
+                       dieRollsProducer: () => Seq[Option[EffectDTO]],
+                       colorHex: String
+                       ): PlayerBoxBuilder = this.copy(
+      diceSection = new HBox {
+        private val dice = dieRollsProducer()
+        if !dice.contains(None) then
+          spacing = 10
+          children = EffectWrapperPane("", dice.map(p =>  p.get), Color.valueOf(colorHex))
+      }
+    )
     def build: Node = new BorderPane {
       border = boxStyle.fxBorder
       background = boxStyle.fxBackground

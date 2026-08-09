@@ -1,7 +1,6 @@
 package model
 
-import model.dice.Die
-import model.dice.DieFactory.*
+import model.dice.{Die, DieFactory}
 import model.missions.Obtained
 import model.resource.PlayerBoard
 
@@ -43,7 +42,7 @@ object Players:
       var pendingRolls = 0
       override val board: PlayerBoard = PlayerBoard.emptyBoard
       
-      override val dice: Seq[Die] = Seq(mockOptionDie, mockGoldDie)
+      override val dice: Seq[Die] = DieFactory.makeStarterDice
 
       override def missions: Seq[Obtained] = _missions
 

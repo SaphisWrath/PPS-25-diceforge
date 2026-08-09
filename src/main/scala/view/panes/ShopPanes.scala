@@ -22,8 +22,8 @@ object ShopPanes:
     padding = Insets(10)
     spacing = 10
     children = Seq(
-      EffectWrapperPane(LanguageStrings.ShopStrings.cost, itemDTO.cost, primaryBorder),
-      EffectWrapperPane(LanguageStrings.ShopStrings.item, itemDTO.item, primaryBorder),
+      EffectWrapperPane(LanguageStrings.ShopStrings.cost, Seq(itemDTO.cost), primaryBorder),
+      EffectWrapperPane(LanguageStrings.ShopStrings.item, Seq(itemDTO.item), primaryBorder),
       buyItemButton(itemDTO)
     )
 

@@ -88,11 +88,12 @@ class EffectTest extends AnyFlatSpec:
     multiplyEffect.resolve(player)
     assert(player.board.gold.amount == 6)
 
-  "An UpdateCapacityEffect" should "update the max capacity of a player's resource" in:
+  "An UpdateCapacityEffect" should "update the max capacity of a player's resource by adding its value to the max" in:
     val player = newPlayer
-    val newMax = 30
     val oldMax = 10
-    val updateMaxEffect = UpdateCapacityEffect(MoonCrystal(newMax))
+    val diff = 3
+    val newMax = diff + oldMax
+    val updateMaxEffect = UpdateCapacityEffect(MoonCrystal(diff))
 
     player.board.moonCrystals.maxCapacity = oldMax
     assert(player.board.moonCrystals.maxCapacity == oldMax)
