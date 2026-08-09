@@ -52,3 +52,8 @@ object LanguageStrings:
     val support = "Fase di Rinforzo"
     val action = "Fase Azione"
     val actionDone = "Azione Eseguita"
+
+  object ShopStrings:
+    val purchase = "Compra"
+    val cost = "Costo"
+    val item = "Faccia dado"
