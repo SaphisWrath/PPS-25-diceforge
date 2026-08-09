@@ -4,9 +4,8 @@ import model.ModelPublisher
 import model.ModelPublisher.ModelContext.{FaceObtainedContext, MissionContext, ResourceContext}
 import model.Players.Player
 import model.effects.Target.*
-import model.effects.{CopyEffect, Effect, ResourceEffect, Target}
+import model.effects.{CopyEffect, Effect, EffectManager, ResourceEffect, Target}
 import model.resource.PlayerBoard
-import model.utils.EffectManager
 import model.utils.RandomModules.given_RandomModule_Int
 
 trait Mission:
