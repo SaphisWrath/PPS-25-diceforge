@@ -33,7 +33,11 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   import CentralPaneStates.*
 
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
-    controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
+    controller.players.map(p => p -> PlayerGUIComponentFactory(
+      p, 
+      controller.playerBoard(p),
+      () => controller.recentDiceResults(p.name)
+    )).toMap
   private val activePlayerPropertyName = "activePlayer"
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>

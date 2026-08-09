@@ -19,6 +19,13 @@ trait GameController:
    */
   def players: Seq[PlayerDTO]
 
+  /**
+   * Returns most recent die throws of selected player
+   * @param playerName the player's name
+   * @return the most recent die throws
+   */
+  def recentDiceResults(playerName: String): Seq[Option[EffectDTO]]
+
   def playerPositions: Map[Int, PlayerDTO]
 
   /**
@@ -147,6 +154,12 @@ object GameController:
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
 
+    override def recentDiceResults(playerName: String): Seq[Option[EffectDTO]] =
+      gameMatch.playerFrom(playerName).get.dice.map(d => 
+        if d.lastEffect.isEmpty then None
+        else Some(EffectDTO(d.lastEffect.get))
+      )
+    
     override def playerPositions: Map[Int, PlayerDTO] = gameMatch.playerPositions.map((i, p) => (i, PlayerDTO(p)))
 
     override def activePlayer: PlayerDTO = PlayerDTO(gameMatch.activePlayer)
