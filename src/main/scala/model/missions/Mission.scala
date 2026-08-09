@@ -1,7 +1,7 @@
 package model.missions
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{MissionContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{FaceObtainedContext, MissionContext, ResourceContext}
 import model.Players.Player
 import model.effects.{Effect, ResourceEffect, Target}
 import model.resource.PlayerBoard
@@ -76,7 +76,7 @@ trait Obtained extends BaseMission:
   override def obtainReward(receiverProducer: Target => Seq[Player]): Unit = 
     super.obtainReward(receiverProducer)
     _obtained = true
-  def reset: Unit = _obtained = false
+  def reset(): Unit = _obtained = false
 
 class InstantMission(reward: List[Effect], cost: List[ResourceEffect], id: String = "placeholder", startCount: Int = 4)
   extends BaseMission(reward, cost, id) with InstantRewards with LimitedPurchase(startCount)
@@ -86,3 +86,18 @@ class SupportMission(reward: List[Effect], supportCost: List[ResourceEffect], mi
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained
+
+class GrantFaceMission(reward: List[Effect],
+                       cost: List[ResourceEffect],
+                       newFace: Effect,
+                       id: String = "placeholder",
+                       startCount: Int = 4)
+  extends InstantMission(reward, cost, id, startCount):
+  override def obtainReward(receiverProducer: Target => Seq[Player]): Unit =
+    super.obtainReward(receiverProducer)
+    receiverProducer(reward
+      .flatMap {
+        case e: ResourceEffect => Seq(e.target)
+        case _ => Seq.empty
+      }.head).foreach(_.dice.foreach(_.setQueueFace(newFace)))
+    ModelPublisher().notify(FaceObtainedContext)
