@@ -2,7 +2,8 @@ package view
 
 import _root_.mock.MockControllerStage
 import controller.ViewState.MatchInit
-import controller.{ControllerMatchInit, MatchBuilderImpl}
+import controller.ControllerMatchInit
+import model.MatchBuilderImpl
 import scalafx.application.JFXApp3
 import view.TestStageSetup
 import view.scenes.MatchInitScene

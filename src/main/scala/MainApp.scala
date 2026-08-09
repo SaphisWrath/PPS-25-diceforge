@@ -2,7 +2,7 @@ import controller.{ControllerManager, ControllerStage, Navigator}
 import scalafx.application.JFXApp3
 import view.{FxMainStage, FxSceneFactory}
 
-object ScalaFXHelloWorld extends JFXApp3 {
+object MainApp extends JFXApp3 {
   override def start(): Unit = {
     val mainStage: FxMainStage = FxMainStage()
     val controllerManager: ControllerManager =

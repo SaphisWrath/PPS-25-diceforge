@@ -9,4 +9,4 @@ class MockControllerStage(private var view: ViewState) extends ControllerStage:
     view = newState
     println(s"Changed Scene to: $view")
 
-  override def getViewState: ViewState = view
+  override def currentViewState: ViewState = view

@@ -27,6 +27,8 @@ case class PlayerGUIComponentFactory(
       .withResourceSection(resourceProducers, resourceCapProducers)
       .build
 
+  def onlyToken: Node = circleTokenComponent(playerColor, 10)
+
 object PlayerGUIComponentFactory:
   def apply(player: PlayerDTO, playerBoard: PlayerBoardDTO): PlayerGUIComponentFactory =
     PlayerGUIComponentFactory(

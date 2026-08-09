@@ -4,7 +4,7 @@
 | Ogni giocatore ha 2 dadi base che può lanciare                           |                                              |            |                  |   |   |   |   |   |   |   |   |   |    |    |    |
 |                                                                          | Risoluzione degli effetti                    | Lorenzo    |        8         | 8 | 6 | 6 | 6 | 4 | 4 | 3 | 3 | 2 | 1  | 1  | 0  |
 |                                                                          | Implementazione base del lancio              | Lorenzo    |        2         | 2 | 2 | 1 | 1 | 0 | 0 | 0 | 0 | 0 | 0  | 0  | 0  |
-|                                                                          | Aggiungere risultato del lancio alla GUI     | Giulia     |        2         |   |   |   |   |   |   |   |   |   |    |    |    |
+|                                                                          | Aggiungere risultato del lancio alla GUI     | Giulia     |        2         | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 1  | 1  | 1  |
 | I giocatori possono passare il turno                                     |                                              |            |                  |   |   |   |   |   |   |   |   |   |    |    |    |
 |                                                                          | Implementazione base di Turno                | Galileo    |        2         | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2  | 2  | 2  |
 |                                                                          | Lancio automatico dei dadi                   | Lorenzo    |        2         | 2 | 2 | 2 | 2 | 2 | 2 | 1 | 1 | 1 | 1  | 0  | 0  |
@@ -16,11 +16,11 @@
 |                                                                          | Aggiunta file di lingua                      | Galileo    |        3         | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0  | 0  | 0  |
 |                                                                          | Completare navigazione delle Gui             | Galileo    |        7         | 7 | 7 | 4 | 3 | 2 | 0 | 0 | 0 | 0 | 0  | 0  | 0  |
 | I giocatori ottengono risorse dai dadi                                   |                                              |            |                  |   |   |   |   |   |   |   |   |   |    |    |    |
-|                                                                          | Effetti legati alle risorse                  | Giulia     |        5         |   |   |   |   |   |   |   |   |   |    |    |    |
+|                                                                          | Effetti legati alle risorse                  | Giulia     |        5         | 5 | 5 | 5 | 5 | 5 | 5 | 0 | 0 | 0 | 0  | 0  | 0  |
 | Vedere e completare missioni                                             |                                              |            |                  |   |   |   |   |   |   |   |   |   |    |    |    |
-|                                                                          | Completare collegamento tra logica e view    | Giulia     |        7         |   |   |   |   |   |   |   |   |   |    |    |    |
+|                                                                          | Completare collegamento tra logica e view    | Giulia     |        7         | 7 | 7 | 7 | 7 | 7 | 6 | 4 | 0 | 0 | 0  | 0  | 0  |
 |                                                                          | Implementazione delle missioni più complesse | Galileo    |        8         | 8 | 8 | 8 | 8 | 8 | 8 | 6 | 5 | 3 | 2  | 2  | 2  |
 |                                                                          | Mettere descrizione alle Missioni            | Lorenzo    |        4         | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4 | 4  | 4  | 4  |
 |                                                                          | Implementare numero massimo di completamenti | Lorenzo    |        3         | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3  | 3  | 3  |
 | Miglioramento della Gui                                                  |                                              |            |                  |   |   |   |   |   |   |   |   |   |    |    |    |
-|                                                                          | Abbellimento generale                        | Giulia     |        6         |   |   |   |   |   | 0 |   |   |   |    |    | 0  |
+|                                                                          | Abbellimento generale                        | Giulia     |        6         | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 6 | 5 | 5  | 4  | 0  |

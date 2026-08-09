@@ -1,40 +1,34 @@
 package view.scenes
 
-import controller.ViewPublishers.Context.ResourceContext
-import controller.PlayerChoice
-import controller.dto.EffectDTO
-import model.Players.Player
-import model.effects.{Effect, OptionEffect}
-import controller.ViewPublishers.Context.{ActionContext, TurnChangeContext}
-import controller.ViewPublishers.{ViewPublisher, ViewSubscriber}
-import controller.dto.PlayerDTO
-import controller.{ControllerStage, GameController, ViewPublishers}
-import model.dice.Die
-import scalafx.beans.property.{BooleanProperty, ObjectProperty}
+import controller.ViewPublisher.ViewContext.{PlayerMovedContext, PlayerChoiceContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.dto.{CompoundEffectDTO, EffectDTO, PlayerDTO}
+import controller.{ControllerStage, GameController, ViewPublisher}
+import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
-import scalafx.scene.Node
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
+import scalafx.scene.{Group, Node}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
-import view.panes.MissionPanes.ObtainedMissionPane
+import view.panes.ChoiceWindowChain.manageChoices
+import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
+import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.scenes.CentralPaneStates.ObtainedMissions
-import view.{Redrawable, scenes}
-import view.panes.ChoiceWindowChain
-import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
-import view.panes.MissionPanes.MissionBoardPane
 import view.theme.JfxTheme
+import view.{Redrawable, scenes}
 
 object CentralPaneStates:
+  val Start = MultiPaneState("Start")
   val Missions = MultiPaneState("Missions")
   val ObtainedMissions = MultiPaneState("ObtainedMissions")
   val Shop = MultiPaneState("Shop")
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
-  this.setPublisher(ViewPublisher)
+  this.setPublisher(ViewPublisher())
 
   import CentralPaneStates.*
 
@@ -46,24 +40,42 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       topMainPane.redraw()
       activePlayerPane.redraw()
       centralPane.setState(Missions)
+      turnPhaseSection.redraw()
       obtainedMissionsButton.redraw()
     )
   }
-  private val actionTaken: BooleanProperty = BooleanProperty(false)
-  actionTaken.onChange((_, _, newVal) =>
+
+  private val turnStep: StringProperty = StringProperty("")
+  turnStep.onChange((_, _, _) =>
+    centralPane.setState(if controller.canEndSupportPhase then ObtainedMissions else Missions)
     turnPhaseSection.redraw()
+    obtainedMissionsPane.redraw()
+    obtainedMissionsButton.redraw()
   )
+
   private val turnPhaseSection: Redrawable = Redrawable { () =>
-    Label(if actionTaken() then BSStrings.actionTakenText else BSStrings.actionNotTakenText)
+    Label(turnStep())
   }
+
+  private val missionPane: Redrawable = Redrawable{ () =>
+    MissionBoardPane(
+      controller.missions,
+      controller.playerPositions.map((i, p) => (i, playerDirectors(p).onlyToken))
+    )
+  }
+
   private val centralPane: MultiPane = MultiPane(
     {
-      case Missions => MissionBoardPane(controller.missions)
+      case Start => startPane
+      case Missions => missionPane()
       case ObtainedMissions => obtainedMissionsPane()
     },
-    Set(Missions, ObtainedMissions)
+    Set(Start, Missions, ObtainedMissions)
   )
-  centralPane.setState(Missions)
+
+  private def startPane: Node = new BorderPane {
+    center = ButtonFactory.makeBoardButton(BSStrings.startButtonText, () => controller.startGame())
+  }
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
     val playerBox = playerDirectors(activePlayer()).activePlayerBox
@@ -100,43 +112,28 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     obtainedMissionsButton(),
   )
 
-  private def nextTurnButton: Node = ButtonFactory.makeBoardButton(
+  private val nextTurnButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
     () => controller.nextTurn()
   )
 
-  private def buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
+  private val buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.buyExtraActionButton,
     () => controller.buyExtraAction(),
-    () => controller.hasExtraActionBeenBought
+    () => !controller.canBuyExtraAction
   )
 
-  private def throwDice(dice: Seq[(Player, Seq[Die])]): Unit =
-    val diceThrowManager = controller.diceThrowManager
-    manageChoices(diceThrowManager.copyEffectsFromRoll(dice), solvedCopyEffects =>
-      manageChoices(diceThrowManager.optionEffectsFromRoll(solvedCopyEffects), solvedOptionEffects =>
-        diceThrowManager.endRoll(solvedOptionEffects)
-        ViewPublisher.notify(ResourceContext)
-      )
-    )
-
-  private def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[(Player, A)] => Unit): Unit =
-    def nextChoiceWindow(results: Seq[(Player, A)], playerChoices: Seq[PlayerChoice[A]]): Unit =
-      val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
-      popup.show({
-        case effect: OptionEffect  => EffectWrapperPane("", EffectDTO(effect), JfxTheme.primaryBorder)
-        case effect: Effect => EffectPane(EffectDTO(effect))
-        case _ => throw IllegalStateException("Choice element is not an effect")
-      })
-      if !popup.buttonsAvailable then popup.forceNext()
-
-    if choices.isEmpty
-      then orElse(Seq.empty)
-    else nextChoiceWindow(Seq.empty, choices)
-
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
-    new FlowPane {
-      children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+    new VBox {
+      children = Seq(
+        new FlowPane {
+          children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
+        },
+        if controller.canEndSupportPhase then
+          ButtonFactory.makeBoardButton(BSStrings.endSupportPhaseButton, () => controller.endSupportPhase())
+        else
+          Group()
+      )
     }
   }
 
@@ -167,12 +164,19 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     bottom = activePlayerPane.component
   }
 
-  override def scene: Node = mainPane
+  override def scene: Node =
+    centralPane.setState(Start)
+    mainPane
 
-  override def update(context: ViewPublishers.Context): Unit = context match
+  override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
-      actionTaken() = controller.hasTurnActionBeenTaken
-      throwDice(controller.players.map(p => (p.toPlayer, controller.playerDice(p))))
-    case ActionContext => actionTaken() = controller.hasTurnActionBeenTaken
+    case TurnStepChangeContext => turnStep() = controller.turnStep
+    case PlayerChoiceContext =>
+      val choiceController = controller.solveController
+      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, {
+        case effectDTO: CompoundEffectDTO => EffectWrapperPane("", effectDTO.effects, JfxTheme.primaryBorder)
+        case effectDTO: EffectDTO => EffectPane(effectDTO)
+      })
+    case PlayerMovedContext => missionPane.redraw()
     case _ =>

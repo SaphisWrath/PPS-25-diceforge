@@ -1,22 +1,25 @@
 package controller
 
-import controller.ViewPublishers.Context.*
-import controller.ViewPublishers.ViewPublisher
-import controller.dto.{MissionDTO, PlayerBoardDTO, PlayerDTO}
-import model.GameMatch
+import controller.ViewPublisher
+import controller.ViewPublisher.ViewContext.*
+import controller.converters.TurnStepConverter
+import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import model.ModelPublisher.*
+import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.dice.Die
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
-import model.resource.{PlayerBoard, SunCrystal}
-import model.utils.ValueProperty
-import model.dice.DieFactory.*
+import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
 
 trait GameController:
+
+  def startGame(): Unit
   /**
    * @return the sequence of current players
    */
   def players: Seq[PlayerDTO]
+
+  def playerPositions: Map[Int, PlayerDTO]
 
   /**
    * @return the missions in play, already sorted into their respective cells
@@ -56,7 +59,8 @@ trait GameController:
    * @return the missions obtained by the given player
    */
   def playerMissions(playerName: String): Seq[MissionDTO]
-  
+
+  def canGoToNextTurn: Boolean
   /**
    * Notify the game to go to the next turn
    */
@@ -77,57 +81,62 @@ trait GameController:
    */
   def maxNumberOfRounds: Int
 
-  /**
-   * @return the DiceThrowManager
-   */
-  def diceThrowManager: DiceThrowManager
+  def endDiceThrow(): Unit
 
-  def playerDice(player: PlayerDTO): Seq[Die]
+  def solveController: ChoiceController[EffectDTO]
 
   /**
    * @return true if the player already took his action, false otherwise
    */
-  def hasTurnActionBeenTaken: Boolean
+  def canTakeAction: Boolean
 
-  def hasExtraActionBeenBought: Boolean
+  def canBuyExtraAction: Boolean
+
+  def canEndSupportPhase: Boolean
+
+  def endSupportPhase(): Unit
 
   def buyExtraAction(): Unit
 
+  def turnStep: String
+
 object GameController:
-  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
+  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
+    this.setPublisher(ModelPublisher())
 
-    private val _hasTurnActionBeenTaken: ValueProperty[Boolean] =
-      ValueProperty(
-        false,
-        (_, _) => ViewPublisher.notify(ActionContext)
-      )
+    override def update(context: ModelContext): Unit = context match
+      case ModelContext.ResourceContext => ViewPublisher().notify(ResourceContext)
+      case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
+      case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
+      case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
+      case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
+      case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
 
-    private val _hasExtraActionBeenBought: ValueProperty[Boolean] =
-      ValueProperty(
-        false,
-        (_, newVal) => if newVal then ViewPublisher.notify(ExtraActionContext)
-      )
+    override def startGame(): Unit =
+      ViewPublisher().notify(TurnChangeContext)
+      ViewPublisher().notify(TurnStepChangeContext)
+      gameMatch.startDiceThrow()
+      endDiceThrow()
 
     override def missions: Map[Int, Seq[MissionDTO]] =
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
-          m,
-          () => !m.canGet(extractTarget) || _hasTurnActionBeenTaken.value,
-          () => {
-            m.get(extractTarget)
-            _hasTurnActionBeenTaken.value = true
-            ViewPublisher.notify(ResourceContext)
-            ViewPublisher.notify(MissionBoughtContext)
-          }
-        ))))
+        m,
+        () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
+        () => {
+          gameMatch.movePlayer(gameMatch.activePlayer, i)
+          m.get(extractTarget)
+          gameMatch.executeAction(StandardAction)
+        }
+      ))))
       
     override def playerMissions(playerName: String): Seq[MissionDTO] =
       gameMatch.playerFrom(playerName) match
         case Some(player) => player.missions.map(m => MissionDTO(
           m,
-          () => !m.canGet(extractTarget),
+          () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(ActivateSupport),
           () =>
             m.get(extractTarget)
-            ViewPublisher.notify(ResourceContext)
+            gameMatch.executeAction(ActivateSupport)
         ))
         case _ => Seq.empty
 
@@ -137,6 +146,8 @@ object GameController:
       case Others => gameMatch.nonActivePlayers
 
     override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
+
+    override def playerPositions: Map[Int, PlayerDTO] = gameMatch.playerPositions.map((i, p) => (i, PlayerDTO(p)))
 
     override def activePlayer: PlayerDTO = PlayerDTO(gameMatch.activePlayer)
 
@@ -148,11 +159,8 @@ object GameController:
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-    override def nextTurn(): Unit =
-      gameMatch.nextTurn()
-      _hasTurnActionBeenTaken.value = false
-      _hasExtraActionBeenBought.value = false
-      ViewPublisher.notify(TurnChangeContext)
+    override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
+    override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
@@ -160,28 +168,21 @@ object GameController:
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
-    override def diceThrowManager: DiceThrowManager = DiceThrowManager(gameMatch)
+    override def canEndSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
 
-    override def playerDice(player: PlayerDTO): Seq[Die] = {
-      val diceMap = gameMatch.players.map(p =>
-        if gameMatch.players.indexOf(p) != 0
-        then (PlayerDTO(p), Seq(mockCopyDie))
-        else (PlayerDTO(p), Seq(mockOptionDie))
-      ).toMap
+    override def endSupportPhase(): Unit = gameMatch.executeAction(EndSupport)
 
-      diceMap(player)
-    }
+    override def endDiceThrow(): Unit = gameMatch.executeAction(CompleteDiceThrow)
 
-    override def hasTurnActionBeenTaken: Boolean = _hasTurnActionBeenTaken.value
+    override def canTakeAction: Boolean = !gameMatch.isActionAvailable(StandardAction)
 
-    override def hasExtraActionBeenBought: Boolean = _hasExtraActionBeenBought.value
+    override def canBuyExtraAction: Boolean = gameMatch.isActionAvailable(BuyExtraAction)
 
-    override def buyExtraAction(): Unit =
-      val board = gameMatch.activePlayer.board
-      if board.sunCrystals.amount >= 2 && !_hasExtraActionBeenBought.value then
-        board.sunCrystals = board.sunCrystals - SunCrystal(2)
-        _hasExtraActionBeenBought.value = true
-        _hasTurnActionBeenTaken.value = false
+    override def buyExtraAction(): Unit = gameMatch.executeAction(BuyExtraAction)
+
+    override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
+
+    override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

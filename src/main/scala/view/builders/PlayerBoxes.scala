@@ -1,6 +1,7 @@
 package view.builders
 
-import controller.ViewPublishers.ViewPublisher
+import scalafx.Includes.hex2sfxColor
+import utils.Publishers.Publisher
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.layout.*
@@ -11,14 +12,16 @@ import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
 
 import scala.language.postfixOps
 
+
+
 object PlayerBoxes:
   case class PlayerBoxStyle(
-                             padding: Double,
-                             cornerRadius: Double,
-                             borderStyle: BorderStrokeStyle,
-                             borderColor: Color,
-                             borderWidth: Double,
-                             backgroundColor: Color
+                             padding: Double = 0,
+                             cornerRadius: Double = 0,
+                             borderStyle: BorderStrokeStyle = BorderStrokeStyle.None,
+                             borderColor: Color = Color.Transparent,
+                             borderWidth: Double = 0,
+                             backgroundColor: Color = Color.Transparent
                            ):
     val fxPadding: Insets = Insets(padding)
     val fxCornerRadii: CornerRadii = CornerRadii(cornerRadius)
@@ -26,8 +29,23 @@ object PlayerBoxes:
     val fxBackground: Background = Background(Array(BackgroundFill(backgroundColor, fxCornerRadii, Insets.Empty)))
 
   object PlayerBoxStyle:
-    val Standard = PlayerBoxStyle(10, 10, BorderStrokeStyle.Solid, Color.Black, 3, Color.Transparent)
-    val Small = PlayerBoxStyle(5, 6, BorderStrokeStyle.Dashed, Color.Black, 2, Color.Transparent)
+    val Standard = PlayerBoxStyle(
+      padding = 10,
+      cornerRadius = 10,
+      borderStyle = BorderStrokeStyle.Solid,
+      borderColor = Color.Black,
+      borderWidth = 3,
+      backgroundColor = Color.Transparent)
+    val Small = PlayerBoxStyle(
+      padding = 5,
+      cornerRadius = 6,
+      borderStyle = BorderStrokeStyle.Dashed,
+      borderColor = Color.Black,
+      borderWidth = 2,
+      backgroundColor = Color.Transparent)
+    val None = PlayerBoxStyle()
+  
+  def circleTokenComponent(color: Color, radius: Double): Node = Circle(radius, color)
 
   case class PlayerBoxBuilder(
                                private val boxStyle: PlayerBoxStyle,
@@ -55,7 +73,7 @@ object PlayerBoxes:
               ResourceWithCapBox(resource, amountProducer, resourceCapProducers(resource))
             else
               BaseResourceBox(resource, amountProducer)
-            resourceBox.setPublisher(ViewPublisher())
+            resourceBox.setPublisher(Publisher())
             resourceBox.component
           )
         }
