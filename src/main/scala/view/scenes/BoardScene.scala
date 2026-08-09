@@ -1,5 +1,6 @@
 package view.scenes
 
+import controller.ViewPublisher.ViewContext.{PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
@@ -15,7 +16,7 @@ import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
 import view.panes.DiePanes.DiePane
-import view.panes.EffectPanes.{EffectPane, EffectWrapperPane}
+import view.panes.EffectPanes.{CompoundEffectPane, EffectPane, EffectWrapperPane, effectPane}
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.panes.ShopPanes.ShopPane
@@ -35,7 +36,11 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   import CentralPaneStates.*
 
   private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
-    controller.players.map(p => p -> PlayerGUIComponentFactory(p, controller.playerBoard(p))).toMap
+    controller.players.map(p => p -> PlayerGUIComponentFactory(
+      p,
+      controller.playerBoard(p),
+      () => controller.recentDiceResults(p.name)
+    )).toMap
   private val activePlayerPropertyName = "activePlayer"
   private val activePlayer: ObjectProperty[PlayerDTO] = new ObjectProperty(this, activePlayerPropertyName, controller.activePlayer) {
     onChange((_, _, _) =>
@@ -198,13 +203,10 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case TurnChangeContext =>
       activePlayer() = controller.activePlayer
     case TurnStepChangeContext => turnStep() = controller.turnStep
+    case PlayerMovedContext => missionPane.redraw()
     case PlayerChoiceContext =>
       val choiceController = controller.solveController
-      manageChoices[EffectDTO](
-        choiceController.pendingChoices,
-        choiceController.resumeAfterChoices,
-        EffectWrapperPane("", _, JfxTheme.primaryBorder)
-      )
+      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, effectPane)
     case ItemObtainedContext =>
       manageChoices[DieDTO](
         Seq((controller.activePlayer, controller.dice(controller.activePlayer))),
@@ -213,7 +215,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           manageChoices[EffectDTO](
             faceSwapController.pendingChoices,
             faceSwapController.resumeAfterChoices,
-            EffectWrapperPane("", _, JfxTheme.primaryBorder)
+            effectPane
           )
         },
         DiePane(_)
