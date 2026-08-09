@@ -116,7 +116,7 @@ object GameMatch:
       case _ =>
 
     private def nextTurn(): Unit =
-      activePlayer.missions.foreach(_.reset)
+      activePlayer.missions.foreach(_.reset())
       turn = turn + 1
       if turn == playerList.length then
         turn = 0

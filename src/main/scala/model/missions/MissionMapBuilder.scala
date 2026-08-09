@@ -1,6 +1,6 @@
 package model.missions
 
-import model.effects.ResourceEffect
+import model.effects.{MultiplyEffect, ResourceEffect}
 import model.effects.Target.Self
 import model.resource.{Gold, MoonCrystal, SunCrystal}
 
@@ -10,6 +10,7 @@ object MissionMapBuilder:
     val reward: List[ResourceEffect] = List(ResourceEffect(SunCrystal(3), Self), ResourceEffect(MoonCrystal(3), Self))
     val placeholderMission = SupportMission(reward, cost, cost, "one", 2)
     val placeholderInstant = InstantMission(reward, cost, "two", 2)
+    val placeholderGrantFace = GrantFaceMission(reward, cost, MultiplyEffect(3), "three", 2)
     List(
       0 -> List(placeholderMission, placeholderInstant),
       1 -> List(placeholderMission, placeholderMission),
@@ -17,5 +18,5 @@ object MissionMapBuilder:
       3 -> List(placeholderInstant, placeholderMission),
       4 -> List(placeholderMission, placeholderMission),
       5 -> List(placeholderMission, placeholderMission),
-      6 -> List(placeholderMission, placeholderInstant, placeholderInstant)
+      6 -> List(placeholderMission, placeholderInstant, placeholderGrantFace)
     ).toMap
