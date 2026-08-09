@@ -9,15 +9,15 @@ import view.LanguageStrings
 import view.buttons.ButtonFactory.makeBoardButton
 import view.panes.EffectPanes.*
 import view.theme.JfxTheme.*
-import view.utils.ViewUtils.makeBorder
+import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
 
 object ShopPanes:
   private class ItemPane(itemDTO: ItemDTO) extends VBox:
     private def buyItemButton(itemDTO: ItemDTO): Button =
-      //  TODO: add background
       makeBoardButton(LanguageStrings.ShopStrings.purchase, itemDTO.onClick, () => !itemDTO.clickable())
 
     border = makeBorder(primaryBorder)
+    background = makeBackgroundFill(primaryContainer)
     alignment = Center
     padding = Insets(10)
     spacing = 10
