@@ -133,7 +133,7 @@ object MissionFactory:
     )
 
     def makeOwl: Mission = new SupportMission(
-      missionCost = List(ResourceEffect(SunCrystal(1), Self)),
+      missionCost = List(ResourceEffect(SunCrystal(2), Self)),
       missionReward = List.empty,
       supportCost = List(ResourceEffect(Gold(3), Self)),
       supportReward = List(OptionEffect(Seq(

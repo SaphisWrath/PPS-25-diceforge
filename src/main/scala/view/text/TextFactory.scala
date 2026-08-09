@@ -42,3 +42,11 @@ object TextFactory:
       fill = White
       stroke = Black
     }
+
+  def makeCompoundEffectText(label: String): Text =
+    new Text {
+      text = label
+      style = "-fx-font: normal bolder 30pt sans-serif"
+      fill = Color.White
+      stroke = JfxTheme.primaryBorder
+    }
