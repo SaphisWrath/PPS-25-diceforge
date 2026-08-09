@@ -34,11 +34,11 @@ object CompoundEffect:
 class SumEffect(effects: Seq[Effect]) extends CompoundEffect(effects):
   override def resolve(receiver: Player): Unit = effects.foreach(_.resolve(receiver))
 
-class UpdateCapacityEffect(resource: Resource) extends Effect:
+case class UpdateCapacityEffect(resource: Resource) extends Effect:
   override def resolve(receiver: Player): Unit = resource match
-    case Gold(newMax) => receiver.board.gold.maxCapacity = newMax
-    case SunCrystal(newMax) => receiver.board.sunCrystals.maxCapacity = newMax
-    case MoonCrystal(newMax) => receiver.board.moonCrystals.maxCapacity = newMax
+    case Gold(newMax) => receiver.board.gold.maxCapacity += newMax
+    case SunCrystal(newMax) => receiver.board.sunCrystals.maxCapacity += newMax
+    case MoonCrystal(newMax) => receiver.board.moonCrystals.maxCapacity += newMax
     case _ =>
     
 
