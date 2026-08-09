@@ -15,6 +15,7 @@ object LanguageStrings:
     val playerColorLabelText = "Colore Del Giocatore"
     val playerAddedConfirmationText = "Giocatore aggiunto con successo!"
     val playerAddingErrorText = "Il colore o il nome sono già stati selezionati"
+    val absentNameErrorText = "Il nome non è stato specificato"
     val gameReadyConfirmationText = "Pronti per iniziare!"
     val startButtonText = "Iniziamo!"
 

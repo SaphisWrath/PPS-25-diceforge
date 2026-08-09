@@ -19,6 +19,7 @@ import view.buttons.ButtonFactory.makeMenuButton
 class MatchInitScene(controller: ControllerMatchInit, controllerStage: ControllerStage) extends ViewScene[Node]:
   private val playerNameField = new TextField()
   private val playerColorChoice = new ChoiceBox[String](ObservableBuffer[String]("Orange", "Green", "Blue", "Black"))
+  playerColorChoice.value = "Orange"
   private val feedbackLabel = new Label()
   private var playerList: Seq[Node] = Seq.empty
   private val playerQueue = Redrawable { () => makeRowWith(playerList) }
@@ -50,6 +51,7 @@ class MatchInitScene(controller: ControllerMatchInit, controllerStage: Controlle
       makeRowWith(Seq(new Label(GISStrings.playerNameLabelText + separator), playerNameField)),
       makeRowWith(Seq(new Label(GISStrings.playerColorLabelText + separator), playerColorChoice)),
       makeRowWith(Seq(addPlayerButton, startMatchButton)),
+      feedbackLabel,
       playerQueue.component
     )
   }
@@ -62,7 +64,10 @@ class MatchInitScene(controller: ControllerMatchInit, controllerStage: Controlle
       playerQueue.redraw()
       feedbackLabel.text = GISStrings.playerAddedConfirmationText
       playerNameField.text = ""
-    else feedbackLabel.text = GISStrings.playerAddingErrorText
+    else
+      if playerNameField.getText == ""
+      then feedbackLabel.text = GISStrings.absentNameErrorText
+      else feedbackLabel.text = GISStrings.playerAddingErrorText
 
     if controller.enoughPlayers then startMatchButton.disable = false
     if controller.maxPlayers then addPlayerButton.disable = true
