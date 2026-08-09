@@ -77,7 +77,10 @@ object MissionFactory:
 
     def makeScorpion: Mission = new InstantMission(
       cost = List(ResourceEffect(MoonCrystal(3), Self)),
-      reward = List(ThrowAllDice(2)),
+      reward = List(
+        ResourceEffect(GloryPoint(8), Self),
+        ThrowAllDice(2)
+      ),
       id = "scorpion",
       startCount = startCount
     )
