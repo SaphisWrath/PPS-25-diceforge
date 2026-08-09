@@ -27,9 +27,7 @@ lazy val root = project
         "org.scalatest" %% "scalatest" % "3.2.19" % Test,
         "org.scalatestplus" %% "mockito-5-23" % "3.2.20.0" % "test",
         "org.scalafx" %% "scalafx" % "16.0.0-R24",
-        "io.circe" %% "circe-yaml" % "0.14.2",
-        "io.circe" %% "circe-generic" % "0.14.6",
-        "io.circe" %% "circe-parser" % "0.14.6"
+        "org.virtuslab" %% "scala-yaml" % "0.3.2"
       )
     },
 
