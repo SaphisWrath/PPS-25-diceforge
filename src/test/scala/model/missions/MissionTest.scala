@@ -45,14 +45,19 @@ class MissionTest extends AnyFlatSpec:
   "Support Mission" should "be obtained by the player" in :
     player.resetMissions()
     player.board = enoughResourceBoard
-    SupportMission(reward, cost, cost).get(selfTargetProducer)
+    SupportMission(List.empty, cost, reward, cost).get(selfTargetProducer)
     assert(player.missions.nonEmpty)
 
   "Obtained Mission" should "let the player collect them" in :
     player.resetMissions()
-    SupportMission(reward, cost, List.empty).get(selfTargetProducer)
+    val mission = SupportMission(List.empty, List.empty, reward, cost)
+    assert(mission.canGet(selfTargetProducer))
+    mission.get(selfTargetProducer)
     player.board = enoughResourceBoard
-    player.missions.foreach(_.get(selfTargetProducer))
+    player.missions.foreach( m=>
+      assert(m.canGet(selfTargetProducer))
+      m.get(selfTargetProducer)
+    )
     assert(player.board.sunCrystals.amount == 0)
     assert(player.board.moonCrystals.amount == 0)
     assert(player.board.gold.amount == rewardAmount)
