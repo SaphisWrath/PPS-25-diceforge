@@ -2,7 +2,7 @@ package model.dice
 
 import model.effects.Target.Self
 import model.effects.*
-import model.resource.{Gold, SunCrystal}
+import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
 import model.utils.RandomModule
 
 object DieFactory:
@@ -10,7 +10,35 @@ object DieFactory:
     val die = Die(1)
     die.addFace(effect)
     die
+    
+  private def makeStarterDie1(): Die =
+    val goldEffect = ResourceEffect(Gold(1), Self)
+    Die(Seq(
+      goldEffect,
+      goldEffect,
+      goldEffect,
+      goldEffect,
+      goldEffect,
+      ResourceEffect(SunCrystal(1), Self)
+    ))
+  
+  private def makeStarterDie2(): Die =
+    val goldEffect = ResourceEffect(Gold(1), Self)
+    Die(Seq(
+      goldEffect,
+      goldEffect,
+      goldEffect,
+      goldEffect,
+      ResourceEffect(MoonCrystal(1), Self),
+      ResourceEffect(GloryPoint(2), Self)
+    ))
 
+  def makeStarterDice: Seq[Die] =
+    Seq(
+      makeStarterDie1(),
+      makeStarterDie2()
+    )
+  
   def mockGoldDie: Die =
     oneFaceDie(ResourceEffect(Gold(2), Self))
 
