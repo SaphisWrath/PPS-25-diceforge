@@ -62,7 +62,7 @@ object GameMatch:
     list
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] = initializePlayerList(playerList)
-    private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makePlaceholderMissions
+    private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makeStandardMissions(players.length)
     private val mapManager: MapManager = MapManager(
       () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
       player => startDiceThrow(Seq((player, player.dice)))
