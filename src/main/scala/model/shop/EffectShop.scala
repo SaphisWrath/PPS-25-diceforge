@@ -4,22 +4,26 @@ import model.Players
 import model.effects.Effect
 import model.resource.Resource
 
-class EffectShop(initialItems: (Effect, Resource)*) extends Shop[Effect]:
-  private val _catalog: Set[(Effect, Resource)] = Set.from(initialItems)
-  private var _items = initialItems.map((item, _) =>  item)
+class EffectShop(initialItems: (Effect, Resource, Int)*) extends Shop[Effect]:
+  private var _catalog: Map[Effect, (Resource, Int)] = Set.from(initialItems).map((e, r, a) => (e, (r, a))).toMap
 
-  override def getPrice(item: Effect): Resource = {
-    if _catalog.isEmpty then throw IllegalStateException("Price catalog is empty.")
-    else _catalog.filter((e, _) => e == item).head._2
-  }
+  private def isInCatalog(item: Effect) = _catalog.contains(item)
 
-  override def buy(item: Effect, player: Players.Player): Unit =
-    if _items.contains(item) then
+  override def getPrice(item: Effect): Option[Resource] =
+     if isInCatalog(item) then Some(_catalog(item)._1) else None
+
+  override def getStocked(item: Effect): Option[Int] =
+    if isInCatalog(item) then Some(_catalog(item)._2) else None
+
+  override def buy(item: Effect, player: Players.Player): Boolean =
+    if _catalog.contains(item) then
       val price = getPrice(item)
-      if player.board.canSpend(price) then
-        player.board.takeResource(price)
-        _items = _items.diff(Seq(item))
-      else throw IllegalStateException(s"Player ${player.name} bought shop item without the necessary funds")
-    else throw IllegalStateException("Bought shop item that wasn't in stock.")
+      if player.board.canSpend(price.get) then
+        player.board.takeResource(price.get)
+        _catalog.map((k, v) => if k == item then (k, (v._1, v._2 - 1)))
+        _catalog = _catalog.updated(item, (getPrice(item).get, getStocked(item).get - 1))
+        true
+      else false
+    else false
 
-  override def items: Seq[Effect] = _items
+  override def items: Seq[Effect] = _catalog.keys.toSeq
