@@ -7,7 +7,6 @@ import model.dice.Die
 import model.effects.{Effect, EffectManager}
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.{Gold, PlayerBoard}
-import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndSupport}
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.RandomModules.given_RandomModule_Int
@@ -15,7 +14,7 @@ import model.utils.RandomModules.given_RandomModule_Int
 import scala.util.Random
 
 trait GameMatch:
-  /**The map of the missions in the game
+  /** The map of the missions in the game
    *
    * The map is divided in one or more "cells",
    * each one can contain one or more missions
@@ -24,44 +23,44 @@ trait GameMatch:
    */
   def missions: Map[Int, Seq[Mission]]
 
-  /**All players participating at the game
+  /** All players participating at the game
    *
    * @return A Seq containing all [[Player]] instances
    */
   def players: Seq[Player]
 
-  /**All the boards of the players
+  /** All the boards of the players
    *
    * @return A Seq containing all [[PlayerBoard]] instances
    */
   def playerBoards: Seq[PlayerBoard]
 
-  /**The currently active player
+  /** The currently active player
    *
    * @return The instance of [[Player]] relative to the active player
    */
   def activePlayer: Player
 
-  /**All the currently non-active players
+  /** All the currently non-active players
    *
    * @return The instances of [[Player]] relative to the non-active
    */
   def nonActivePlayers: Seq[Player]
 
-  /**The player with the given name
+  /** The player with the given name
    *
    * @param name the name of the player
    * @return A [[Some]] of [[Player]] if the player is present in the game, a [[None]] otherwise
    */
   def playerFrom(name: String): Option[Player]
 
-  /**The current turn number
+  /** The current turn number
    *
    * @return An [[Int]] representing the current turn
    */
   def currentTurn: Int
 
-  /**The current round number
+  /** The current round number
    *
    * @return An [[Int]] representing the current round
    */
@@ -86,7 +85,7 @@ trait GameMatch:
    */
   def isActionAvailable(turnAction: TurnAction): Boolean
 
-  /**Execute a particular turn action
+  /** Execute a particular turn action
    *
    * Execute the actions relative to the action, if the action is not available it does nothing.
    *
@@ -94,54 +93,55 @@ trait GameMatch:
    */
   def executeAction(turnAction: TurnAction): Unit
 
-  /**The current turn step
+  /** The current turn step
    *
    * @return The [[TurnStep]] instance
    */
   def currentTurnStep: TurnStep
 
-  /**The position of the players in the map
+  /** The position of the players in the map
    *
    * @return The map containing the players positions
    */
   def playerPositions: Map[Int, Player]
 
-  /**Gives out the player in the given position, if any
+  /** Gives out the player in the given position, if any
    *
    * @param position The position that should be checked
    * @return A [[Some]] of the [[Player]] occupying the position if any, a [[None]] otherwise
    */
   def playerInPosition(position: Int): Option[Player]
 
-  /**Moves a given player to a new position
+  /** Moves a given player to a new position
    *
-   * @param player The player that should be moved
+   * @param player      The player that should be moved
    * @param newPosition the
    */
   def movePlayer(player: Player, newPosition: Int): Unit
 
-  /**Makes all the players throw their dices
+  /** Makes all the players throw their dices
    */
   def startDiceThrow(): Unit
 
-  /**Makes the given players throw the given dices
+  /** Makes the given players throw the given dices
+   *
    * @param playerDice A seq containing the [[Player]] instances and the [[Die]] instances
-    */
+   */
   def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit
 
-  /**Gives the results of the player dices
+  /** Gives the results of the player dices
    *
    * @return The Seq of [[Player]] instances and their [[Effect]] results instances
    */
   def getDiceResults: Seq[(Player, Effect)]
 
-//TODO Refactor
 object GameMatch:
 
   private def initializePlayerList(playerList: Seq[Player]): Seq[Player] =
     val list = Random.shuffle(playerList)
     list.foreach(p => p.board.gold = p.board.gold + Gold(3 - list.indexOf(p)))
     list
+
   private class GameMatchImpl(playerList: Seq[Player]) extends GameMatch:
     val players: Seq[Player] = initializePlayerList(playerList)
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makeStandardMissions(players.length)
@@ -201,7 +201,7 @@ object GameMatch:
         turn = 0
         round = round + 1
       ModelPublisher().notify(TurnEndContext)
-      
+
     override def currentTurnStep: TurnStep = turnManager.currentStep
 
     override def getDiceResults: Seq[(Player, Effect)] = players.flatMap(p => p.dice.map(d => (p, d.lastEffect.get)))
