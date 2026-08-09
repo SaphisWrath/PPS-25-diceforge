@@ -1,7 +1,7 @@
 package model.effects
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{ChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{EffectChoiceContext, ResourceContext}
 import model.Players.Player
 import model.effects.*
 
@@ -61,14 +61,14 @@ object EffectManager:
             .map((p, ce) => (p, OptionEffect(_currentTurnEffects.flatMap((otherP, otherE) =>
               if otherP.name == p.name then Seq.empty else Seq(otherE)
             ))))
-          ModelPublisher().notify(ChoiceContext)
+          ModelPublisher().notify(EffectChoiceContext)
       else
         val (optionEffects, nonOptionEffects) = getOptionEffects(otherEffects)
         if optionEffects.nonEmpty
           then
             effectCache = nonOptionEffects
             _effectsToSolve = optionEffects
-            ModelPublisher().notify(ChoiceContext)
+            ModelPublisher().notify(EffectChoiceContext)
         else
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)

@@ -9,7 +9,8 @@ object ModelPublisher:
     case TurnEndContext
     case TurnStepContext
     case PlayerMovedContext
-    case ChoiceContext
+    case EffectChoiceContext
+    case DieChoiceContext
     case FaceObtainedContext
 
   trait ModelSubscriber extends Subscriber[ModelContext]
