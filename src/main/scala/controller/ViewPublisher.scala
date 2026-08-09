@@ -12,6 +12,7 @@ object ViewPublisher:
     case PlayerMovedContext
     case PlayerChoiceContext
     case ItemObtainedContext
+    case SelectDieForThrowContext
 
   trait ViewSubscriber extends Subscriber[ViewContext]
 

@@ -38,18 +38,21 @@ object EffectManager:
     override def effectsToSolve: Seq[(Player, OptionEffect)] = _effectsToSolve
 
     override def updateTurnEffects(newEffects: Seq[(Player, Effect, Int)]): Unit =
-      var count: Int = 0
-      var lastPlayer = _currentTurnEffects.head._1
-      _currentTurnEffects = _currentTurnEffects
-        .map((p, e) =>
-          if lastPlayer.name != p.name
-          then
-            count = 0
-            lastPlayer = p
-          count = count + 1
-          (p, e, count - 1)
-        ).map((p, e, i) => newEffects.find((_p, _, _i) => p.name == _p.name && i == _i).getOrElse((p, e, i)))
-        .map((p, e, i) => (p, e))
+      if _currentTurnEffects.isEmpty
+      then _currentTurnEffects = newEffects.map((p, e, _) => (p, e))
+      else
+        var count: Int = 0
+        var lastPlayer = _currentTurnEffects.head._1
+        _currentTurnEffects = _currentTurnEffects
+          .map((p, e) =>
+            if lastPlayer.name != p.name
+            then
+              count = 0
+              lastPlayer = p
+            count = count + 1
+            (p, e, count - 1)
+          ).map((p, e, i) => newEffects.find((_p, _, _i) => p.name == _p.name && i == _i).getOrElse((p, e, i)))
+          .map((p, e, i) => (p, e))
 
     override def attemptSolve(effects: Seq[(Player, Effect)], updateTurnEffects: Boolean): Unit =
       if updateTurnEffects then _currentTurnEffects = effects

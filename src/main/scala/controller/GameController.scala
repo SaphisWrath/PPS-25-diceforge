@@ -106,6 +106,8 @@ trait GameController:
   def dice(playerDTO: PlayerDTO): Seq[DieDTO]
   
   def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO]
+  
+  def dieChoiceAndRollController: ChoiceController[DieDTO]
 
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
@@ -119,6 +121,7 @@ object GameController:
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
       case ModelContext.EffectChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
       case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
+      case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
@@ -212,6 +215,9 @@ object GameController:
         gameMatch.activePlayer,
         gameMatch.activePlayer.dice(dieIndex)
       )
+
+    override def dieChoiceAndRollController: ChoiceController[DieDTO] =
+      DieChoiceAndRollController(gameMatch.activePlayer)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

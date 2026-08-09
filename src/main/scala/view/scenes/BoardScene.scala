@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.dto.{CompoundEffectDTO, DieDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, FaceSwapController, GameController, ViewPublisher}
@@ -216,6 +216,13 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
             EffectWrapperPane("", _, JfxTheme.primaryBorder)
           )
         },
+        DiePane(_)
+      )
+    case SelectDieForThrowContext =>
+      val dieRollController = controller.dieChoiceAndRollController
+      manageChoices[DieDTO](
+        dieRollController.pendingChoices,
+        dieRollController.resumeAfterChoices,
         DiePane(_)
       )
     case PlayerMovedContext | MissionBoughtContext => missionPane.redraw()
