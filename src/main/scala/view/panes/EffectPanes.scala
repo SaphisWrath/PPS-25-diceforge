@@ -26,7 +26,6 @@ object EffectPanes:
       case _ =>
 
   class CompoundEffectPane(compoundEffectDTO: CompoundEffectDTO, color: Color) extends StackPane:
-    compoundEffectDTO.effects.foreach(e => println(e.sprite))
     children ++= Seq(
       EffectGridPane(compoundEffectDTO.effects, color)
     )

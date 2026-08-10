@@ -118,6 +118,7 @@ object GameController:
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
       case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
+      case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
@@ -174,6 +175,7 @@ object GameController:
 
     override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
     override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
+
 
     override def currentRound: Int = gameMatch.currentRound + 1
 

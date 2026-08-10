@@ -1,7 +1,7 @@
 package model
 
 import model.ModelPublisher.ModelContext
-import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
+import model.ModelPublisher.ModelContext.{DiceThrownContext, TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
 import model.effects.{Effect, EffectManager}
@@ -209,6 +209,9 @@ object GameMatch:
     override def startDiceThrow(): Unit = startDiceThrow(players.map(p => (p, p.dice)))
 
     override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
-      EffectManager().attemptSolve(playerDice.flatMap((p, d) => d.map(die => (p, die.roll))))
+      val thrown = playerDice.flatMap((p, d) => d.map(die => (p, die.roll)))
+      ModelPublisher().notify(DiceThrownContext)
+      EffectManager().attemptSolve(thrown)
+
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)
