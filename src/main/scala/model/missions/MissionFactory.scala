@@ -1,6 +1,6 @@
 package model.missions
 
-import model.effects.Target.Self
+import model.effects.Target.{Others, Self}
 import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie, ThrowSubtractEffect}
 import model.effects.*
 import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
@@ -72,7 +72,7 @@ object MissionFactory:
       cost = List(ResourceEffect(SunCrystal(3), Self)),
       reward = List(
         ResourceEffect(GloryPoint(8), Self),
-        ThrowSubtractEffect()
+        ThrowSubtractEffect(1, Others)
       ),
       id = "minotaur",
       startCount = startCount
