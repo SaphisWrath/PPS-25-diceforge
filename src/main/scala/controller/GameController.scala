@@ -220,7 +220,7 @@ object GameController:
           EffectDTO(ResourceEffect(cost.get, Target.Self)),
           shop.getStocked(item).getOrElse(0),
           () => shop.buy(item, gameMatch.activePlayer),
-          () => shop.getStocked(item).isDefined && gameMatch.activePlayer.board.canSpend(cost.get)
+          () => shop.getStocked(item).getOrElse(0) > 0 && gameMatch.activePlayer.board.canSpend(cost.get)
         ))
 
     override def dice(playerDTO: PlayerDTO): Seq[DieDTO] =
