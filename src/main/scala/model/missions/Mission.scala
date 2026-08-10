@@ -95,19 +95,3 @@ class SupportMission(
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained with Notification
-
-class CopyOtherEffectsMission(reward: List[Effect],
-          cost: List[ResourceEffect],
-          id: String = "placeholder",
-          startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
-  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit = {
-    super.applyEffects(receiverProducer)
-    EffectManager().updateTurnEffects(
-      receiverProducer(Others).flatMap(p => p.dice.zipWithIndex.map((d, i) => (p, d.roll, i)))
-    )
-    EffectManager().attemptSolve(
-      LazyList
-        .continually((receiverProducer(Self).head, CopyEffect()))
-        .take(2)
-    )
-  }

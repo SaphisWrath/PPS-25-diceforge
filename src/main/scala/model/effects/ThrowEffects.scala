@@ -22,17 +22,18 @@ trait SubtractThrow extends ThrowAction:
     )
 
 object ThrowEffects:
-  case class ThrowAllDice(times: Int = 1, override val target: Target = Self) extends Effect with ThrowAction with ModelSubscriber:
-    this.setPublisher(ModelPublisher())
+  protected abstract class PartialThrowEffect extends Effect with ThrowAction:
     protected var results: Seq[(Player, Effect, Int)] = Seq.empty
-    private var currentPlayers: Seq[Player] = Seq.empty
-    private var pendingCount = 0
 
     override def throwDice(receiver: Player): Unit =
       results = results.concat(receiver.dice.zipWithIndex.map((d, i) => (receiver, d.roll, i)))
 
-    override def resolve(receiver: Player): Unit =
-      resolve(Seq(receiver))
+    override def resolve(receiver: Player): Unit = resolve(Seq(receiver))
+
+  case class ThrowAllDice(times: Int = 1, override val target: Target = Self) extends PartialThrowEffect with ModelSubscriber:
+    this.setPublisher(ModelPublisher())
+    private var currentPlayers: Seq[Player] = Seq.empty
+    private var pendingCount = 0
 
     private def rollDice(): Unit =
       results = Seq.empty
@@ -60,3 +61,17 @@ object ThrowEffects:
     override def resolve(receiver: Player): Unit =
       receiver.pendingRolls = times
       ModelPublisher().notify(DieChoiceContext)
+
+  case class PlainThrowEffect(override val target: Target = Self) extends PartialThrowEffect:
+    override def resolve(receivers: Seq[Player]): Unit =
+      results = Seq.empty
+      throwDice(receivers)
+      EffectManager().updateTurnEffects(results)
+
+  case class CopyOtherThrowResults(override val target: Target) extends Effect:
+    override def resolve(receiver: Player): Unit =
+      EffectManager().attemptSolve(
+        LazyList
+          .continually((receiver, CopyEffect()))
+          .take(2)
+      )
