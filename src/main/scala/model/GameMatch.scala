@@ -1,7 +1,7 @@
 package model
 
 import model.ModelPublisher.ModelContext
-import model.ModelPublisher.ModelContext.{DiceThrownContext, TurnEndContext, TurnStepContext}
+import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
 import model.effects.{Effect, EffectManager}
@@ -131,8 +131,7 @@ object GameMatch:
 
     override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
       val thrown = playerDice.flatMap((p, d) => d.map(die => (p, die.roll)))
-      ModelPublisher().notify(DiceThrownContext)
-      EffectManager().attemptSolve(thrown)
+      EffectManager().attemptSolve(thrown, true)
 
     override val shop: Shop[Effect] = EffectShopFactory().makeStandardShop
 

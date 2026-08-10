@@ -1,7 +1,7 @@
 package model.effects
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{EffectChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{DiceThrownContext, EffectChoiceContext, ResourceContext}
 import model.Players.Player
 import model.effects.*
 import model.utils.ResourceEffectModule
@@ -48,6 +48,7 @@ object EffectManager:
     override def effectsToSolve: Seq[(Player, OptionEffect)] = _effectsToSolve
 
     override def updateTurnEffects(newEffects: Seq[(Player, Effect, Int)]): Unit =
+      ModelPublisher().notify(DiceThrownContext)
       if _currentTurnEffects.isEmpty
       then _currentTurnEffects = newEffects.map((p, e, _) => (p, e))
       else
@@ -62,10 +63,13 @@ object EffectManager:
             count = count + 1
             (p, e, count - 1)
           ).map((p, e, i) => newEffects.find((_p, _, _i) => p.name == _p.name && i == _i).getOrElse((p, e, i)))
-          .map((p, e, i) => (p, e))
+          .map((p, e, _) => (p, e))
 
     override def attemptSolve(effects: Seq[(Player, Effect)], updateTurnEffects: Boolean): Unit =
-      if updateTurnEffects then _currentTurnEffects = effects
+      if updateTurnEffects
+      then
+        _currentTurnEffects = effects
+        ModelPublisher().notify(DiceThrownContext)
       val (copyEffects, otherEffects) = splitCopyEffects(effects.concat(effectCache))
       if copyEffects.nonEmpty
         then
