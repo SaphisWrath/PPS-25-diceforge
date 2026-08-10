@@ -38,15 +38,17 @@ object ControllerStage:
     override def init(): Unit = changeScene(viewState)
 
     override def changeScene(newState: ViewState): Unit =
-      ViewPublisher().reset()
+      resetPublishers()
       newState match
         case MainMenu => navigator.navigateToMainMenu()
-        case MatchInit =>
-          ModelPublisher().reset()
-          navigator.navigateToMatchInit()
+        case MatchInit => navigator.navigateToMatchInit()
         case Board => navigator.navigateToBoard()
         case MatchEnd => navigator.navigateToMatchEnd()
       viewState = newState
+
+    private def resetPublishers(): Unit =
+      ViewPublisher().reset()
+      ModelPublisher().reset()
 
     override def currentViewState: ViewState = viewState
 

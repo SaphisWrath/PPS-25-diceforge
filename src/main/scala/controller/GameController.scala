@@ -15,106 +15,175 @@ import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, Comp
 
 trait GameController:
 
+  /**The final initialization of the game
+   *
+   * Should be called at the start of a game
+   */
   def startGame(): Unit
-  /**
+
+  /**The players participating at the game
+   *
    * @return the sequence of current players
    */
   def players: Seq[PlayerDTO]
 
-  /**
+  /**The results of the dices of the players
    * Returns most recent die throws of selected player
    * @param playerName the player's name
    * @return the most recent die throws
    */
   def recentDiceResults(playerName: String): Seq[Option[EffectDTO]]
 
+  /** The positions occupied by the players
+   *
+   * @return A map from the index of the position to the [[Player]] occupying it
+   */
   def playerPositions: Map[Int, PlayerDTO]
 
-  /**
+  /**The map of the missions
+   *
    * @return the missions in play, already sorted into their respective cells
    */
   def missions: Map[Int, Seq[MissionDTO]]
 
-  /**
-   * @return the current active player
+  /**The player currently playing his turn
+   *
+   * @return the currently active player
    */
   def activePlayer: PlayerDTO
 
-  /**
+  /**The player waiting for their turn
+   *
    * @return the sequence of all players that are not the active player
    */
   def nonActivePlayerList: Seq[PlayerDTO]
 
-  /**
+  /**The board of a player
+   *
+   * Gives the board of a player corresponding to the DTO object
    * @param player the player proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
   def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-  /**
+  /**The board of a player
+   *
+   * Gives the board of a player with the corresponding name
    * @param playerName the name of the proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
   def playerBoard(playerName: String): PlayerBoardDTO
 
-  /**
+  /**The missions obtained by a player
+   *
+   * Gives the obtained missions of a player corresponding to the DTO object
    * @param player the player proprietary of the missions
    * @return the missions obtained by the given player
    */
   def playerMissions(player: PlayerDTO): Seq[MissionDTO] = playerMissions(player.name)
 
-  /**
+  /**The missions obtained by a player
+   *
+   * Gives the obtained missions of a player with the corresponding name
    * @param playerName the name of the proprietary of the missions
    * @return the missions obtained by the given player
    */
   def playerMissions(playerName: String): Seq[MissionDTO]
 
+  /**Check if the player can go to next turn
+   *
+   * @return true if the player can go to next turn, false otherwise
+   */
   def canGoToNextTurn: Boolean
-  /**
-   * Notify the game to go to the next turn
+
+  /**Notify the game to go to next turn
+   *
+   * May do nothing if [[canGoToNextTurn]] is false
+   *
    */
   def nextTurn(): Unit
 
-  /**
+  /**The current round
    * @return the current round number
    */
   def currentRound: Int
 
-  /**
-   * @return true if the game ended
+  /**Check if the game is ended
+   *
+   * @return true if the game ended, false otherwise
    */
   def isGameEnded: Boolean
 
-  /**
+  /**The total number of rounds that should be played
    * @return the maximum number of rounds of the currently initialized game
    */
   def maxNumberOfRounds: Int
 
+  /** Notify the game that the dices are all thrown
+   *
+   */
   def endDiceThrow(): Unit
 
+  /** Controller used for complicate effect resolutions
+   * @return A instance of [[ChoiceController]] of [[EffectDTO]]
+   */
   def solveController: ChoiceController[EffectDTO]
 
-  /**
+  /** Check if the active player can take an Action
    * @return true if the player already took his action, false otherwise
    */
   def canTakeAction: Boolean
 
+  /** Check if the active player can buy an extra action
+   *
+   * @return true if the player can buy an extra action, false otherwise
+   */
   def canBuyExtraAction: Boolean
 
-  def canEndSupportPhase: Boolean
+  /** Check if the current turn phase is the SupportPhase
+   * @return true if the current turn phase is the SupportPhase, false otherwise
+   */
+  def isSupportPhase: Boolean
 
+  /** Notify the game to end the supportPhase
+   * May do nothing if [[isSupportPhase]] is false
+   */
   def endSupportPhase(): Unit
 
+  /**Notify the game that the current player wants to buy an extra action
+   * May do nothing if [[canBuyExtraAction]] is false
+   */
   def buyExtraAction(): Unit
 
+  /**Return the current turn step
+   * @return A [[String]] representing the current turn step
+   */
   def turnStep: String
 
+  /**All the items of the shop
+   *
+   * @return A sequence of the [[ItemDTO]] representing the items of the shop
+   */
   def shopItems: Seq[ItemDTO]
 
+  /**The dices of the given player
+   *
+   * @param playerDTO The [[PlayerDTO]] instance corresponding to the player
+   * @return The dices of the given player
+   */
   def dice(playerDTO: PlayerDTO): Seq[DieDTO]
 
+  /**A controller used for changing the faces of a die
+   *
+   * @param dieIndex the index of the die to modify
+   * @return A [[ChoiceController]] instance
+   */
   def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO]
 
+  /**A controller used to choose a single dice to throw
+   *
+   * @return A [[ChoiceController]] instance
+   */
   def dieChoiceAndRollController: ChoiceController[DieDTO]
 
 object GameController:
@@ -194,7 +263,7 @@ object GameController:
 
     override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
 
-    override def canEndSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
+    override def isSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
 
     override def endSupportPhase(): Unit = gameMatch.executeAction(EndSupport)
 

@@ -27,11 +27,13 @@ object TurnManagers:
   case class TurnManager(
                           currentStep: TurnStep,
                           private val actionRequirements: PartialFunction[TurnAction, Boolean] = PartialFunction.empty,
+                          private val additionalActionEffects: PartialFunction[TurnAction, Unit] = PartialFunction.empty,
                           private val consecutiveActions: PartialFunction[TurnAction, TurnAction]  = PartialFunction.empty,
                         ):
     def executeAction(turnAction: TurnAction): Option[TurnManager] =
       if isActionAvailable(turnAction) then
         val newTm = this.copy(turnAction.getTransition(currentStep).get)
+        additionalActionEffects.lift(turnAction)
         consecutiveActions.lift(turnAction) match
           case Some(ta) if newTm.isActionAvailable(ta) => newTm.executeAction(ta)
           case _ => Option(newTm)

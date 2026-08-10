@@ -6,12 +6,13 @@ import model.Players.Player
 import model.dice.Die
 import model.effects.{Effect, EffectManager}
 import model.missions.{Mission, MissionMapBuilder}
-import model.resource.{Gold, PlayerBoard}
+import model.resource.{Gold, PlayerBoard, SunCrystal}
 import model.shop.factories.EffectShopFactory
 import model.shop.Shop
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.RandomModules.given_RandomModule_Int
+import _root_.utils.SeqUtils.*
 
 import scala.util.Random
 
@@ -161,7 +162,7 @@ object GameMatch:
 
     override def activePlayer: Player = players(turn)
 
-    override def nonActivePlayers: Seq[Player] = players.filter(_ != activePlayer)
+    override def nonActivePlayers: Seq[Player] = players.rotate(players.indexOf(activePlayer)).filter(_ != activePlayer)
 
     override def playerFrom(name: String): Option[Player] = players.find(_.name == name)
 
@@ -176,15 +177,20 @@ object GameMatch:
     private var turn: Int = 0
     private var round: Int = 0
     private var turnManager: TurnManager = TurnManager(
-      StartStep,
-      {
+      currentStep = StartStep,
+      actionRequirements = {
         case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
       },
-      {
+      additionalActionEffects = {
+        case TurnAction.BuyExtraAction =>
+          activePlayer.board.sunCrystals = activePlayer.board.sunCrystals - SunCrystal(2)
+          ModelPublisher().notify(ModelContext.ResourceContext)
         case TurnAction.EndTurn =>
           nextTurn()
           startDiceThrow()
-          TurnAction.CompleteDiceThrow
+      },
+      consecutiveActions = {
+        case TurnAction.EndTurn => TurnAction.CompleteDiceThrow
         case TurnAction.CompleteDiceThrow if activePlayer.missions.isEmpty => TurnAction.EndSupport
       }
     )
