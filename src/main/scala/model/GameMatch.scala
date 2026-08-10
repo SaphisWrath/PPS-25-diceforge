@@ -6,7 +6,7 @@ import model.Players.Player
 import model.dice.Die
 import model.effects.{Effect, EffectManager}
 import model.missions.{Mission, MissionMapBuilder}
-import model.resource.{Gold, PlayerBoard}
+import model.resource.{Gold, PlayerBoard, SunCrystal}
 import model.shop.factories.EffectShopFactory
 import model.shop.Shop
 import model.turn.TurnManagers.TurnStep.StartStep
@@ -176,15 +176,20 @@ object GameMatch:
     private var turn: Int = 0
     private var round: Int = 0
     private var turnManager: TurnManager = TurnManager(
-      StartStep,
-      {
+      currentStep = StartStep,
+      actionRequirements = {
         case TurnAction.BuyExtraAction => activePlayer.board.sunCrystals.amount >= 2
       },
-      {
+      additionalActionEffects = {
+        case TurnAction.BuyExtraAction =>
+          activePlayer.board.sunCrystals = activePlayer.board.sunCrystals - SunCrystal(2)
+          ModelPublisher().notify(ModelContext.ResourceContext)
         case TurnAction.EndTurn =>
           nextTurn()
           startDiceThrow()
-          TurnAction.CompleteDiceThrow
+      },
+      consecutiveActions = {
+        case TurnAction.EndTurn => TurnAction.CompleteDiceThrow
         case TurnAction.CompleteDiceThrow if activePlayer.missions.isEmpty => TurnAction.EndSupport
       }
     )
