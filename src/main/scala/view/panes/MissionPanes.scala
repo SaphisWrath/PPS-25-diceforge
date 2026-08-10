@@ -6,7 +6,7 @@ import scalafx.geometry.Pos.Center
 import scalafx.scene.control.{Button, Tooltip}
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
-import scalafx.scene.text.Text
+import scalafx.scene.text.{Font, Text}
 import view.{LanguageStrings, MissionDescriptions}
 import view.buttons.ButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
@@ -32,10 +32,14 @@ object MissionPanes:
     private val fillColor: Color = getCorrectColor(secondaryContainer, tertiaryContainer, primaryContainer)
     private val borderColor: Color = getCorrectColor(secondaryBorder, tertiaryBorder, primaryBorder)
 
+    Tooltip.install(this, new Tooltip {
+      text = MissionDescriptions.getDescription(missionDTO)
+      font = new Font(14)
+    })
     border = makeBorder(borderColor)
     background = makeBackgroundFill(fillColor)
     alignment = Center
-    padding = Insets(10)
+    padding = Insets(2)
     spacing = 10
     children = Seq(
       name,
@@ -57,11 +61,7 @@ object MissionPanes:
     protected def cost =
       EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
 
-    protected def name: Text = {
-      val nameText = TextFactory.makeMissionName(MissionDescriptions.getTitle(missionDTO))
-      Tooltip.install(nameText, new Tooltip(MissionDescriptions.getDescription(missionDTO)))
-      nameText
-    }
+    protected def name: Text = TextFactory.makeMissionName(MissionDescriptions.getTitle(missionDTO))
 
   class ObtainedMissionPane(missionDTO: MissionDTO) extends MissionPane(missionDTO):
     override protected def button: Button = ButtonFactory.makeBoardButton(
@@ -84,7 +84,7 @@ object MissionPanes:
 
   class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]], playerTokens: Map[Int, Node]) extends BorderPane:
     private val contentSpacing: Double = 20
-    padding = Insets(20)
+    padding = Insets(10)
     top = new HBox {
       alignment = Center
       spacing = contentSpacing

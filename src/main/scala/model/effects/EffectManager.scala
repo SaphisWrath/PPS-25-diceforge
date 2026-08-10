@@ -70,7 +70,7 @@ object EffectManager:
       then
         _currentTurnEffects = effects
         ModelPublisher().notify(DiceThrownContext)
-      val (copyEffects, otherEffects) = splitCopyEffects(effects.concat(effectCache))
+      val (copyEffects, otherEffects) = splitCopyEffects(flattenSumEffects(effects.concat(effectCache)))
       if copyEffects.nonEmpty
         then
           effectCache = otherEffects
@@ -94,6 +94,12 @@ object EffectManager:
 
     override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
 
+    private def flattenSumEffects(effects: Seq[(Player, Effect)]): Seq[(Player, Effect)] =
+      effects.flatMap((p, e) => e match
+        case e: SumEffect => e.effects.map(e => (p, e))
+        case _ => Seq((p, e))
+      )
+    
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
       val (copyEffects, resourceEffects) = effects

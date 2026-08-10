@@ -61,12 +61,12 @@ trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
 trait InstantRewards extends Mission:
   abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    reward.foreach(_.resolve(receiverProducer(Self)))
+    reward.foreach(r => r.resolve(receiverProducer(r.target)))
 
 trait SupportRewards(supportReward: List[Effect], supportCost: List[ResourceEffect]) extends Mission:
   abstract override def applyEffects(receiverProducer: Target => scala.Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    val player = receiverProducer(Target.Self).head
+    val player = receiverProducer(Self).head
     player.addMission(ObtainedMission(supportReward, supportCost, player, id))
 
 trait Obtained extends Mission:

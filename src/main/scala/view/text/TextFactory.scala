@@ -24,7 +24,7 @@ object TextFactory:
   def makeMissionName(name: String): Text =
     new Text {
       text = name
-      style = "-fx-font: normal bold 15pt sans-serif"
+      style = "-fx-font: normal bold 12pt sans-serif"
       fill = JfxTheme.onPrimaryContainer
     }
 
@@ -35,13 +35,22 @@ object TextFactory:
       fill = JfxTheme.onPrimaryContainer
     }
 
-  def makeEffectText(label: String): Text =
-    new Text {
-      text = label
-      style = "-fx-font: normal bolder 20pt sans-serif"
-      fill = White
-      stroke = Black
-    }
+  def makeEffectText(label: String): Text = {
+    val text = try
+        label.toInt
+        new Text {
+          style = "-fx-font: normal bolder 20pt sans-serif"
+        }
+      catch
+        case _ =>
+            new Text {
+              style = "-fx-font: normal bolder 15pt sans-serif"
+            }
+    text.fill = White
+    text.stroke = Black
+    text.text = label
+    text
+  }
 
   def makeCompoundEffectText(label: String): Text =
     new Text {

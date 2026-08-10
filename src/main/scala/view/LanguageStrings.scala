@@ -59,3 +59,6 @@ object LanguageStrings:
     val item = "Faccia dado"
     val stockCount = "Oggetti rimasti:"
     val soldOut = "Esaurito"
+
+  object Miscellaneous:
+    val choiceDialog = "scegli fra le seguenti opzioni"

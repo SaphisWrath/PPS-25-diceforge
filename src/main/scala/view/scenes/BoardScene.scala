@@ -15,7 +15,7 @@ import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
-import view.panes.DiePanes.DiePane
+import view.panes.DicePanes.DiePane
 import view.panes.EffectPanes.effectPane
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
@@ -212,7 +212,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case PlayerMovedContext => missionPane.redraw()
     case PlayerChoiceContext =>
       val choiceController = controller.solveController
-      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, effectPane)
+      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, effectPane(_))
     case ItemObtainedContext =>
       shopPane.redraw()
       manageChoices[DieDTO](
@@ -222,7 +222,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           manageChoices[EffectDTO](
             faceSwapController.pendingChoices,
             faceSwapController.resumeAfterChoices,
-            effectPane
+            effectPane(_)
           )
         },
         DiePane(_)

@@ -10,7 +10,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
 import scalafx.scene.{Group, Node}
 import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
-import view.panes.DicePanes.DicePane
+import view.panes.DicePanes.FacePane
 import view.panes.EffectPanes.EffectWrapperPane
 
 import scala.language.postfixOps
@@ -86,7 +86,7 @@ object PlayerBoxes:
                        dieRollsProducer: () => Seq[Option[EffectDTO]],
                        colorHex: String
                        ): PlayerBoxBuilder = this.copy(
-      diceSection = DicePane(dieRollsProducer, colorHex)
+      diceSection = FacePane(dieRollsProducer, colorHex)
     )
     def build: Node = new BorderPane {
       border = boxStyle.fxBorder

@@ -7,6 +7,7 @@ import scalafx.geometry.Pos.Center
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.stage.{Modality, Stage, StageStyle}
+import view.LanguageStrings
 import view.buttons.ButtonFactory.makeChoiceButton
 
 trait ChoiceWindow[A]:
@@ -39,7 +40,7 @@ object ChoiceWindowChain:
           root = new VBox {
             alignment = Center
             children = Seq(
-              Label(playerChoice._1.name + ", scegli fra le seguenti opzioni"),
+              Label(s"${playerChoice._1.name}, ${LanguageStrings.Miscellaneous.choiceDialog}"),
               new HBox {
                 alignment = Center
                 children = playerChoice._2.map(option => makeChoiceButton(
