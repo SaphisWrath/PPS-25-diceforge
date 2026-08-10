@@ -56,6 +56,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     turnPhaseSection.redraw()
     obtainedMissionsPane.redraw()
     obtainedMissionsButton.redraw()
+    visitShopButton.redraw()
   )
 
   private val turnPhaseSection: Redrawable = Redrawable { () =>
@@ -141,13 +142,15 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           BSStrings.leaveShopButton,
           () =>
             centralPane.setState(Missions)
-            visitShopButton.redraw()
+            visitShopButton.redraw(),
+          () => controller.canTakeAction
         )
         case _ => ButtonFactory.makeBoardButton(
           BSStrings.visitShopButton,
           () =>
             centralPane.setState(Shop)
-            visitShopButton.redraw()
+            visitShopButton.redraw(),
+          () => controller.canTakeAction
         )
     }
   }
