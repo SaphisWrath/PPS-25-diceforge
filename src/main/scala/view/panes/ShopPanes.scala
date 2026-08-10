@@ -5,6 +5,7 @@ import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Button
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
+import scalafx.scene.text.Text
 import view.LanguageStrings
 import view.buttons.ButtonFactory.makeBoardButton
 import view.panes.EffectPanes.*
@@ -24,6 +25,9 @@ object ShopPanes:
     children = Seq(
       EffectWrapperPane(LanguageStrings.ShopStrings.cost, Seq(itemDTO.cost), primaryBorder),
       EffectWrapperPane(LanguageStrings.ShopStrings.item, Seq(itemDTO.item), primaryBorder),
+      if itemDTO.stock > 0
+      then new Text(s"${LanguageStrings.ShopStrings.stockCount} ${itemDTO.stock}")
+      else new Text(LanguageStrings.ShopStrings.soldOut),
       buyItemButton(itemDTO)
     )
 

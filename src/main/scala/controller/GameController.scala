@@ -10,6 +10,7 @@ import model.{GameMatch, ModelPublisher}
 import model.Players.Player
 import model.effects.{ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
+import model.resource.Gold
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
 
 trait GameController:
@@ -213,6 +214,7 @@ object GameController:
       val shop = gameMatch.shop
       shop.items
         .map(i => (i, shop.getPrice(i)))
+        .sortBy(_._2.getOrElse(Gold(0)).amount)
         .map((item, cost) => ItemDTO(
           EffectDTO(item),
           EffectDTO(ResourceEffect(cost.get, Target.Self)),

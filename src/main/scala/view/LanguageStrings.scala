@@ -57,3 +57,5 @@ object LanguageStrings:
     val purchase = "Compra"
     val cost = "Costo"
     val item = "Faccia dado"
+    val stockCount = "Oggetti rimasti:"
+    val soldOut = "Esaurito"
