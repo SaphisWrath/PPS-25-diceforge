@@ -6,12 +6,12 @@
 | I giocatori possono passare il turno                          |                                              |            |                  |   |   |   |   |   |   |
 |                                                               | Rifinitura fasi del turno                    | Galileo    |        4         | 4 | 4 | 0 | 0 | 0 | 0 |
 | Vedere e completare missioni                                  |                                              |            |                  |   |   |   |   |   |   |
-|                                                               | Mettere descrizione alle Missioni            | Lorenzo    |        4         |   |   |   |   |   |   |
-|                                                               | Implementare numero massimo di completamenti | Lorenzo    |        3         |   |   |   |   |   |   |
+|                                                               | Mettere descrizione alle Missioni            | Lorenzo    |        4         | 4 | 1 | 1 | 1 | 1 | 0 |
+|                                                               | Implementare numero massimo di completamenti | Lorenzo    |        3         | 1 | 0 | 0 | 0 | 0 | 0 |
 |                                                               | Posizione del giocatore                      | Galileo    |        6         | 6 | 6 | 6 | 1 | 0 | 0 |
 | I giocatori possono acquistare facce dal negozio              |                                              |            |                  |   |   |   |   |   |   |
-|                                                               | Gui del negozio                              | Lorenzo    |        6         |   |   |   |   |   |   |
-|                                                               | Gui dell'acquisto                            | Lorenzo    |        7         |   |   |   |   |   |   |
+|                                                               | Gui del negozio                              | Lorenzo    |        6         | 6 | 6 | 6 | 2 | 2 | 0 |
+|                                                               | Gui dell'acquisto                            | Lorenzo    |        7         | 7 | 5 | 2 | 2 | 0 | 0 |
 |                                                               | Logica del negozio                           | Giulia     |        10        |   |   |   |   |   |   |
 | I giocatori possono attivare gli effetti di rinforzo ottenuti |                                              |            |                  |   |   |   |   |   |   |
 |                                                               | Limite al numero di attivazioni              | Galileo    |        2         | 2 | 2 | 0 | 0 | 0 | 0 |
