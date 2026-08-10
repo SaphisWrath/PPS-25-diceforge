@@ -15,6 +15,7 @@ trait ThrowAction:
 trait SubtractThrow extends ThrowAction:
   abstract override def throwDice(receiver: Player): Unit =
     super.throwDice(receiver)
+    EffectManager().setModuleOnce(SubtractResource)
     results.foreach((_, e, _) => e match
       case r: ResourceEffect => r.setModule(SubtractResource)
     )

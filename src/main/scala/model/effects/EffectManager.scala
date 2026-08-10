@@ -4,6 +4,8 @@ import model.ModelPublisher
 import model.ModelPublisher.ModelContext.{EffectChoiceContext, ResourceContext}
 import model.Players.Player
 import model.effects.*
+import model.utils.ResourceEffectModule
+import model.utils.ResourceEffectModules.AddResource
 
 /**
  * A manager that attempts to solve every effect given
@@ -29,11 +31,19 @@ trait EffectManager:
    */
   def updateTurnEffects(turnEffects: Seq[(Player, Effect, Int)]): Unit
 
+  /**
+   * Sets a specific ResourceEffectModule to apply on the next solve
+   * It resets to default when the next solve is completed
+   * @param module the module to use for next solve
+   */
+  def setModuleOnce(module: ResourceEffectModule): Unit
+
 object EffectManager:
   private class EffectManagerImpl extends EffectManager:
     private var effectCache: Seq[(Player, Effect)] = Seq.empty
     private var _effectsToSolve: Seq[(Player, OptionEffect)] = Seq.empty
     private var _currentTurnEffects: Seq[(Player, Effect)] = Seq.empty
+    private var _module: ResourceEffectModule = AddResource
 
     override def effectsToSolve: Seq[(Player, OptionEffect)] = _effectsToSolve
 
@@ -75,7 +85,10 @@ object EffectManager:
         else
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)
+          _module = AddResource
           ModelPublisher().notify(ResourceContext)
+
+    override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
 
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
@@ -90,10 +103,18 @@ object EffectManager:
       (optionEffects.map((p, e) => (p, e.asInstanceOf[OptionEffect])), resourceEffects)
 
     private def resolveAll(effects: Seq[(Player, Effect)]): Unit =
-      val (multiplyEffects, resourceEffects) = effects
+      val (multiplyEffects, otherEffects) = effects
         .partition((_, e) => e.isInstanceOf[MultiplyEffect])
 
-      resourceEffects.foreach((p, e) => e.resolve(p))
+      val resourceEffects = otherEffects
+        .flatMap((p, e) => e match {
+          case effect: ResourceEffect => Seq((p, effect))
+          case _ => Seq.empty
+        })
+      resourceEffects.foreach((p, e) =>
+          e.setModule(_module)
+          e.resolve(p)
+      )
       multiplyEffects
         .map((p, e) => (p, e.asInstanceOf[MultiplyEffect]))
         .foreach((p, e) =>
@@ -104,7 +125,7 @@ object EffectManager:
             case _ =>
           e.resolve(p)
         )
-      
+
   private val effectManager = EffectManagerImpl()    
   
   def apply(): EffectManager = effectManager
