@@ -43,5 +43,5 @@ object ResourceBoxes:
       box
 
     override def update(context: ViewContext): Unit = context match
-      case ResourceMaxContext => cap() = capProducer()
+      case ResourceContext => cap() = capProducer()
       case _ => baseResourceBox.update(context)

@@ -1,10 +1,12 @@
 package model.missions
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{MissionContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{FaceObtainedContext, MissionContext, ResourceContext}
 import model.Players.Player
-import model.effects.{Effect, ResourceEffect, Target}
+import model.effects.Target.*
+import model.effects.*
 import model.resource.PlayerBoard
+import model.utils.RandomModules.given_RandomModule_Int
 
 trait Mission:
   def reward: List[Effect]
@@ -59,10 +61,7 @@ trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
 trait InstantRewards extends Mission:
   abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
-    reward.foreach {
-      case res@ResourceEffect(_, _, _) =>
-        res.resolve(receiverProducer(res.target))
-    }
+    reward.foreach(_.resolve(receiverProducer(Self)))
 
 trait SupportRewards(supportReward: List[Effect], supportCost: List[ResourceEffect]) extends Mission:
   abstract override def applyEffects(receiverProducer: Target => scala.Seq[Player]): Unit =
@@ -96,3 +95,19 @@ class SupportMission(
 
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained with Notification
+
+class CopyOtherEffectsMission(reward: List[Effect],
+          cost: List[ResourceEffect],
+          id: String = "placeholder",
+          startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
+  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit = {
+    super.applyEffects(receiverProducer)
+    EffectManager().updateTurnEffects(
+      receiverProducer(Others).flatMap(p => p.dice.zipWithIndex.map((d, i) => (p, d.roll, i)))
+    )
+    EffectManager().attemptSolve(
+      LazyList
+        .continually((receiverProducer(Self).head, CopyEffect()))
+        .take(2)
+    )
+  }

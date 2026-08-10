@@ -1,9 +1,11 @@
 package model.effects
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{ChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{DiceThrownContext, EffectChoiceContext, ResourceContext}
 import model.Players.Player
 import model.effects.*
+import model.utils.ResourceEffectModule
+import model.utils.ResourceEffectModules.AddResource
 
 /**
  * A manager that attempts to solve every effect given
@@ -13,8 +15,9 @@ trait EffectManager:
   /**
    * Tries to solve all effects and succeeds immediately when no user input is required
    * @param effects the effects it tries to resolve
+   * @param updateTurnEffects whether all the saved effects should be replaced by the incoming effects or not
    */
-  def attemptSolve(effects: Seq[(Player, Effect)]): Unit
+  def attemptSolve(effects: Seq[(Player, Effect)], updateTurnEffects: Boolean = false): Unit
 
   /**
    *
@@ -22,33 +25,74 @@ trait EffectManager:
    */
   def effectsToSolve: Seq[(Player, OptionEffect)]
 
+  /**
+   * Sets the current turn's effects rolled by the player's dice
+   * @param turnEffects the newly rolled effects that must replace the older ones
+   */
+  def updateTurnEffects(turnEffects: Seq[(Player, Effect, Int)]): Unit
+
+  /**
+   * Sets a specific ResourceEffectModule to apply on the next solve
+   * It resets to default when the next solve is completed
+   * @param module the module to use for next solve
+   */
+  def setModuleOnce(module: ResourceEffectModule): Unit
+
 object EffectManager:
   private class EffectManagerImpl extends EffectManager:
     private var effectCache: Seq[(Player, Effect)] = Seq.empty
     private var _effectsToSolve: Seq[(Player, OptionEffect)] = Seq.empty
-    
+    private var _currentTurnEffects: Seq[(Player, Effect)] = Seq.empty
+    private var _module: ResourceEffectModule = AddResource
+
     override def effectsToSolve: Seq[(Player, OptionEffect)] = _effectsToSolve
-    
-    override def attemptSolve(effects: Seq[(Player, Effect)]): Unit =
+
+    override def updateTurnEffects(newEffects: Seq[(Player, Effect, Int)]): Unit =
+      ModelPublisher().notify(DiceThrownContext)
+      if _currentTurnEffects.isEmpty
+      then _currentTurnEffects = newEffects.map((p, e, _) => (p, e))
+      else
+        var count: Int = 0
+        var lastPlayer = _currentTurnEffects.head._1
+        _currentTurnEffects = _currentTurnEffects
+          .map((p, e) =>
+            if lastPlayer.name != p.name
+            then
+              count = 0
+              lastPlayer = p
+            count = count + 1
+            (p, e, count - 1)
+          ).map((p, e, i) => newEffects.find((_p, _, _i) => p.name == _p.name && i == _i).getOrElse((p, e, i)))
+          .map((p, e, _) => (p, e))
+
+    override def attemptSolve(effects: Seq[(Player, Effect)], updateTurnEffects: Boolean): Unit =
+      if updateTurnEffects
+      then
+        _currentTurnEffects = effects
+        ModelPublisher().notify(DiceThrownContext)
       val (copyEffects, otherEffects) = splitCopyEffects(effects.concat(effectCache))
       if copyEffects.nonEmpty
         then
           effectCache = otherEffects
           _effectsToSolve = copyEffects
-            .map((p, ce) => (p, OptionEffect(otherEffects.flatMap((otherP, otherE) =>
+            .map((p, ce) => (p, OptionEffect(_currentTurnEffects.flatMap((otherP, otherE) =>
               if otherP.name == p.name then Seq.empty else Seq(otherE)
             ))))
-          ModelPublisher().notify(ChoiceContext)
+          ModelPublisher().notify(EffectChoiceContext)
       else
         val (optionEffects, nonOptionEffects) = getOptionEffects(otherEffects)
         if optionEffects.nonEmpty
           then
             effectCache = nonOptionEffects
             _effectsToSolve = optionEffects
-            ModelPublisher().notify(ChoiceContext)
+            ModelPublisher().notify(EffectChoiceContext)
         else
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)
+          _module = AddResource
+          ModelPublisher().notify(ResourceContext)
+
+    override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
 
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
@@ -63,10 +107,18 @@ object EffectManager:
       (optionEffects.map((p, e) => (p, e.asInstanceOf[OptionEffect])), resourceEffects)
 
     private def resolveAll(effects: Seq[(Player, Effect)]): Unit =
-      val (multiplyEffects, resourceEffects) = effects
+      val (multiplyEffects, otherEffects) = effects
         .partition((_, e) => e.isInstanceOf[MultiplyEffect])
 
-      resourceEffects.foreach((p, e) => e.resolve(p))
+      val resourceEffects = otherEffects
+        .flatMap((p, e) => e match {
+          case effect: ResourceEffect => Seq((p, effect))
+          case _ => Seq.empty
+        })
+      resourceEffects.foreach((p, e) =>
+          e.setModule(_module)
+          e.resolve(p)
+      )
       multiplyEffects
         .map((p, e) => (p, e.asInstanceOf[MultiplyEffect]))
         .foreach((p, e) =>
@@ -77,8 +129,7 @@ object EffectManager:
             case _ =>
           e.resolve(p)
         )
-      ModelPublisher().notify(ResourceContext)
-      
+
   private val effectManager = EffectManagerImpl()    
   
   def apply(): EffectManager = effectManager

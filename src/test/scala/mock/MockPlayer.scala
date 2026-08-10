@@ -20,3 +20,7 @@ case class MockPlayer(
   def resetMissions(): Unit = _missions = Seq.empty
   
   def resetPlayerBoard(): Unit = board = PlayerBoard.emptyBoard
+
+  override def pendingRolls: Int = 0
+
+  override def pendingRolls_=(rollsLeft: Int): Unit = {}

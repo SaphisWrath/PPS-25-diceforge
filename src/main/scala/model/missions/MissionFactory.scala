@@ -1,8 +1,8 @@
 package model.missions
 
 import model.effects.Target.Self
-import model.effects.ThrowEffects.{ThrowAllDice, ThrowSubtractEffect}
-import model.effects.{OptionEffect, ResourceEffect, Target, UpdateCapacityEffect}
+import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie, ThrowSubtractEffect}
+import model.effects.*
 import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
 
 object MissionFactory:
@@ -40,16 +40,19 @@ object MissionFactory:
       startCount = startCount
     )
 
-    def makeSatyr: Mission = new InstantMission(
+    def makeSatyr: Mission = new CopyOtherEffectsMission(
       cost = List(ResourceEffect(MoonCrystal(3), Self)),
-      reward = List(ResourceEffect(GloryPoint(6), Self)), //TODO add other effect
+      reward = List(ResourceEffect(GloryPoint(6), Self)),
       id = "satyr",
       startCount = startCount
     )
 
     def makeHelmet: Mission = new InstantMission(
       cost = List(ResourceEffect(MoonCrystal(5), Self)),
-      reward = List.empty, //TODO add effect
+      reward = List(
+        ResourceEffect(GloryPoint(4), Self),
+        GrantFaceEffect(MultiplyEffect(3))
+      ),
       id = "helmet",
       startCount = startCount
     )
@@ -89,7 +92,7 @@ object MissionFactory:
       cost = List(ResourceEffect(SunCrystal(5), Self)),
       reward = List(
         ResourceEffect(GloryPoint(10), Self),
-        //TODO add effect
+        GrantFaceEffect(CopyEffect())
       ),
       id = "mirror",
       startCount = startCount
@@ -99,7 +102,7 @@ object MissionFactory:
       cost = List(ResourceEffect(SunCrystal(6), Self)),
       reward = List(
         ResourceEffect(GloryPoint(10), Self),
-        //TODO add
+        ThrowOneDie(4)
       ),
       id = "sphinx",
       startCount = startCount
@@ -118,7 +121,7 @@ object MissionFactory:
       missionCost = List(ResourceEffect(MoonCrystal(2), Self)),
       missionReward = List(ResourceEffect(GloryPoint(2), Self)),
       supportCost = List.empty,
-      supportReward = List.empty, //TODO add
+      supportReward = List(ThrowOneDie(1)),
       id = "silver_doe",
       startCount = startCount
     )

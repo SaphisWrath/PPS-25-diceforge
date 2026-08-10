@@ -3,11 +3,15 @@ package view.panes
 import controller.dto.{CompoundEffectDTO, EffectDTO}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.{Center, CenterLeft}
+import scalafx.scene.Node
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.sprites.Sprite
 import view.text.TextFactory
+import view.theme.JfxTheme
 import view.utils.ViewUtils.makeBorder
+
+import scala.annotation.tailrec
 
 object EffectPanes:
   class EffectPane(effectDTO: EffectDTO, spriteDim: Option[Double] = None) extends StackPane:
@@ -33,10 +37,10 @@ object EffectPanes:
     compoundEffectDTO.label match
       case Some(s) => children ++= Seq(TextFactory.makeCompoundEffectText(s))
       case _ =>
-
+  
   private class EffectGridPane(
-                                effectDTOs: Seq[EffectDTO], 
-                                color: Color, 
+                                effectDTOs: Seq[EffectDTO],
+                                color: Color,
                                 spriteDim: Option[Double] = None) extends GridPane:
     effectDTOs.zipWithIndex.foreach((e, i) =>
       add(
@@ -48,10 +52,9 @@ object EffectPanes:
       )
     )
 
-  class EffectWrapperPane(
-                           title: String,
-                           effectDTOs: Seq[EffectDTO],
-                           color: Color) extends VBox:
+  class EffectWrapperPane(title: String,
+                          effectDTOs: Seq[EffectDTO],
+                          color: Color) extends VBox:
     border = makeBorder(color)
     padding = Insets(10)
     alignment = CenterLeft
@@ -59,3 +62,7 @@ object EffectPanes:
       TextFactory.makeMissionLabel(title),
       EffectGridPane(effectDTOs, color),
     )
+
+  def effectPane(effectDTO: EffectDTO): StackPane = effectDTO match
+    case e: CompoundEffectDTO => CompoundEffectPane(e, JfxTheme.primaryBorder)
+    case e: EffectDTO => EffectPane(e)
