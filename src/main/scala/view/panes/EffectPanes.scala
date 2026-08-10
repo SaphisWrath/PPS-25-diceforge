@@ -1,7 +1,8 @@
 package view.panes
 
 import controller.dto.{CompoundEffectDTO, EffectDTO}
-import scalafx.geometry.Insets
+import javafx.scene.layout
+import scalafx.geometry.{Insets, VPos}
 import scalafx.geometry.Pos.{Center, CenterLeft}
 import scalafx.scene.Node
 import scalafx.scene.layout.*
@@ -38,19 +39,20 @@ object EffectPanes:
       case Some(s) => children ++= Seq(TextFactory.makeCompoundEffectText(s))
       case _ =>
   
-  private class EffectGridPane(
+  class EffectGridPane(
                                 effectDTOs: Seq[EffectDTO],
                                 color: Color,
-                                spriteDim: Option[Double] = None) extends GridPane:
+                                hasBorder: Boolean = false
+                      ) extends GridPane:
     effectDTOs.zipWithIndex.foreach((e, i) =>
       add(
-        e match
-          case c: CompoundEffectDTO =>  CompoundEffectPane(c, color)
-          case _ => EffectPane(e, spriteDim),
+        effectPane(e, color),
         i % 2,
         i / 2
       )
     )
+    if hasBorder then border = makeBorder(color)
+    padding = Insets(2)
 
   class EffectWrapperPane(title: String,
                           effectDTOs: Seq[EffectDTO],
@@ -63,6 +65,6 @@ object EffectPanes:
       EffectGridPane(effectDTOs, color),
     )
 
-  def effectPane(effectDTO: EffectDTO): StackPane = effectDTO match
-    case e: CompoundEffectDTO => CompoundEffectPane(e, JfxTheme.primaryBorder)
+  def effectPane(effectDTO: EffectDTO, color: Color = JfxTheme.primaryBorder): StackPane = effectDTO match
+    case e: CompoundEffectDTO => CompoundEffectPane(e, color)
     case e: EffectDTO => EffectPane(e)

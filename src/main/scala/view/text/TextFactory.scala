@@ -24,7 +24,7 @@ object TextFactory:
   def makeMissionName(name: String): Text =
     new Text {
       text = name
-      style = "-fx-font: normal bold 15pt sans-serif"
+      style = "-fx-font: normal bold 12pt sans-serif"
       fill = JfxTheme.onPrimaryContainer
     }
 
