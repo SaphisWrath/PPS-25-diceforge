@@ -10,6 +10,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
 import scalafx.scene.{Group, Node}
 import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
+import view.panes.DicePanes.DicePane
 import view.panes.EffectPanes.EffectWrapperPane
 
 import scala.language.postfixOps
@@ -85,12 +86,7 @@ object PlayerBoxes:
                        dieRollsProducer: () => Seq[Option[EffectDTO]],
                        colorHex: String
                        ): PlayerBoxBuilder = this.copy(
-      diceSection = new HBox {
-        private val dice = dieRollsProducer()
-        if !dice.contains(None) then
-          spacing = 10
-          children = EffectWrapperPane("", dice.map(p =>  p.get), Color.valueOf(colorHex))
-      }
+      diceSection = DicePane(dieRollsProducer, colorHex)
     )
     def build: Node = new BorderPane {
       border = boxStyle.fxBorder
