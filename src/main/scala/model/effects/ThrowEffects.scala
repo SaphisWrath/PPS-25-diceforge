@@ -10,7 +10,7 @@ import model.utils.ResourceEffectModules.SubtractResource
 trait ThrowAction:
   protected def results: Seq[(Player, Effect, Int)]
   def throwDice(receiver: Player): Unit
-  def throwDice(receivers: Seq[Player]): Unit
+  def throwDice(receivers: Seq[Player]): Unit = receivers.foreach(throwDice)
 
 trait SubtractThrow extends ThrowAction:
   abstract override def throwDice(receiver: Player): Unit =
@@ -43,9 +43,6 @@ object ThrowEffects:
       pendingCount = times - 1
       currentPlayers = receivers
       rollDice()
-
-    override def throwDice(receivers: Seq[Player]): Unit =
-      receivers.foreach(throwDice)
 
     override def update(context: ModelPublisher.ModelContext): Unit = context match
       case ResourceContext =>

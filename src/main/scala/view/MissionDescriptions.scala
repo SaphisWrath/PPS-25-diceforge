@@ -8,7 +8,7 @@ object MissionDescriptions:
     ("gorgon", ("Gorgone", "Ottieni 14 Punti Vittoria")),
     ("hydra", ("Idra", "Ottieni 26 Punti Vittoria")),
     ("smith_chest", ("Forziere del fabbro", "Ottieni 2 Punti Vittoria e aumenta la tua capacità massima di 4 Oro, 3 Cristalli Solari, e 3 Cristalli Lunari")),
-    ("satyr", ("Satiri", "Ottieni 6 Punti Vittoria; tutti gli altri giocatori tirano i propri dadi senza appicarne gli effetti, poi scegli quali effetti applicare pre te stesso")),
+    ("satyr", ("Satiri", "Ottieni 6 Punti Vittoria; tutti gli altri giocatori tirano i propri dadi senza appicarne gli effetti, poi scegli quali effetti applicare per te stesso")),
     ("helmet", ("Elmo dell'invisibilità", "Ottieni 4 Punti Vittoria e ottieni una faccia \"Risultato per 3\" da applicare a uno dei tuoi dadi")),
     ("spirits", ("Spiriti Selvaggi", "Ottieni 2 Punti Vittoria, 3 Oro, e 3 Cristalli Lunari")),
     ("minotaur", ("Minotauro", "Ottieni 8 Punti Vittoria; tutti gli altri giocatori lanciano i loro dadi, ma perdono le risorse determinate dal lancio dei dadi invece di guadagnarle")),
