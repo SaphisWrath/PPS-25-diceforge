@@ -1,7 +1,7 @@
 package controller.dto.pathfinders
 
-import model.effects.ThrowEffects.ThrowAllDice
-import model.effects.{CopyEffect, Effect, MultiplyEffect, ResourceEffect, SubtractThrow, UpdateCapacityEffect}
+import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie}
+import model.effects.{CopyEffect, Effect, GrantFaceEffect, MultiplyEffect, ResourceEffect, SubtractThrow, UpdateCapacityEffect}
 import model.resource.*
 import scalafx.scene.layout.BackgroundImage
 
@@ -35,11 +35,13 @@ object ImagePathFinders:
     private val spritePath = systemSeparator + "sprites" + systemSeparator
 
     override def getPath(element: Effect): String = element match
-      case ResourceEffect(resource, _, _) => summon[ImagePathFinder[Resource]].getPath(resource)
+      case t: ResourceEffect => summon[ImagePathFinder[Resource]].getPath(t.resource)
       case t: MultiplyEffect => spritePath + "multiply.png"
       case t: CopyEffect => spritePath + "copy.png"
       case t: SubtractThrow => spritePath + "throw_subtract.png"
-      case t: UpdateCapacityEffect => spritePath + "capacity_up.png"
+      case t: UpdateCapacityEffect => summon[ImagePathFinder[Resource]].getPath(t.resource)
+      case t: ThrowOneDie => spritePath + "throw_one.png"
       case t: ThrowAllDice => spritePath  + "throw_all.png"
+      case t: GrantFaceEffect => summon[ImagePathFinder[Effect]].getPath(t.newFace)
       case _ =>  spritePath + "placeholder.png"
   

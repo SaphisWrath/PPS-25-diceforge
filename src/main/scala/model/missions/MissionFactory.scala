@@ -79,7 +79,7 @@ object MissionFactory:
     )
 
     def makeScorpion: Mission = new InstantMission(
-      cost = List(ResourceEffect(MoonCrystal(3), Self)),
+      cost = List(ResourceEffect(MoonCrystal(6), Self)),
       reward = List(
         ResourceEffect(GloryPoint(8), Self),
         ThrowAllDice(2)
@@ -112,7 +112,7 @@ object MissionFactory:
       missionCost = List(ResourceEffect(MoonCrystal(1), Self)),
       missionReward = List.empty,
       supportCost = List(ResourceEffect(Gold(12), Self)),
-      supportReward = List(ResourceEffect(GloryPoint(20), Self)),
+      supportReward = List(ResourceEffect(GloryPoint(17), Self)),
       id = "smith_hammer",
       startCount = startCount
     )
@@ -137,8 +137,8 @@ object MissionFactory:
 
     def makeOwl: Mission = new SupportMission(
       missionCost = List(ResourceEffect(SunCrystal(2), Self)),
-      missionReward = List.empty,
-      supportCost = List(ResourceEffect(Gold(3), Self)),
+      missionReward = List(ResourceEffect(GloryPoint(4), Self)),
+      supportCost = List.empty,
       supportReward = List(OptionEffect(Seq(
         ResourceEffect(Gold(1), Self),
         ResourceEffect(SunCrystal(1), Self),

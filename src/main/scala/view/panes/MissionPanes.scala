@@ -39,7 +39,7 @@ object MissionPanes:
     border = makeBorder(borderColor)
     background = makeBackgroundFill(fillColor)
     alignment = Center
-    padding = Insets(10)
+    padding = Insets(2)
     spacing = 10
     children = Seq(
       name,

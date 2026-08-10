@@ -56,7 +56,7 @@ object ThrowEffects:
   class ThrowSubtractEffect(times: Int = 1, target: Target = Self) extends ThrowAllDice(times, target) with SubtractThrow
   class ThrowTimesEffect(times: Int = 1, target: Target = Self) extends ThrowAllDice(times, target)
 
-  class ThrowOneDie(times: Int = 1) extends Effect:
+  class ThrowOneDie(val times: Int = 1) extends Effect:
     override def resolve(receiver: Player): Unit =
       receiver.pendingRolls = times
       ModelPublisher().notify(DieChoiceContext)

@@ -210,7 +210,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     case PlayerMovedContext => missionPane.redraw()
     case PlayerChoiceContext =>
       val choiceController = controller.solveController
-      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, effectPane)
+      manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, effectPane(_))
     case ItemObtainedContext =>
       shopPane.redraw()
       manageChoices[DieDTO](
@@ -220,7 +220,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           manageChoices[EffectDTO](
             faceSwapController.pendingChoices,
             faceSwapController.resumeAfterChoices,
-            effectPane
+            effectPane(_)
           )
         },
         DiePane(_)

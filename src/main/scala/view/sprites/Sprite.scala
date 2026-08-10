@@ -25,8 +25,7 @@ trait Sprite:
 
 object Sprite:
   private class BaseSprite(path: String) extends Sprite:
-    override def getSpriteAsImage: Image =
-      Image(getClass.getResource(path).toString)
+    override def getSpriteAsImage: Image = Image(getClass.getResource(path).toString)
 
 
     override def getSpriteAsBackground: Background =
