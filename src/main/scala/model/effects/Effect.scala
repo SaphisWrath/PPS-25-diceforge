@@ -48,10 +48,9 @@ case class GrantFaceEffect(newFace: Effect) extends Effect:
     receiver.dice.foreach(_.setQueueFace(newFace))
     ModelPublisher().notify(FaceObtainedContext)
 
-class OptionEffect(options: Seq[Effect]) extends CompoundEffect(options) with EffectWrapper:
-  private var _currentEffect: Effect = options.head
-  override def currentEffect: Effect = _currentEffect
-  override def currentEffect_=(effect: Effect): Unit = if options.contains(effect) then _currentEffect = effect
+class OptionEffect(options: Seq[Effect]) extends CompoundEffect(options):
+  override def resolve(receiver: Player): Unit =
+    EffectManager().attemptSolve(Seq((receiver, this)))
 
 class CopyEffect extends Effect with EffectWrapper:
   var currentEffect: Effect = emptyEffect
