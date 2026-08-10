@@ -209,17 +209,17 @@ object GameController:
 
     override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
 
-    override def shopItems: Seq[ItemDTO] = {
+    override def shopItems: Seq[ItemDTO] =
       val shop = gameMatch.shop
       shop.items
         .map(i => (i, shop.getPrice(i)))
         .map((item, cost) => ItemDTO(
           EffectDTO(item),
           EffectDTO(ResourceEffect(cost.get, Target.Self)),
+          shop.getStocked(item).getOrElse(0),
           () => shop.buy(item, gameMatch.activePlayer),
-          () => true)
-        )
-    }
+          () => shop.getStocked(item).isDefined
+        ))
 
     override def dice(playerDTO: PlayerDTO): Seq[DieDTO] =
       gameMatch.playerFrom(playerDTO.name).get.dice.map(DieDTO(_))
