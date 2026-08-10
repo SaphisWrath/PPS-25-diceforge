@@ -16,8 +16,9 @@ enum Target:
 trait Effect:
   def resolve(receivers: Seq[Player]): Unit = receivers.foreach(resolve)
   def resolve(receiver: Player): Unit
+  def target: Target = Self
 
-case class ResourceEffect(resource: Resource, target: Target, private var module: ResourceEffectModule = AddResource) extends Effect:
+case class ResourceEffect(resource: Resource, override val target: Target, private var module: ResourceEffectModule = AddResource) extends Effect:
   override def resolve(receiver: Player): Unit = module.apply(receiver.board, resource)
   def setModule(mod: ResourceEffectModule): Unit = module = mod
 

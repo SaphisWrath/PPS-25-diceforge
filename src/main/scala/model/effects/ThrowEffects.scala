@@ -3,6 +3,7 @@ package model.effects
 import model.ModelPublisher.ModelContext.{DieChoiceContext, ResourceContext}
 import model.ModelPublisher.ModelSubscriber
 import model.Players.Player
+import model.effects.Target.Self
 import model.{ModelPublisher, effects}
 import model.utils.RandomModules.given_RandomModule_Int
 import model.utils.ResourceEffectModules.SubtractResource
@@ -21,7 +22,7 @@ trait SubtractThrow extends ThrowAction:
     )
 
 object ThrowEffects:
-  class ThrowAllDice(val times: Int = 1) extends Effect with ThrowAction with ModelSubscriber:
+  case class ThrowAllDice(times: Int = 1, override val target: Target = Self) extends Effect with ThrowAction with ModelSubscriber:
     this.setPublisher(ModelPublisher())
     protected var results: Seq[(Player, Effect, Int)] = Seq.empty
     private var currentPlayers: Seq[Player] = Seq.empty
@@ -52,8 +53,8 @@ object ThrowEffects:
           rollDice()
       case _ =>
 
-  class ThrowSubtractEffect extends ThrowAllDice with SubtractThrow
-  class ThrowTimesEffect(times: Int = 1) extends ThrowAllDice(times)
+  class ThrowSubtractEffect(times: Int = 1, target: Target = Self) extends ThrowAllDice(times, target) with SubtractThrow
+  class ThrowTimesEffect(times: Int = 1, target: Target = Self) extends ThrowAllDice(times, target)
 
   class ThrowOneDie(val times: Int = 1) extends Effect:
     override def resolve(receiver: Player): Unit =
