@@ -1,6 +1,7 @@
 package controller
 
 import controller.ViewState.*
+import model.ModelPublisher
 
 enum ViewState:
   case MainMenu
@@ -37,9 +38,12 @@ object ControllerStage:
     override def init(): Unit = changeScene(viewState)
 
     override def changeScene(newState: ViewState): Unit =
+      ViewPublisher().reset()
       newState match
         case MainMenu => navigator.navigateToMainMenu()
-        case MatchInit => navigator.navigateToMatchInit()
+        case MatchInit =>
+          ModelPublisher().reset()
+          navigator.navigateToMatchInit()
         case Board => navigator.navigateToBoard()
         case MatchEnd => navigator.navigateToMatchEnd()
       viewState = newState

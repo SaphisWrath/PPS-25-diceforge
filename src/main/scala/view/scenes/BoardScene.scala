@@ -2,6 +2,7 @@ package view.scenes
 
 import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.ViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, ViewPublisher}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
@@ -202,7 +203,9 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   override def update(context: ViewContext): Unit = context match
     case TurnChangeContext =>
-      activePlayer() = controller.activePlayer
+      if controller.isGameEnded
+      then controllerStage.changeScene(MatchEnd)
+      else activePlayer() = controller.activePlayer
     case TurnStepChangeContext => turnStep() = controller.turnStep
     case PlayerMovedContext => missionPane.redraw()
     case PlayerChoiceContext =>

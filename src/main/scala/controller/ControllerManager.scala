@@ -45,10 +45,11 @@ object ControllerManager:
     override val stageController: ControllerStage =
       ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)), ViewState.MainMenu)
 
-    override def matchInitController: ControllerMatchInit = ControllerMatchInit()
+    override val matchInitController: ControllerMatchInit = ControllerMatchInit()
 
     override def gameController: GameController =
       gameMatch = Option(matchInitController.builder.build())
+      matchInitController.reset()
       GameController(gameMatch.get)
 
     override def matchEndController: ControllerMatchEnd = gameMatch match
