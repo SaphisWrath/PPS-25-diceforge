@@ -12,6 +12,7 @@ import model.shop.Shop
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.RandomModules.given_RandomModule_Int
+import _root_.utils.SeqUtils.*
 
 import scala.util.Random
 
@@ -161,7 +162,7 @@ object GameMatch:
 
     override def activePlayer: Player = players(turn)
 
-    override def nonActivePlayers: Seq[Player] = players.filter(_ != activePlayer)
+    override def nonActivePlayers: Seq[Player] = players.rotate(players.indexOf(activePlayer)).filter(_ != activePlayer)
 
     override def playerFrom(name: String): Option[Player] = players.find(_.name == name)
 
