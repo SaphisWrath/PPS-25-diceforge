@@ -96,19 +96,8 @@ class SupportMission(
 class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: Player, id: String = "placeholder")
   extends BaseMission(rewards, cost, id) with InstantRewards with Obtained with Notification
 
-class GrantFaceMission(reward: List[Effect],
-                       cost: List[ResourceEffect],
-                       newFace: Effect,
-                       id: String = "placeholder",
-                       startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
-  override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
-    super.applyEffects(receiverProducer)
-    receiverProducer(Target.Self).foreach(_.dice.foreach(_.setQueueFace(newFace)))
-    ModelPublisher().notify(FaceObtainedContext)
-
 class CopyOtherEffectsMission(reward: List[Effect],
           cost: List[ResourceEffect],
-          newFace: Effect,
           id: String = "placeholder",
           startCount: Int = 4) extends InstantMission(reward, cost, id, startCount):
   override def applyEffects(receiverProducer: Target => Seq[Player]): Unit = {
