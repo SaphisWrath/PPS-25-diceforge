@@ -127,7 +127,8 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private val nextTurnButton: Node = ButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
-    () => controller.nextTurn()
+    () => controller.nextTurn(),
+    () => !controller.canGoToNextTurn || centralPane.currentState == Start
   )
 
   private val buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
@@ -184,7 +185,8 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
           () =>
             centralPane.setState(ObtainedMissions)
             obtainedMissionsPane.redraw()
-            obtainedMissionsButton.redraw()
+            obtainedMissionsButton.redraw(),
+          () => !controller.canGoToNextTurn
         )
     }
   }
