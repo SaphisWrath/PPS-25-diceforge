@@ -21,11 +21,8 @@ class FxMainStage extends MainStage[Node]:
     scene = new Scene {
       root = mainPane
     }
-    resizable = true
-    minWidth = 800
-    minHeight = 500
-    width = 800
-    height = 500
+    maximized = true
+    resizable = false
   }
 
   override def setContent(scene: ViewScene[Node]): Unit = paneContent() = scene()
