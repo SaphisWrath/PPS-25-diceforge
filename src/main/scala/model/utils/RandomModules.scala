@@ -9,5 +9,5 @@ trait RandomModule[T]:
 object RandomModules:
   given RandomModule[Int] with
     override def randomIndex(upperBound: Int): Int =
-      val random = Random(Date().getTime)
-      random.between(0, upperBound)
+      val random = new Random()
+      random.nextInt(upperBound)

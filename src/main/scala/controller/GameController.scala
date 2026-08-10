@@ -109,9 +109,9 @@ trait GameController:
   def turnStep: String
 
   def shopItems: Seq[ItemDTO]
-  
+
   def dice(playerDTO: PlayerDTO): Seq[DieDTO]
-  
+
   def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO]
 
 object GameController:
@@ -126,6 +126,7 @@ object GameController:
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
       case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
       case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
+      case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)

@@ -9,7 +9,6 @@ import scalafx.scene.control.Button
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
-import view.scenes.ViewComponent
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 

@@ -11,6 +11,7 @@ object ModelPublisher:
     case PlayerMovedContext
     case ChoiceContext
     case FaceObtainedContext
+    case DiceThrownContext
 
   trait ModelSubscriber extends Subscriber[ModelContext]
   
