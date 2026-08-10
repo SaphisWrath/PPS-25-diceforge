@@ -128,11 +128,10 @@ object EffectManager:
       multiplyEffects
         .map((p, e) => (p, e.asInstanceOf[MultiplyEffect]))
         .foreach((p, e) =>
-          resourceEffects
-            .find((player, _) => player.name == p.name)
-            .map(_._2) match
-            case Some(effect) => e.currentEffect = effect
-            case _ =>
+          e.currentEffect = SumEffect(
+            resourceEffects
+              .filter((player, _) => player.name == p.name)
+              .map(_._2))
           e.resolve(p)
         )
 
