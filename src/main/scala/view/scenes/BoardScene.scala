@@ -15,7 +15,7 @@ import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
 import view.buttons.ButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
-import view.panes.DiePanes.DiePane
+import view.panes.DicePanes.DiePane
 import view.panes.EffectPanes.effectPane
 import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
