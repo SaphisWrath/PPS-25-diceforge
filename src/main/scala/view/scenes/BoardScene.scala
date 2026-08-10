@@ -206,6 +206,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
       val choiceController = controller.solveController
       manageChoices[EffectDTO](choiceController.pendingChoices, choiceController.resumeAfterChoices, effectPane)
     case ItemObtainedContext =>
+      shopPane.redraw()
       manageChoices[DieDTO](
         Seq((controller.activePlayer, controller.dice(controller.activePlayer))),
         results => {
