@@ -21,7 +21,7 @@ trait SubtractThrow extends ThrowAction:
     )
 
 object ThrowEffects:
-  class ThrowAllDice(times: Int = 1) extends Effect with ThrowAction with ModelSubscriber:
+  class ThrowAllDice(val times: Int = 1) extends Effect with ThrowAction with ModelSubscriber:
     this.setPublisher(ModelPublisher())
     protected var results: Seq[(Player, Effect, Int)] = Seq.empty
     private var currentPlayers: Seq[Player] = Seq.empty
@@ -53,7 +53,7 @@ object ThrowEffects:
       case _ =>
 
   class ThrowSubtractEffect extends ThrowAllDice with SubtractThrow
-  class ThrowTimesEffect(val times: Int = 1) extends ThrowAllDice(times)
+  class ThrowTimesEffect(times: Int = 1) extends ThrowAllDice(times)
 
   class ThrowOneDie(val times: Int = 1) extends Effect:
     override def resolve(receiver: Player): Unit =

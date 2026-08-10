@@ -31,7 +31,7 @@ object EffectDTO:
       )
       case UpdateCapacityEffect(resource) => EffectDTO(
         findImagePath(effect),
-        Some("+" + resource.amount.toString)
+        Some("++" + resource.amount.toString)
       )
       case MultiplyEffect(multiplier) => EffectDTO (
         findImagePath(effect),
@@ -41,7 +41,7 @@ object EffectDTO:
         findImagePath(effect),
         Some("++")
       )
-      case t: ThrowTimesEffect => EffectDTO(
+      case t: ThrowAllDice => EffectDTO(
         findImagePath(effect),
         Some(s"×${t.times.toString}")
       )
