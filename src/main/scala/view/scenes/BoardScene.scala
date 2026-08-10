@@ -34,7 +34,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   import CentralPaneStates.*
 
-  private val playerDirectors: Map[PlayerDTO, PlayerGUIComponentFactory] =
+  private val playerFactories: Map[PlayerDTO, PlayerGUIComponentFactory] =
     controller.players.map(p => p -> PlayerGUIComponentFactory(
       p,
       controller.playerBoard(p),
@@ -53,7 +53,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private val turnStep: StringProperty = StringProperty("")
   turnStep.onChange((_, _, _) =>
-    centralPane.setState(if controller.canEndSupportPhase then ObtainedMissions else Missions)
+    centralPane.setState(if controller.isSupportPhase then ObtainedMissions else Missions)
     turnPhaseSection.redraw()
     obtainedMissionsPane.redraw()
     obtainedMissionsButton.redraw()
@@ -67,7 +67,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   private val missionPane: Redrawable = Redrawable{ () =>
     MissionBoardPane(
       controller.missions,
-      controller.playerPositions.map((i, p) => (i, playerDirectors(p).onlyToken))
+      controller.playerPositions.map((i, p) => (i, playerFactories(p).onlyToken))
     )
   }
 
@@ -90,7 +90,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   }
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
-    val playerBox = playerDirectors(activePlayer()).activePlayerBox
+    val playerBox = playerFactories(activePlayer()).activePlayerBox
     val playerPane: HBox = new HBox {
       children = Seq(playerBox, menuSection)
       spacing = 5
@@ -101,7 +101,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   }
 
   private def nonActivePlayersPane: Node =
-    val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerDirectors(_))
+    val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerFactories(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
       .map(_.nonActivePlayerBox)
     val pane: HBox = new HBox {
@@ -163,7 +163,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
         new FlowPane {
           children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
         },
-        if controller.canEndSupportPhase then
+        if controller.isSupportPhase then
           ButtonFactory.makeBoardButton(BSStrings.endSupportPhaseButton, () => controller.endSupportPhase())
         else
           Group()
