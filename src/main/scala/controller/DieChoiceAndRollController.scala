@@ -9,6 +9,7 @@ import model.effects.EffectManager
 import model.utils.RandomModules.given_RandomModule_Int
 
 class DieChoiceAndRollController(player: Player) extends ChoiceController[DieDTO] with ModelSubscriber:
+  this.setPublisher(ModelPublisher())
   var dieIndex: Int = 0
 
   private def rollDie(): Unit = EffectManager().attemptSolve(Seq((player, player.dice(dieIndex).roll)))

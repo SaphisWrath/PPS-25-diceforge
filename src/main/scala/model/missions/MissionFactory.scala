@@ -1,7 +1,7 @@
 package model.missions
 
 import model.effects.Target.Self
-import model.effects.ThrowEffects.{ThrowAllDice, ThrowSubtractEffect}
+import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie, ThrowSubtractEffect}
 import model.effects.{CopyEffect, GrantFaceEffect, MultiplyEffect, OptionEffect, ResourceEffect, Target, UpdateCapacityEffect}
 import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
 
@@ -102,7 +102,7 @@ object MissionFactory:
       cost = List(ResourceEffect(SunCrystal(6), Self)),
       reward = List(
         ResourceEffect(GloryPoint(10), Self),
-        //TODO add
+        ThrowOneDie(4)
       ),
       id = "sphinx",
       startCount = startCount
@@ -121,7 +121,7 @@ object MissionFactory:
       missionCost = List(ResourceEffect(MoonCrystal(2), Self)),
       missionReward = List(ResourceEffect(GloryPoint(2), Self)),
       supportCost = List.empty,
-      supportReward = List.empty, //TODO add
+      supportReward = List(ThrowOneDie(1)),
       id = "silver_doe",
       startCount = startCount
     )
