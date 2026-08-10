@@ -11,9 +11,10 @@ trait ImagePathFinder[T]:
   val systemSeparator: String = "/"
 
   /**
+   * Returns the sprite path, formatted for jar navigation, of the selected element
    *
-   * @tparam T the type of model element that requires an image
-   * @return
+   * @param element the element whose sprite we have to find
+   * @return the sprite path
    */
   def getPath(element: T): String
 

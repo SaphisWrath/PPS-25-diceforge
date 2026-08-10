@@ -84,7 +84,7 @@ object MissionPanes:
 
   class MissionBoardPane(missions: Map[Int, Seq[MissionDTO]], playerTokens: Map[Int, Node]) extends BorderPane:
     private val contentSpacing: Double = 20
-    padding = Insets(20)
+    padding = Insets(10)
     top = new HBox {
       alignment = Center
       spacing = contentSpacing
