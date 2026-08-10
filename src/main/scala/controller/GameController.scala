@@ -3,12 +3,14 @@ package controller
 import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{EffectDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
+import controller.FaceSwapController
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.effects.Target
+import model.effects.{ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
+import model.resource.Gold
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
 
 trait GameController:
@@ -107,6 +109,14 @@ trait GameController:
 
   def turnStep: String
 
+  def shopItems: Seq[ItemDTO]
+
+  def dice(playerDTO: PlayerDTO): Seq[DieDTO]
+
+  def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO]
+
+  def dieChoiceAndRollController: ChoiceController[DieDTO]
+
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
     this.setPublisher(ModelPublisher())
@@ -117,7 +127,9 @@ object GameController:
       case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
       case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
       case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
-      case ModelContext.ChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
+      case ModelContext.EffectChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
+      case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
+      case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
       case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
 
     override def startGame(): Unit =
@@ -157,8 +169,8 @@ object GameController:
 
     override def recentDiceResults(playerName: String): Seq[Option[EffectDTO]] =
       gameMatch.playerFrom(playerName).get.dice.map(d => 
-        if d.lastEffect.isEmpty then None
-        else Some(EffectDTO(d.lastEffect.get))
+        if d.lastRolledEffect.isEmpty then None
+        else Some(EffectDTO(d.lastRolledEffect.get))
       )
     
     override def playerPositions: Map[Int, PlayerDTO] = gameMatch.playerPositions.map((i, p) => (i, PlayerDTO(p)))
@@ -175,7 +187,6 @@ object GameController:
 
     override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
     override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
-
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
@@ -198,6 +209,34 @@ object GameController:
     override def turnStep: String = TurnStepConverter.toString(gameMatch.currentTurnStep)
 
     override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
+
+    override def shopItems: Seq[ItemDTO] =
+      val shop = gameMatch.shop
+      shop.items
+        .map(i => (i, shop.getPrice(i)))
+        .sortBy(_._2.getOrElse(Gold(0)).amount)
+        .map((item, cost) => ItemDTO(
+          EffectDTO(item),
+          EffectDTO(ResourceEffect(cost.get, Target.Self)),
+          shop.getStocked(item).getOrElse(0),
+          () => {
+            shop.buy(item, gameMatch.activePlayer)
+            gameMatch.executeAction(StandardAction)
+          },
+          () => shop.getStocked(item).getOrElse(0) > 0 && gameMatch.activePlayer.board.canSpend(cost.get)
+        ))
+
+    override def dice(playerDTO: PlayerDTO): Seq[DieDTO] =
+      gameMatch.playerFrom(playerDTO.name).get.dice.map(DieDTO(_))
+
+    override def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO] =
+      FaceSwapController(
+        gameMatch.activePlayer,
+        gameMatch.activePlayer.dice(dieIndex)
+      )
+
+    override def dieChoiceAndRollController: ChoiceController[DieDTO] =
+      DieChoiceAndRollController(gameMatch.activePlayer)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

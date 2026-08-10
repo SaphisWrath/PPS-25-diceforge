@@ -1,28 +1,29 @@
 package view.scenes
 
 import controller.ViewState.{MainMenu, MatchInit}
+import controller.dto.PlayerDTO
 import controller.{ControllerMatchEnd, ControllerStage}
-import model.Players.Player
-import model.resource.GloryPoint
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
-import scalafx.scene.control.{Button, Label}
+import scalafx.scene.control.Label
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
-import scalafx.scene.{Node, Scene}
+import scalafx.scene.Node
 import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
 import view.ViewComponents.ViewScene
+import view.buttons.ButtonFactory.makeMenuButton
+import view.sprites.Sprite
 
 class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage) extends ViewScene[Node]:
-  private val newMatchButton = new Button {
-    text = ESStrings.playAgainButtonText
-    onAction = _ => controllerStage.changeScene(MatchInit)
-  }
-  private val endGameButton = new Button {
-    text = ESStrings.exitButtonText
-    onAction = _ => controllerStage.changeScene(MainMenu)
-  }
+  private val newMatchButton = makeMenuButton(
+    ESStrings.playAgainButtonText,
+    _ => controllerStage.changeScene(MatchInit)
+  )
+  private val endGameButton = makeMenuButton(
+    ESStrings.exitButtonText,
+    _ => controllerStage.changeScene(MainMenu)
+  )
 
   private def makeRowWith(nodes: Iterable[Node]): HBox =
     new HBox {
@@ -32,9 +33,9 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
       children = nodes
     }
 
-  private def setupPlayerRanking(players: Seq[(Player, GloryPoint)]): Seq[HBox] = {
-    def samePlacement(player: (Player, GloryPoint), previousPlayer: Option[(Player, GloryPoint)]): Boolean =
-      previousPlayer.isEmpty || previousPlayer.get._2.amount == player._2.amount
+  private def setupPlayerRanking(players: Seq[(PlayerDTO, Int)], resPath: String): Seq[HBox] = {
+    def samePlacement(player: (PlayerDTO, Int), previousPlayer: Option[(PlayerDTO, Int)]): Boolean =
+      previousPlayer.isEmpty || previousPlayer.get._2 == player._2
 
     def buildLabel(_text: String, sizeX: Int, sizeY: Int, fontSize: Int): Label =
       new Label {
@@ -44,7 +45,7 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
         minHeight = sizeY
       }
 
-    var labelSizeX = 200
+    var labelSizeX = 140
     var labelSizeY = 100
     var fontSize = 20
     var placement = 1
@@ -62,17 +63,22 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
           fontSize = 15
         val placementLabel = buildLabel(s"$placement.", 20, labelSizeY, fontSize)
         val nameLabel = buildLabel(player.name, labelSizeX, labelSizeY, fontSize)
-        val pointLabel = buildLabel(s"${points.amount} ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
+        val pointLabel = buildLabel(s"$points ${RStrings.gloryPoint}", labelSizeX, labelSizeY, fontSize)
 
         nameLabel.alignment = Center
         nameLabel.alignmentInParent = Center
         nameLabel.textFill = Color.White
         nameLabel.background = new Background(Array(new BackgroundFill(
-          Color.valueOf(player.color.toString),
+          Color.valueOf(player.colorHex),
           CornerRadii.Empty,
           Insets.Empty
         )))
-        val returnBox = makeRowWith(Seq(placementLabel, nameLabel, pointLabel))
+        val returnBox = makeRowWith(Seq(
+          placementLabel,
+          nameLabel,
+          pointLabel,
+          Sprite(resPath).getSpriteAsImageView
+        ))
         returnBox.setMinSize(labelSizeX, labelSizeY)
         returnBox
       )
@@ -83,6 +89,6 @@ class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerS
     spacing = 20
     alignment = Center
     alignmentInParent = Center
-    val playerRanking: Seq[HBox] = setupPlayerRanking(controller.getSortedPlayers)
+    val playerRanking: Seq[HBox] = setupPlayerRanking(controller.sortedPlayers, controller.gloryPointPath)
     children = playerRanking.appended(makeRowWith(Seq(newMatchButton, endGameButton)))
   }

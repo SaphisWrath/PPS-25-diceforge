@@ -8,15 +8,20 @@ trait Die:
 
   def addFace(newFace: Effect, replacedFace: Option[Effect] = None): Unit
 
+  def addFaceFromQueue(replacedFace: Effect): Unit
+
   def faces: Seq[Effect]
 
-  def lastEffect: Option[Effect]
+  def lastRolledEffect: Option[Effect]
+
+  def setQueueFace(nextFace: Effect): Unit
 
 object Die:
   private class BaseDie(numFaces: Int) extends Die:
     private var _faces: Seq[Effect] = Seq.empty
     private val maxFaces: Int = numFaces
-    private var _lastEffect: Option[Effect] = Option.empty
+    private var _lastEffect: Option[Effect] = None
+    private var _queueEffect: Option[Effect] = None
 
     private def isFull: Boolean = numFaces == _faces.length
 
@@ -36,11 +41,19 @@ object Die:
             addFace(newFace)
           case _ => throw IllegalStateException("Max number of faces was reached but no replacedFace was provided.")
 
-    override def lastEffect: Option[Effect] = _lastEffect
+    override def lastRolledEffect: Option[Effect] = _lastEffect
+
+    override def setQueueFace(nextFace: Effect): Unit = _queueEffect = Some(nextFace)
+
+    override def addFaceFromQueue(replacedFace: Effect): Unit =
+      if _queueEffect.isEmpty
+      then throw IllegalStateException("Can't add a face from empty queue.")
+      else addFace(_queueEffect.get, Some(replacedFace))
+      _queueEffect = None
 
   def apply(numFaces: Int): Die = new BaseDie(numFaces)
   
   def apply(faces: Seq[Effect]): Die =
     val die = BaseDie(faces.size)
-    faces.foreach(die.addFace(_, Option.empty))
+    faces.foreach(die.addFace(_, None))
     die

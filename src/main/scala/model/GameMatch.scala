@@ -1,13 +1,14 @@
 package model
 
 import model.ModelPublisher.ModelContext
-import model.ModelPublisher.ModelContext.{DiceThrownContext, TurnEndContext, TurnStepContext}
+import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
 import model.dice.Die
 import model.effects.{Effect, EffectManager}
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.{Gold, PlayerBoard}
-import model.turn.TurnManagers.TurnAction.{CompleteDiceThrow, EndSupport}
+import model.shop.factories.EffectShopFactory
+import model.shop.Shop
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.RandomModules.given_RandomModule_Int
@@ -52,6 +53,8 @@ trait GameMatch:
   def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit
 
   def getDiceResults: Seq[(Player, Effect)]
+
+  def shop: Shop[Effect]
 
 //TODO Refactor
 object GameMatch:
@@ -122,14 +125,14 @@ object GameMatch:
       
     override def currentTurnStep: TurnStep = turnManager.currentStep
 
-    override def getDiceResults: Seq[(Player, Effect)] = players.flatMap(p => p.dice.map(d => (p, d.lastEffect.get)))
+    override def getDiceResults: Seq[(Player, Effect)] = players.flatMap(p => p.dice.map(d => (p, d.lastRolledEffect.get)))
 
     override def startDiceThrow(): Unit = startDiceThrow(players.map(p => (p, p.dice)))
 
     override def startDiceThrow(playerDice: Seq[(Player, Seq[Die])]): Unit =
       val thrown = playerDice.flatMap((p, d) => d.map(die => (p, die.roll)))
-      ModelPublisher().notify(DiceThrownContext)
-      EffectManager().attemptSolve(thrown)
+      EffectManager().attemptSolve(thrown, true)
 
+    override val shop: Shop[Effect] = EffectShopFactory().makeStandardShop
 
   def apply(playerList: Seq[Player]): GameMatch = GameMatchImpl(playerList)

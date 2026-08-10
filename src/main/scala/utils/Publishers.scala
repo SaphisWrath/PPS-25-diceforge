@@ -31,6 +31,18 @@ object Publishers:
      */
     def notify(context: C): Unit
 
+    /**
+     * 
+     * @param subscriber the subscriber to unsubscribe for this publisher
+     */
+    def unsubscribe(subscriber: Subscriber[C]): Unit
+    
+    /**
+     * Unsubscribe all subscribers
+     * 
+     */
+    def reset(): Unit
+
   object Publisher:
     private class PublisherImpl[C<:Context] extends Publisher[C]:
       private var subscribers: Seq[Subscriber[C]] = Seq.empty
@@ -39,4 +51,8 @@ object Publishers:
 
       def notify(context: C): Unit = subscribers.foreach(_.update(context))
 
+      override def unsubscribe(subscriber: Subscriber[C]): Unit = subscribers = subscribers.diff(Seq(subscriber))
+
+      override def reset(): Unit = subscribers = Seq.empty
+    
     def apply[C<:Context](): Publisher[C] = PublisherImpl[C]()

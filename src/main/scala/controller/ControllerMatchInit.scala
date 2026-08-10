@@ -1,56 +1,52 @@
 package controller
 
-import model.MatchBuilder
+import controller.dto.PlayerDTO
+import model.{MatchBuilder, MatchBuilderImpl}
 import model.Players.*
 
 /**
  * A controller to handle communication with view about match initialization
  */
 trait ControllerMatchInit:
-  def setPlayerAmount(amount: Int): Unit
-
-  def isPlayerAmountSet: Boolean
-
-  def updateMatchInfo(name: String, color: Color): Unit
+  def updateMatchInfo(name: String, color: String): Unit
 
   def isLastPlayerValid: Boolean
+  
+  def currentPlayers: Seq[PlayerDTO]
 
-  def allPlayersSet: Boolean
+  def enoughPlayers: Boolean
+
+  def maxPlayers: Boolean
 
   def reset(): Unit
 
   def builder: MatchBuilder
 
 object ControllerMatchInit:
-  private class ControllerMatchInitImpl(matchBuilder: MatchBuilder) extends ControllerMatchInit:
+  private class ControllerMatchInitImpl extends ControllerMatchInit:
+    private val matchBuilder = MatchBuilderImpl()
     matchBuilder.reset()
-    var isPlayerAmountSet = false
     var isLastPlayerValid = true
-    private var playerAmount: Int = 0
 
     private def accept(newPlayer: Player): Boolean =
+      newPlayer.name != "" && Color.values.contains(newPlayer.color) &&
       !matchBuilder.currentPlayers.exists(p => p.name == newPlayer.name || p.color == newPlayer.color)
 
-    override def setPlayerAmount(amount: Int): Unit =
-      if !isPlayerAmountSet
-      then
-        playerAmount = amount
-        isPlayerAmountSet = true
-
-    override def updateMatchInfo(name: String, color: Color): Unit =
-      val nextPlayer = Player(name, color)
+    override def updateMatchInfo(name: String, color: String): Unit =
+      val nextPlayer = Player(name, Color.valueOf(color))
       isLastPlayerValid = accept(nextPlayer)
       if isLastPlayerValid then matchBuilder.addPlayer(nextPlayer)
 
-    override def allPlayersSet: Boolean =
-      matchBuilder.currentPlayers.size >= playerAmount
-
     override def reset(): Unit =
       matchBuilder.reset()
-      isPlayerAmountSet = false
       isLastPlayerValid = true
-      playerAmount = 0
 
     override def builder: MatchBuilder = matchBuilder
 
-  def apply(matchBuilder: MatchBuilder): ControllerMatchInit = ControllerMatchInitImpl(matchBuilder)
+    override def enoughPlayers: Boolean = matchBuilder.currentPlayers.size > 1
+
+    override def maxPlayers: Boolean = matchBuilder.currentPlayers.size == 4
+
+    override def currentPlayers: Seq[PlayerDTO] = matchBuilder.currentPlayers.map(PlayerDTO(_))
+
+  def apply(): ControllerMatchInit = ControllerMatchInitImpl()
