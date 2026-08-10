@@ -2,6 +2,7 @@ package controller.dto
 
 import controller.converters.ResourceConverters.stringToResourceBuilder
 import controller.dto.pathfinders.ImagePathFinders.{findImagePath, given}
+import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie, ThrowTimesEffect}
 import model.effects.{UpdateCapacityEffect, *}
 import model.resource.Resource
 import view.LanguageStrings
@@ -25,15 +26,27 @@ object EffectDTO:
         case _ => Option.empty
       )
       case ResourceEffect(resource, _, _) => EffectDTO(
-        findImagePath(resource),
+        findImagePath(effect),
         Some(resource.amount.toString)
       )
       case UpdateCapacityEffect(resource) => EffectDTO(
-        findImagePath(resource),
+        findImagePath(effect),
         Some("+" + resource.amount.toString)
       )
       case MultiplyEffect(multiplier) => EffectDTO (
         findImagePath(effect),
         Some(multiplier.toString)
+      )
+      case GrantFaceEffect(newFace) => EffectDTO(
+        findImagePath(effect),
+        Some("++")
+      )
+      case t: ThrowTimesEffect => EffectDTO(
+        findImagePath(effect),
+        Some(s"×${t.times.toString}")
+      )
+      case t: ThrowOneDie => EffectDTO(
+        findImagePath(effect),
+        Some(s"×${t.times.toString}")
       )
       case _ => EffectDTO(findImagePath(effect), Option.empty)

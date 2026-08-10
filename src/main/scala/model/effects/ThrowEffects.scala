@@ -53,9 +53,9 @@ object ThrowEffects:
       case _ =>
 
   class ThrowSubtractEffect extends ThrowAllDice with SubtractThrow
-  class ThrowTimesEffect(times: Int = 1) extends ThrowAllDice(times)
+  class ThrowTimesEffect(val times: Int = 1) extends ThrowAllDice(times)
 
-  class ThrowOneDie(times: Int = 1) extends Effect:
+  class ThrowOneDie(val times: Int = 1) extends Effect:
     override def resolve(receiver: Player): Unit =
       receiver.pendingRolls = times
       ModelPublisher().notify(DieChoiceContext)
