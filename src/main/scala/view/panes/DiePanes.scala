@@ -14,6 +14,6 @@ object DiePanes:
         this.add(
           effectPane,
           i % 3,
-          i / 2
+          i / 3
         )
       )
