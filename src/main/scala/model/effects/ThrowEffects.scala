@@ -1,6 +1,7 @@
 package model.effects
 
-import model.ModelPublisher.ModelContext.DieChoiceContext
+import model.ModelPublisher.ModelContext.{DieChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelSubscriber
 import model.Players.Player
 import model.{ModelPublisher, effects}
 import model.utils.RandomModules.given_RandomModule_Int
@@ -19,8 +20,11 @@ trait SubtractThrow extends ThrowAction:
     )
 
 object ThrowEffects:
-  class ThrowAllDice(times: Int = 1) extends Effect with ThrowAction:
+  class ThrowAllDice(times: Int = 1) extends Effect with ThrowAction with ModelSubscriber:
+    this.setPublisher(ModelPublisher())
     protected var results: Seq[(Player, Effect, Int)] = Seq.empty
+    private var currentPlayers: Seq[Player] = Seq.empty
+    private var pendingCount = 0
 
     override def throwDice(receiver: Player): Unit =
       results = results.concat(receiver.dice.zipWithIndex.map((d, i) => (receiver, d.roll, i)))
@@ -28,16 +32,27 @@ object ThrowEffects:
     override def resolve(receiver: Player): Unit =
       resolve(Seq(receiver))
 
+    private def rollDice(): Unit =
+      results = Seq.empty
+      throwDice(currentPlayers)
+      EffectManager().updateTurnEffects(results)
+      EffectManager().attemptSolve(results.map((p, e, i) => (p, e)))
+
     override def resolve(receivers: Seq[Player]): Unit =
-      Array.range(0, times).foreach(_ =>
-        throwDice(receivers)
-        EffectManager().updateTurnEffects(results)
-        EffectManager().attemptSolve(results.map((p, e, i) => (p, e)))
-        results = Seq.empty
-      )
+      pendingCount = times - 1
+      currentPlayers = receivers
+      rollDice()
 
     override def throwDice(receivers: Seq[Player]): Unit =
       receivers.foreach(throwDice)
+
+    override def update(context: ModelPublisher.ModelContext): Unit = context match
+      case ResourceContext =>
+        if currentPlayers.nonEmpty && pendingCount > 0
+        then
+          pendingCount = pendingCount - 1
+          rollDice()
+      case _ =>
 
   class ThrowSubtractEffect extends ThrowAllDice with SubtractThrow
   class ThrowTimesEffect(times: Int = 1) extends ThrowAllDice(times)
