@@ -6,7 +6,7 @@ import model.ModelPublisher.ModelContext.{EffectChoiceContext, ResourceContext}
 import model.ModelPublisher.ModelSubscriber
 import model.Players.Color.{Green, Orange}
 import model.effects.Target.Self
-import model.resource.{Gold, SunCrystal}
+import model.resource.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -31,6 +31,7 @@ class EffectManagerTest extends AnyFlatSpec with Matchers:
   )
 
   "An EffectManager" should "solve ResourceEffects without outer help" in:
+    resetChoiceListenerRecord()
     val goldAmount = 3
     val sunCrystalAmount = 2
     val effects = Seq(
@@ -42,4 +43,22 @@ class EffectManagerTest extends AnyFlatSpec with Matchers:
     choiceCalls should be(0)
     players.head.board.gold.amount should be(goldAmount)
     players.head.board.sunCrystals.amount should be(sunCrystalAmount)
+
+  "An EffectManager" should "handle SumEffects and MultiplyEffects accordingly" in:
+    resetChoiceListenerRecord()
+    val gloryPointAmount = 3
+    val moonCrystalAmount = 2
+    val multiplier = 3
+    val effects = Seq(
+      (players.head, SumEffect(Seq(
+        ResourceEffect(GloryPoint(gloryPointAmount), Self),
+        ResourceEffect(MoonCrystal(moonCrystalAmount), Self),
+      ))),
+      (players.head, MultiplyEffect(multiplier)),
+    )
+
+    effectManager.attemptSolve(effects)
+    choiceCalls should be(0)
+    players.head.board.gloryPoints.amount should be(gloryPointAmount * multiplier)
+    players.head.board.moonCrystals.amount should be(moonCrystalAmount * multiplier)
 
