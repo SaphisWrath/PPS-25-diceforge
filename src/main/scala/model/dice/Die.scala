@@ -4,16 +4,42 @@ import model.effects.Effect
 import model.utils.RandomModule
 
 trait Die:
+  /**
+   * Rolls the die and returns the resulting face
+   * 
+   * @param randomModule the module utilized for generating a random number
+   * @return the result of the roll
+   */
   def roll(using randomModule: RandomModule[Int]): Effect
 
+  /**
+   * Adds a face to the die, returning an exception if the replaced face was not provided and the die is full
+   * @param newFace the new face
+   * @param replacedFace the face that will be replaced by newFace
+   */
   def addFace(newFace: Effect, replacedFace: Option[Effect] = None): Unit
 
+  /**
+   * Adds a face from the internal queue of new faces, requiring the face that will be replaced.
+   * 
+   * @param replacedFace the face that will be replaced by the top of the new faces queue
+   */
   def addFaceFromQueue(replacedFace: Effect): Unit
 
+  /**
+   * @return All the faces of the die
+   */
   def faces: Seq[Effect]
 
+  /**
+   * @return the result of the most recent roll, if there is one
+   */
   def lastRolledEffect: Option[Effect]
 
+  /**
+   * Adds a new face to the queue of faces that should be added to the die
+   * @param nextFace the new face
+   */
   def setQueueFace(nextFace: Effect): Unit
 
 object Die:

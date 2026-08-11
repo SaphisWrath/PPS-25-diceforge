@@ -14,8 +14,21 @@ enum Target:
   case Others
 
 trait Effect:
+  /**
+   * Resolves the effect on the receivers
+   * @param receivers the receivers
+   */
   def resolve(receivers: Seq[Player]): Unit = receivers.foreach(resolve)
+
+  /**
+   * Resolves the effect on a single receiver
+   * @param receiver the receiver
+   */
   def resolve(receiver: Player): Unit
+
+  /**
+   * @return the target of the effect, Self by default
+   */
   def target: Target = Self
 
 case class ResourceEffect(resource: Resource, override val target: Target, private var module: ResourceEffectModule = AddResource) extends Effect:
@@ -25,8 +38,21 @@ case class ResourceEffect(resource: Resource, override val target: Target, priva
 val emptyEffect = ResourceEffect(Gold(0), Self)
 
 trait EffectWrapper extends Effect:
+  /**
+   * @return the current wrapped effect
+   */
   def currentEffect: Effect
+
+  /**
+   * sets the wrapped effect
+   * @param effect the wrapped effect
+   */
   def currentEffect_=(effect: Effect): Unit
+
+  /**
+   * resolves the wrapped effect on the receiver
+   * @param receiver the receiver
+   */
   override def resolve(receiver: Player): Unit = currentEffect.resolve(receiver)
 
 abstract case class CompoundEffect(effects: Seq[Effect]) extends Effect

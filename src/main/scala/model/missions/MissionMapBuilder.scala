@@ -5,6 +5,9 @@ import model.effects.Target.Self
 import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
 
 object MissionMapBuilder:
+  /**
+   * @return a map of placeholder missions for testing
+   */
   def makePlaceholderMissions: Map[Int, List[Mission]] =
     val cost: List[ResourceEffect] = List(ResourceEffect(Gold(3), Self))
     val reward: List[ResourceEffect] = List(ResourceEffect(SunCrystal(3), Self), ResourceEffect(MoonCrystal(3), Self))
@@ -22,6 +25,10 @@ object MissionMapBuilder:
       6 -> List(placeholderMission, placeholderInstant, placeholderGrantFace)
     ).toMap
 
+  /**
+   * @param startCount the amount of times a mission can be completed
+   * @return the standard map of missions
+   */
   def makeStandardMissions(startCount: Int): Map[Int, List[Mission]] = {
     val builder = MissionFactory(startCount)
     List(

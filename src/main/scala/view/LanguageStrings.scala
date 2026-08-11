@@ -5,8 +5,11 @@ object LanguageStrings:
 
   object TitleScreenStrings:
     val title = "DICE FORGE"
-    val startButtonText = "INIZIA"
+    val startButtonText = "Inizia"
     val ruleButtonText = "Regole"
+    
+  object GenericButtonStrings:
+    val close = "Chiudi"
 
   object GameInitScreenStrings:
     val addPlayerButtonText = "Aggiungi Giocatore"
@@ -21,7 +24,7 @@ object LanguageStrings:
 
   object BoardScreenStrings:
     val nextTurnButtonText = "Prossimo Turno"
-    val buyExtraActionButton = "Buy extra action(2 SunCrystals)"
+    val buyExtraActionButton = "Compra Azione Standard extra (2 Cristalli Solari)"
     val visitShopButton = "Visita il negozio"
     val leaveShopButton = "Ritorna alla mappa"
     val actionTakenText = "Hai eseguito la tua azione"

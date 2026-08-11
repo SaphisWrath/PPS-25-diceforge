@@ -9,29 +9,56 @@ import model.resource.PlayerBoard
 import model.utils.RandomModules.given_RandomModule_Int
 
 trait Mission:
+  /**
+   * Returns the instant reward of the mission
+   * @return A list of effects that are the rewards of the mission
+   */
   def reward: List[Effect]
 
+  /**
+   * Returns the instant cost of the mission
+   * @return The list of costs of the mission
+   */
   def cost: List[ResourceEffect]
 
+  /**
+   * @return the id of the mission
+   */
   def id: String
 
+  /**
+   * @param receiverProducer producer of the players that need to check 
+   * @return whether the receivers can complete the mission
+   */
   def canGet(receiverProducer: Target => Seq[Player]): Boolean =
     cost.forall { e =>
       val players = receiverProducer(e.target)
       players.nonEmpty && players.forall(_.board.canSpend(e.resource))
     }
 
+  /**
+   * Awards the players with the mission effects and subtracts the cost
+   * @param receiverProducer the receivers producer
+   */
   final def get(receiverProducer: Target => Seq[Player]): Unit =
     if canGet(receiverProducer) then
       payCost(receiverProducer)
       applyEffects(receiverProducer)
 
+  /**
+   * Subtracts the cost of the mission from the targets' board
+   * @param receiverProducer the receivers producer
+   */
   protected def payCost(receiverProducer: Target => Seq[Player]): Unit =
     cost.foreach(r => {
       r.setModule(model.utils.ResourceEffectModules.SubtractResource)
       r.resolve(receiverProducer(r.target))
     })
 
+  /**
+   * Applies the reward effects to produced players.
+   * @param receiverProducer the receivers producer
+   */
   protected def applyEffects(receiverProducer: Target => Seq[Player]): Unit
 
 object Mission:
@@ -59,6 +86,10 @@ trait LimitedPurchase(_startingPurchaseCount: Int) extends Mission:
     availableForPurchase && super.canGet(receiverProducer)
 
 trait InstantRewards extends Mission:
+  /**
+   * Applies the rewards immediately upon completion of the mission
+   * @param receiverProducer the receivers producer
+   */
   abstract override def applyEffects(receiverProducer: Target => Seq[Player]): Unit =
     super.applyEffects(receiverProducer)
     reward.foreach(r => r.resolve(receiverProducer(r.target)))

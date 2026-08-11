@@ -16,7 +16,7 @@ object MissionDescriptions:
     ("scorpion", ("Scorpione", s"Ottieni 8 $gloryPoint; tira entrambi i tuoi dadi due volte e ottieni i risultati")),
     ("mirror", ("Specchio dell'abisso", s"Ottieni 10 $gloryPoint e ottieni una faccia \"Copia\" da applicare a uno dei tuoi dadi")),
     ("sphinx", ("Sfinge", s"Ottieni 10 $gloryPoint, poi tiri uno dei tuoi dadi 4 volte e ne ottieni i risultati")),
-    ("smith_hammer", ("Martello del fabbro", s"Spendi 12 $gold per ottenere 20 $gloryPoint")),
+    ("smith_hammer", ("Martello del fabbro", s"Spendi 12 $gold per ottenere 17 $gloryPoint")),
     ("silver_doe", ("Cerva d'argento", s"Ottieni 2 $gloryPoint; durante il tuo turno puoi tirare uno dei tuoi dadi e applicarne gli effetti")),
     ("elder", ("Anziano", s"Spendi 3 $gold per ottenere 4 $gloryPoint")),
     ("owl", ("Gufo del guardiano", s"Ottieni 4 $gloryPoint; durante il tuo turno puoi ottenere a scelta 1 $gold, 1 $sunCrystal, o 1 $moonCrystal"))
