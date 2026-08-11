@@ -1,10 +1,10 @@
 package view.scenes
 
-import controller.publishers.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
-import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.StandardViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
 import controller.publishers.ViewPublisher
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.{ControllerStage, GameController, StandardViewState}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
@@ -65,7 +65,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
     Label(turnStep())
   }
 
-  private val missionPane: Redrawable = Redrawable{ () =>
+  private val missionPane: Redrawable = Redrawable { () =>
     MissionBoardPane(
       controller.missions,
       controller.playerPositions.map((i, p) => (i, playerFactories(p).onlyToken))

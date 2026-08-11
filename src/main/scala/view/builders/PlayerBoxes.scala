@@ -1,7 +1,6 @@
 package view.builders
 
 import controller.dto.EffectDTO
-import scalafx.Includes.hex2sfxColor
 import general_utils.Publishers.Publisher
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
@@ -11,10 +10,8 @@ import scalafx.scene.shape.Circle
 import scalafx.scene.{Group, Node}
 import view.builders.ResourceBoxes.{BaseResourceBox, ResourceWithCapBox}
 import view.panes.DicePanes.FacePane
-import view.panes.EffectPanes.EffectWrapperPane
 
 import scala.language.postfixOps
-
 
 
 object PlayerBoxes:
@@ -47,7 +44,7 @@ object PlayerBoxes:
       borderWidth = 2,
       backgroundColor = Color.Transparent)
     val None = PlayerBoxStyle()
-  
+
   def circleTokenComponent(color: Color, radius: Double): Node = Circle(radius, color)
 
   case class PlayerBoxBuilder(
@@ -83,11 +80,12 @@ object PlayerBoxes:
       )
 
     def withDiceSection(
-                       dieRollsProducer: () => Seq[Option[EffectDTO]],
-                       colorHex: String
+                         dieRollsProducer: () => Seq[Option[EffectDTO]],
+                         colorHex: String
                        ): PlayerBoxBuilder = this.copy(
       diceSection = FacePane(dieRollsProducer, colorHex)
     )
+
     def build: Node = new BorderPane {
       border = boxStyle.fxBorder
       background = boxStyle.fxBackground
