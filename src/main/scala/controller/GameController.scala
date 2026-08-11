@@ -214,11 +214,11 @@ object GameController:
         m,
         () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
         () =>
-          MissionHandler(() =>
-            gameMatch.movePlayer(gameMatch.activePlayer, i)
+          new MissionHandler(() =>
             m.get(extractTarget)
+            gameMatch.executeAction(StandardAction)
           )
-          gameMatch.executeAction(StandardAction)
+          gameMatch.movePlayer(gameMatch.activePlayer, i)
       ))))
       
     override def playerMissions(playerName: String): Seq[MissionDTO] =
