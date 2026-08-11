@@ -2,9 +2,10 @@ package view.text
 
 import scalafx.geometry.Insets
 import scalafx.scene.Node
+import scalafx.scene.control.Label
 import scalafx.scene.paint.Color.{Black, Cyan, DarkRed, Peru, Red, White}
 import scalafx.scene.paint.{Color, LinearGradient, Paint, Stops}
-import scalafx.scene.text.Text
+import scalafx.scene.text.{Font, Text}
 import scalafx.stage.Popup
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.theme.JfxTheme
@@ -17,10 +18,18 @@ object TextFactory:
       margin = Insets(10)
       fill = new LinearGradient(
         endX = 0,
-        stops = Stops(JfxTheme.primary, JfxTheme.tertiary))
-      stroke = JfxTheme.tertiary
+        stops = Stops(JfxTheme.primary, JfxTheme.primaryBorder))
+      stroke = JfxTheme.primaryBorder
     }
 
+  def makeRulesLabel(text: String, parentWidth: Double, parentHeight: Double): Label =
+    new Label(text) {
+      font = Font.font(20)
+      wrapText = true
+      prefWidth = parentWidth - 20
+      maxWidth = parentWidth - 20
+    }
+  
   def makeMissionName(name: String): Text =
     new Text {
       text = name
@@ -33,6 +42,14 @@ object TextFactory:
       text = label
       style = "-fx-font: normal bold 10pt sans-serif"
       fill = JfxTheme.onPrimaryContainer
+    }
+
+  def makeTurnCounterText(label: String): Text =
+    new Text {
+      text = label
+      style = "-fx-font: normal bold 25pt sans-serif"
+      stroke = Black
+      fill = JfxTheme.primary
     }
 
   def makeEffectText(label: String): Text = {
