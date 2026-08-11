@@ -130,7 +130,7 @@ trait GameController:
 
   /** Controller used for complicate effect resolutions
    *
-   * @return A instance of [[ChoiceController]] of [[EffectDTO]]
+   * @return An instance of [[ChoiceController]] of [[EffectDTO]]
    */
   def solveController: ChoiceController[EffectDTO]
 
@@ -211,11 +211,6 @@ object GameController:
 
     override def playerMissions(playerName: String): Seq[MissionDTO] = gameDTOConverter.playerMissions(playerName, extractTarget)
 
-    private def extractTarget(target: Target): Seq[Player] = target match
-      case Self => Seq(gameMatch.activePlayer)
-      case All => gameMatch.players
-      case Others => gameMatch.nonActivePlayers
-
     override def players: Seq[PlayerDTO] = gameDTOConverter.playersDTOs
 
     override def recentDiceResults(playerName: String): Seq[Option[EffectDTO]] = gameDTOConverter.recentDiceResultsDTO(playerName)
@@ -262,6 +257,11 @@ object GameController:
 
     override def dieChoiceAndRollController: ChoiceController[DieDTO] =
       DieChoiceAndRollController(gameMatch.activePlayer)
+
+    private def extractTarget(target: Target): Seq[Player] = target match
+      case Self => Seq(gameMatch.activePlayer)
+      case All => gameMatch.players
+      case Others => gameMatch.nonActivePlayers
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
