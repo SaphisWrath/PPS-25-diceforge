@@ -1,5 +1,6 @@
 import controller.{ControllerManager, ControllerStage, Navigator}
 import scalafx.application.JFXApp3
+import view.utils.FxPopup
 import view.{FxMainStage, FxSceneFactory}
 
 object MainApp extends JFXApp3 {
@@ -11,6 +12,7 @@ object MainApp extends JFXApp3 {
         controller => FxSceneFactory(controller)
       )
     controllerManager.stageController.init()
+    FxPopup.setOwner(mainStage.primaryStage)
     stage = mainStage.primaryStage
   }
 }

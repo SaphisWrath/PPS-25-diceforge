@@ -152,7 +152,9 @@ object GameMatch:
     private val _missions: Map[Int, Seq[Mission]] = MissionMapBuilder.makeStandardMissions(players.length)
     private val mapManager: MapManager = MapManager(
       () => ModelPublisher().notify(ModelContext.PlayerMovedContext),
-      player => startDiceThrow(Seq((player, player.dice)))
+      player =>
+        EffectManager().updateTurnEffects(player.dice.zipWithIndex.map((d, i) => (player, d.roll, i)))
+        EffectManager().attemptSolve(player.dice.map(d => (player, d.lastRolledEffect.get)))
     )
     export mapManager.*
 

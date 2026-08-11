@@ -23,7 +23,7 @@ object ButtonFactory:
       onAction = event => onClick(event)
       textFill = JfxTheme.onPrimaryContainer
       background = ViewUtils.makeBackgroundFill(JfxTheme.primaryContainer, CornerRadii(10))
-      border = ViewUtils.makeBorder(JfxTheme.onPrimaryContainer, CornerRadii(10))
+      border = ViewUtils.makeBorder(JfxTheme.primaryBorder, CornerRadii(10))
     }
 
   def makeBoardButton(buttonText: String, onClick: () => Unit, isDisabled: () => Boolean = () => false): Button =
@@ -36,7 +36,7 @@ object ButtonFactory:
           cornerRadii
         )
         border = ViewUtils.makeBorder(
-          if disabled.value then JfxTheme.onSecondaryContainer else JfxTheme.onTertiaryContainer,
+          if disabled.value then JfxTheme.secondaryBorder else JfxTheme.tertiaryBorder,
           cornerRadii
         )
 

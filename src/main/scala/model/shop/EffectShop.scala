@@ -21,7 +21,6 @@ class EffectShop(initialItems: (Effect, Resource, Int)*) extends Shop[Effect]:
       val price = getPrice(item)
       if player.board.canSpend(price.get) then
         player.board.takeResource(price.get)
-        _catalog.map((k, v) => if k == item then (k, (v._1, v._2 - 1)))
         _catalog = _catalog.updated(item, (getPrice(item).get, getStocked(item).get - 1))
         player.dice.foreach(_.setQueueFace(item))
         ModelPublisher().notify(ResourceContext)

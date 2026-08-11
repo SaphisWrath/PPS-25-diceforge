@@ -1,12 +1,15 @@
 package view.utils
 
+import javafx.stage.Screen
 import scalafx.geometry.Insets
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 
 object ViewUtils:
-  val globalCornerRadii = 15
-  val globalBorderWidth = 4
+  private val globalCornerRadii = 15
+  private val globalBorderWidth = 4
+  val screenWidth: Double = Screen.getPrimary.getVisualBounds.getWidth
+  val screenHeight: Double = Screen.getPrimary.getVisualBounds.getHeight
 
   def makeBackgroundFill(color: Color, cornerRadii: CornerRadii = CornerRadii(globalCornerRadii)): Background =
     Background(Array(BackgroundFill(color, cornerRadii, Insets.Empty)))

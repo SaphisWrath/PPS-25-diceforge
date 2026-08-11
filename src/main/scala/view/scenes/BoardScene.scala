@@ -1,6 +1,8 @@
 package view.scenes
 
-import controller.StandardViewState.MatchEnd
+import controller.ViewPublisher.ViewContext.*
+import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.ViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
 import controller.publishers.ViewPublisher
 import controller.publishers.ViewPublisher.ViewContext.*
@@ -22,7 +24,9 @@ import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.panes.ShopPanes.ShopPane
 import view.scenes.CentralPaneStates.ObtainedMissions
-import view.{Redrawable, scenes}
+import view.text.TextFactory
+import view.utils.FxPopup
+import view.{LanguageStrings, Redrawable, scenes}
 
 object CentralPaneStates:
   val Start = MultiPaneState("Start")
@@ -192,7 +196,14 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
     }
   }
 
-  private def roundCounter: Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
+  private def roundCounter: Node =
+    new HBox {
+      children ++= Seq(
+        TextFactory.makeTurnCounterText(s"${controller.currentRound}/${controller.maxNumberOfRounds}"),
+        ButtonFactory.makeBoardButton(LanguageStrings.TitleScreenStrings.ruleButtonText, () => FxPopup.showPopUp())
+      )
+      spacing = 5
+    }
 
   private val mainPane = new BorderPane {
     top = topMainPane.component
