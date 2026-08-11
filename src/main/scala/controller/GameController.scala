@@ -5,6 +5,7 @@ import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
 import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
 import controller.choices.{ChoiceController, DieChoiceAndRollController, EffectSolveController, FaceSwapController}
+import controller.dto.MissionDTO.MissionHandler
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
@@ -211,29 +212,12 @@ object GameController:
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
         () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
-        () => {
-          new ModelSubscriber {
-            setPublisher(ModelPublisher())
-            private var playerMoved = false
-            private var missionGot = false
-            private def activateMission(): Unit =
-              m.get(extractTarget)
-              gameMatch.executeAction(StandardAction)
-              missionGot = true
-
-            override def update(context: ModelContext): Unit = {
-              if !missionGot
-              then context match
-                case ModelPublisher.ModelContext.PlayerMovedContext =>
-                  if EffectManager().effectsToSolve.isEmpty
-                  then activateMission()
-                  else playerMoved = true
-                case ModelPublisher.ModelContext.ResourceContext => if playerMoved then activateMission()
-                case _ =>
-            }
-          }
-          gameMatch.movePlayer(gameMatch.activePlayer, i)
-        }
+        () =>
+          MissionHandler(() =>
+            gameMatch.movePlayer(gameMatch.activePlayer, i)
+            m.get(extractTarget)
+          )
+          gameMatch.executeAction(StandardAction)
       ))))
       
     override def playerMissions(playerName: String): Seq[MissionDTO] =
