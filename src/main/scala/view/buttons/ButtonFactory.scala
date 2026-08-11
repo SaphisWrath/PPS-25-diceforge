@@ -50,7 +50,7 @@ object ButtonFactory:
         case _ => this.disable = isDisabled()
 
     val button = ButtonSubscriber()
-    button.setPublisher(ViewPublisher())
+    button.subscribeTo(ViewPublisher())
     button
     
   def makeChoiceButton(icon: Node, onClick: () => Unit): Button =

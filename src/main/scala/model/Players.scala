@@ -11,17 +11,18 @@ object Players:
     case Black extends Color("Black")
     case Blue extends Color("Blue")
 
+  /** Represents a participant in the game and holds their current state
+   *
+   */
   trait Player:
 
     /** The nickname of the player
-     *
      *
      * @return The name of the player
      */
     def name: String
 
     /** The color representing the player
-     *
      *
      * @return The assigned color
      */
@@ -31,13 +32,11 @@ object Players:
      *
      * This board contains all the resources of the player
      *
-     *
      * @return The [[PlayerBoard]] instance containing the resources of the player
      */
     def board: PlayerBoard
 
     /** The Dices of the player
-     *
      *
      * @return A sequence containing the [[Dice]] instances
      */
@@ -45,13 +44,11 @@ object Players:
 
     /** The missions that the player obtained
      *
-     *
      * @return A sequence containing all the [[Obtained]] instances
      */
     def missions: Seq[Obtained]
 
     /** Add an obtained mission to the mission list
-     *
      *
      * @param mission The [[Obtained]] instance that should be added
      */
@@ -59,13 +56,11 @@ object Players:
 
     /** How many rolls the player has to perform
      *
-     *
      * @return The number of rolls the player has to perform
      */
     def pendingRolls: Int
 
     /** Set the number of pending rolls
-     *
      *
      * @param rollsLeft The number of pending rolls to set
      */

@@ -49,7 +49,7 @@ object ThrowEffects:
     override def resolve(receiver: Player): Unit = resolve(Seq(receiver))
 
   case class ThrowAllDice(times: Int = 1, override val target: Target = Self) extends PartialThrowEffect with ModelSubscriber:
-    this.setPublisher(ModelPublisher())
+    this.subscribeTo(ModelPublisher())
     private var currentPlayers: Seq[Player] = Seq.empty
     private var pendingCount = 0
 

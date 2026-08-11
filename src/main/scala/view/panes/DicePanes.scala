@@ -10,7 +10,7 @@ import view.panes.EffectPanes.{EffectGridPane, effectPane}
 
 object DicePanes:
   class FacePane(effects: () => Seq[Option[EffectDTO]], colorHex: String) extends HBox with ViewSubscriber:
-    setPublisher(ViewPublisher())
+    subscribeTo(ViewPublisher())
     private def updateChildren(): Unit =
       if !effects().contains(None) then
         children = EffectGridPane(effects().map(e => e.get), Color.valueOf(colorHex), true)

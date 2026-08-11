@@ -1,5 +1,6 @@
 package model
 
+import general_utils.SeqUtils.*
 import model.ModelPublisher.ModelContext
 import model.ModelPublisher.ModelContext.{TurnEndContext, TurnStepContext}
 import model.Players.Player
@@ -7,15 +8,18 @@ import model.dice.Die
 import model.effects.{Effect, EffectManager}
 import model.missions.{Mission, MissionMapBuilder}
 import model.resource.{Gold, PlayerBoard, SunCrystal}
-import model.shop.factories.EffectShopFactory
 import model.shop.Shop
+import model.shop.factories.EffectShopFactory
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.RandomModules.given_RandomModule_Int
-import general_utils.SeqUtils.*
 
 import scala.util.Random
 
+/** The core of the game
+ *
+ * Handles the main components and the state of a game
+ */
 trait GameMatch:
   /** The map of the missions in the game
    *
