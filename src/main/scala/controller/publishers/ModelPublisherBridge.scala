@@ -21,3 +21,4 @@ class ModelPublisherBridge extends ModelSubscriber:
     case ModelContext.FaceObtainedContext => ItemObtainedContext
     case ModelContext.DieChoiceContext => SelectDieForThrowContext
     case ModelContext.DiceThrownContext => DiceThrownContext
+    case ModelContext.DiceThrowEnd => DiceThrowEnd

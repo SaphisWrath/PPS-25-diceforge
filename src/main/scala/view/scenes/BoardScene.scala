@@ -1,8 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.*
-import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.ViewState.MatchEnd
+import controller.StandardViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
 import controller.publishers.ViewPublisher
 import controller.publishers.ViewPublisher.ViewContext.*

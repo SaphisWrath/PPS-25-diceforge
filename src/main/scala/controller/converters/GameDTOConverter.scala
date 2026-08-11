@@ -1,6 +1,7 @@
 package controller.converters
 
 import controller.dto.*
+import controller.dto.MissionDTO.MissionHandler
 import model.GameMatch
 import model.Players.Player
 import model.effects.{ResourceEffect, Target}
@@ -36,9 +37,11 @@ class GameDTOConverter(private val gameMatch: GameMatch):
       m,
       () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
       () => {
+        new MissionHandler(() =>
+          m.get(extractTarget)
+          gameMatch.executeAction(StandardAction)
+        )
         gameMatch.movePlayer(gameMatch.activePlayer, i)
-        m.get(extractTarget)
-        gameMatch.executeAction(StandardAction)
       }
     ))))
 

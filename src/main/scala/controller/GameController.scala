@@ -1,22 +1,13 @@
 package controller
 
-import controller.publishers.ViewPublisher.ViewContext.*
+import controller.choices.{ChoiceController, DieChoiceAndRollController, EffectSolveController, FaceSwapController}
 import controller.converters.{GameDTOConverter, TurnStepConverter}
 import controller.dto.*
-import controller.FaceSwapController
+import controller.publishers.ViewPublisher.ViewContext.*
 import controller.publishers.{ModelPublisherBridge, ViewPublisher}
 import model.GameMatch
-import controller.ViewPublisher
-import controller.ViewPublisher.ViewContext.*
-import controller.converters.TurnStepConverter
-import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
-import controller.choices.{ChoiceController, DieChoiceAndRollController, EffectSolveController, FaceSwapController}
-import controller.dto.MissionDTO.MissionHandler
-import model.ModelPublisher.*
-import model.{GameMatch, ModelPublisher}
 import model.Players.Player
 import model.effects.Target
-import model.effects.{EffectManager, ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
 import model.turn.TurnManagers.TurnAction.*
 
@@ -236,6 +227,8 @@ object GameController:
     override def shopItems: Seq[ItemDTO] = gameDTOConverter.shopItemsDTO
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
+
+    override def dice(playerDTO: PlayerDTO): Seq[DieDTO] = gameDTOConverter.diceDTO(playerDTO)
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
