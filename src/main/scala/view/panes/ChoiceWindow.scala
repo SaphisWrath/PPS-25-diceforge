@@ -10,9 +10,26 @@ import scalafx.stage.{Modality, Stage, StageStyle}
 import view.LanguageStrings
 import view.buttons.ButtonFactory.makeChoiceButton
 
+/**
+ * A window with different options a user can choose from
+ * @tparam A the type of the elements represented in each option
+ */
 trait ChoiceWindow[A]:
+  /**
+   * Displays the popup to the user
+   * @param mapper the mapper that turns the options into a visual representation of themselves
+   */
   def show(mapper: A => Node): Unit
-  def buttonsAvailable: Boolean
+
+  /**
+   *
+   * @return true if there are options to choose from
+   */
+  def optionsAvailable: Boolean
+
+  /**
+   * Forces the next choice in the sequence, should be used only if the user can't proceed normally
+   */
   def forceNext(): Unit
 
 object ChoiceWindowChain:
@@ -55,14 +72,14 @@ object ChoiceWindowChain:
 
       popupStage.showAndWait()
 
-    override def buttonsAvailable: Boolean = playerChoice._2.nonEmpty
-    override def forceNext(): Unit = buttonCallback(results, println)()
+    override def optionsAvailable: Boolean = playerChoice._2.nonEmpty
+    override def forceNext(): Unit = buttonCallback(results, () => {})()
 
   def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[Int] => Unit, mapper: A => Node): Unit =
     def nextChoiceWindow(results: Seq[Int], playerChoices: Seq[PlayerChoice[A]]): Unit =
       val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
       popup.show(mapper)
-      if !popup.buttonsAvailable then popup.forceNext()
+      if !popup.optionsAvailable then popup.forceNext()
 
     if choices.isEmpty
     then orElse(Seq.empty)
