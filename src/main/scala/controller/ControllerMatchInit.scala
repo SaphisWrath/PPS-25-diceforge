@@ -8,18 +8,46 @@ import model.Players.*
  * A controller to handle communication with view about match initialization
  */
 trait ControllerMatchInit:
+  /**
+   * Given a new player's info, it checks if it's correct and updates the match info if so
+   * @param name the new player's name
+   * @param color the new player's color
+   */
   def updateMatchInfo(name: String, color: String): Unit
 
+  /**
+   *
+   * @return true if the last entered player was added
+   */
   def isLastPlayerValid: Boolean
-  
+
+  /**
+   *
+   * @return the currently added players
+   */
   def currentPlayers: Seq[PlayerDTO]
 
+  /**
+   *
+   * @return true if there are enough players to start the match
+   */
   def enoughPlayers: Boolean
 
+  /**
+   *
+   * @return true if no more players can be added to this match
+   */
   def maxPlayers: Boolean
 
+  /**
+   * Resets this controller's previously saved info
+   */
   def reset(): Unit
 
+  /**
+   *
+   * @return the match builder to create a new match with the current players
+   */
   def builder: MatchBuilder
 
 object ControllerMatchInit:
