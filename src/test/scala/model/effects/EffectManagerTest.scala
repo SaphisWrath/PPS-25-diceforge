@@ -41,7 +41,7 @@ class EffectManagerTest extends AnyFlatSpec with Matchers:
       (players.head, ResourceEffect(SunCrystal(sunCrystalAmount), Self)),
     )
 
-    effectManager.attemptSolve(effects)
+    effectManager.attemptSolve(effects, true)
     choiceCalls should be(0)
     players.head.board.gold.amount should be(goldAmount)
     players.head.board.sunCrystals.amount should be(sunCrystalAmount)
@@ -60,12 +60,12 @@ class EffectManagerTest extends AnyFlatSpec with Matchers:
       (players.head, MultiplyEffect(multiplier)),
     )
 
-    effectManager.attemptSolve(effects)
+    effectManager.attemptSolve(effects, true)
     choiceCalls should be(0)
     players.head.board.gloryPoints.amount should be(gloryPointAmount * multiplier)
     players.head.board.moonCrystals.amount should be(moonCrystalAmount * multiplier)
 
-  "An EffectManager" should "ask the player how to solve OptionEffects and CopyEffects" in :
+  "An EffectManager" should "ask the player how to solve OptionEffects and CopyEffects" in:
     resetChoiceListenerRecord()
     val players = newPlayers
     val goldAmount = 3
@@ -94,3 +94,13 @@ class EffectManagerTest extends AnyFlatSpec with Matchers:
     players(1).board.sunCrystals.amount should be(0)
     choiceCalls should be(2)
 
+  "An EffectManager" should "handle SumEffect chains accordingly" in:
+    resetChoiceListenerRecord()
+    val players = newPlayers
+    val goldAmount = 3
+    val effects = Seq(
+      (players.head, SumEffect(Seq(SumEffect(Seq(ResourceEffect(Gold(goldAmount), Self))))))
+    )
+
+    effectManager.attemptSolve(effects, true)
+    players.head.board.gold.amount should be(goldAmount)

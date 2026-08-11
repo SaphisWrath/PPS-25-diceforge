@@ -7,6 +7,8 @@ import model.effects.*
 import model.utils.ResourceEffectModule
 import model.utils.ResourceEffectModules.AddResource
 
+import scala.annotation.tailrec
+
 /**
  * A manager that attempts to solve every effect given
  * Stores partial results when it needs user input, then attempts to solve again with the new info
@@ -94,12 +96,18 @@ object EffectManager:
 
     override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
 
+    @tailrec
     private def flattenSumEffects(effects: Seq[(Player, Effect)]): Seq[(Player, Effect)] =
-      effects.flatMap((p, e) => e match
+      val currentRound = effects.flatMap((p, e) => e match
         case e: SumEffect => e.effects.map(e => (p, e))
         case _ => Seq((p, e))
       )
-    
+
+      if !currentRound.exists((_, e) => e match {
+        case effect: SumEffect => true
+        case _ => false
+      }) then currentRound else flattenSumEffects(currentRound)
+
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
       val (copyEffects, resourceEffects) = effects
