@@ -14,14 +14,16 @@ class ThrowEffectTest extends AnyFlatSpec:
   "A ThrowSubtractEffect" should "subtract instead of giving resources to everyone" in:
     val players: Seq[MockPlayer] = newPlayers
     val res = Gold(2)
+    val throws = 2
     val mockDie = Die(Seq(ResourceEffect(res, Self)))
     val expected: Array[Int] = Array.ofDim(players.length)
     players.zipWithIndex.foreach((p, i) =>
       p.dice = Seq(mockDie, mockDie)
+      p.board = PlayerBoard.emptyBoard
       p.board.addResource(res.copy(res.amount * 5))
-      expected(i) = math.max(p.board.gold.amount - (res.amount * 2), 0)
+      expected(i) = math.max(p.board.gold.amount - (res.amount * 2 * throws), 0)
     )
-    ThrowSubtractEffect().resolve(players)
+    ThrowSubtractEffect(throws).resolve(players)
     players.zipWithIndex.foreach((p, i) =>
       assert(p.board.gold.amount == expected(i))
     )
@@ -59,8 +61,8 @@ class ThrowEffectTest extends AnyFlatSpec:
   "A CopyOtherThrowResults effect" should "let the player copy other player's results twice" in:
     val resEffect = ResourceEffect(Gold(1), Self)
     val mockDie = Die(Seq(resEffect))
-    val activePlayer = newPlayers.head
-    val otherPlayers = newPlayers.tail
+    val activePlayer = MockPlayer("Bruno", Orange)
+    val otherPlayers = Seq(MockPlayer("Lau", Orange))
     activePlayer.board = PlayerBoard.emptyBoard
     otherPlayers.foreach(_.dice = Seq(mockDie, mockDie))
     PlainThrowEffect().resolve(otherPlayers)
