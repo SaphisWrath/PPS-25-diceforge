@@ -92,6 +92,7 @@ object EffectManager:
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)
           _module = AddResource
+          _effectsToSolve = Seq.empty
           ModelPublisher().notify(ResourceContext)
 
     override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
@@ -144,5 +145,6 @@ object EffectManager:
         )
 
   private val effectManager = EffectManagerImpl()    
-  
-  def apply(): EffectManager = effectManager
+
+  def apply(createNew: Boolean = false): EffectManager =
+    if createNew then EffectManagerImpl() else effectManager

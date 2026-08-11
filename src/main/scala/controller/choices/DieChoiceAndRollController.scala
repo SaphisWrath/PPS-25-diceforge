@@ -13,7 +13,10 @@ class DieChoiceAndRollController(player: Player) extends ChoiceController[DieDTO
   private var pendingCount = player.pendingRolls - 1
   private var dieIndex: Int = 0
 
-  private def rollDie(): Unit = EffectManager().attemptSolve(Seq((player, player.dice(dieIndex).roll)))
+  private def rollDie(): Unit =
+    EffectManager().updateTurnEffects(Seq((player, player.dice(dieIndex).roll, dieIndex)))
+    EffectManager().attemptSolve(Seq((player, player.dice(dieIndex).lastRolledEffect.get)))
+
   override def pendingChoices: Seq[PlayerChoice[DieDTO]] = Seq((PlayerDTO(player), player.dice.map(DieDTO(_))))
   override def resumeAfterChoices(results: Seq[Int]): Unit =
     dieIndex = results.head
