@@ -1,8 +1,8 @@
 package view.scenes
 
-import controller.ViewState.{MainMenu, MatchInit}
+import controller.StandardViewState.{MainMenu, MatchInit}
 import controller.dto.PlayerDTO
-import controller.{ControllerMatchEnd, ControllerStage}
+import controller.{ControllerMatchEnd, ControllerStage, StandardViewState}
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.Center
 import scalafx.scene.control.Label
@@ -15,7 +15,7 @@ import view.ViewComponents.ViewScene
 import view.buttons.ButtonFactory.makeMenuButton
 import view.sprites.Sprite
 
-class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage) extends ViewScene[Node]:
+class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node]:
   private val newMatchButton = makeMenuButton(
     ESStrings.playAgainButtonText,
     _ => controllerStage.changeScene(MatchInit)

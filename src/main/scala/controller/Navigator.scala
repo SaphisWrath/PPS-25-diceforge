@@ -2,37 +2,15 @@ package controller
 
 import view.ViewComponents.{MainStage, ViewSceneFactory}
 
-trait Navigator:
-  /**Set the View to show the main menu
-   *
-   */
-  def navigateToMainMenu(): Unit
+trait ViewState
 
-  /**Set the View to show the match init screen
-   *
-   */
-  def navigateToMatchInit(): Unit
-
-  /**Set the View to show the gameboard
-   *
-   */
-  def navigateToBoard(): Unit
-
-  /**Set the View to show the match end screen
-   *
-   */
-  def navigateToMatchEnd(): Unit
+trait Navigator[VS]:
+  def navigateTo(viewState: VS): Unit
 
 object Navigator:
-  private class NavigatorImpl[T](mainStage: MainStage[T], viewSceneFactory: ViewSceneFactory[T]) extends Navigator:
+  private class NavigatorImpl[T, VS <: ViewState](mainStage: MainStage[T], viewSceneFactory: ViewSceneFactory[T,VS]) extends Navigator[VS]:
 
-    override def navigateToMainMenu(): Unit = mainStage.setContent(viewSceneFactory.createMainMenuScene())
+    override def navigateTo(viewState: VS): Unit = mainStage.setContent(viewSceneFactory.createScene(viewState))
 
-    override def navigateToMatchInit(): Unit = mainStage.setContent(viewSceneFactory.createMatchInitScene())
-
-    override def navigateToBoard(): Unit = mainStage.setContent(viewSceneFactory.createBoardScene())
-
-    override def navigateToMatchEnd(): Unit = mainStage.setContent(viewSceneFactory.createMatchEndScene())
-
-  def apply[T](mainStage: MainStage[T], viewSceneFactory: ViewSceneFactory[T]): Navigator =
+  def apply[T, VS <: ViewState](mainStage: MainStage[T], viewSceneFactory: ViewSceneFactory[T, VS]): Navigator[VS] =
     NavigatorImpl(mainStage, viewSceneFactory)

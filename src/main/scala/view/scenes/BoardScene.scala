@@ -2,9 +2,9 @@ package view.scenes
 
 import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.ViewState.MatchEnd
+import controller.StandardViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
-import controller.{ControllerStage, GameController, ViewPublisher}
+import controller.{ControllerStage, GameController, StandardViewState, ViewPublisher}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
@@ -29,7 +29,7 @@ object CentralPaneStates:
   val ObtainedMissions = MultiPaneState("ObtainedMissions")
   val Shop = MultiPaneState("Shop")
 
-class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
+class BoardScene(controller: GameController, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node] with ViewSubscriber:
   this.setPublisher(ViewPublisher())
 
   import CentralPaneStates.*

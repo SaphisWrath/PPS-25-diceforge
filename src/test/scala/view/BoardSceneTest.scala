@@ -2,7 +2,7 @@ package view
 
 import _root_.mock.MockControllerStage
 import controller.GameController
-import controller.ViewState.Board
+import controller.StandardViewState.Board
 import model.GameMatch
 import model.Players.Color.{Blue, Green, Orange}
 import model.Players.Player

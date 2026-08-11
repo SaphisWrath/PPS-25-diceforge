@@ -1,6 +1,6 @@
 package view
 
-import controller.ControllerManager
+import controller.{ControllerManager, ViewState}
 
 object ViewComponents:
   trait MainStage[T]:
@@ -11,11 +11,5 @@ object ViewComponents:
 
     def apply(): T = this.scene
 
-  trait ViewSceneFactory[T](controllerManager: ControllerManager):
-    def createMainMenuScene(): ViewScene[T]
-
-    def createMatchInitScene(): ViewScene[T]
-
-    def createBoardScene(): ViewScene[T]
-
-    def createMatchEndScene(): ViewScene[T]
+  trait ViewSceneFactory[T, VS <: ViewState](controllerManager: ControllerManager):
+    def createScene(viewState: VS): ViewScene[T]

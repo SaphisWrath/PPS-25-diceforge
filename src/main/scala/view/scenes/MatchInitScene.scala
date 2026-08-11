@@ -1,8 +1,8 @@
 package view.scenes
 
-import controller.ViewState.Board
+import controller.StandardViewState.Board
 import controller.dto.PlayerDTO
-import controller.{ControllerMatchInit, ControllerStage}
+import controller.{ControllerMatchInit, ControllerStage, StandardViewState}
 import javafx.event.ActionEvent
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Pos.Center
@@ -16,7 +16,7 @@ import view.ViewComponents.ViewScene
 import view.builders.PlayerBoxes.{PlayerBoxBuilder, PlayerBoxStyle}
 import view.buttons.ButtonFactory.makeMenuButton
 
-class MatchInitScene(controller: ControllerMatchInit, controllerStage: ControllerStage) extends ViewScene[Node]:
+class MatchInitScene(controller: ControllerMatchInit, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node]:
   private val playerNameField = new TextField()
   private val playerColorChoice = new ChoiceBox[String](ObservableBuffer[String]("Orange", "Green", "Blue", "Black"))
   playerColorChoice.value = "Orange"
