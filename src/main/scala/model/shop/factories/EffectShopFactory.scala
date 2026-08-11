@@ -11,7 +11,7 @@ class EffectShopFactory extends ShopFactory[Effect]:
     EffectShop(
       // 2 Gold
       (ResourceEffect(MoonCrystal(1), Self), Gold(2), 4),
-      (ResourceEffect(Gold(1), Self), Gold(2), 4),
+      (ResourceEffect(Gold(3), Self), Gold(2), 4),
       // 3 Gold
       (ResourceEffect(SunCrystal(1), Self), Gold(3), 4),
       (ResourceEffect(Gold(4), Self), Gold(3), 4),
