@@ -4,6 +4,7 @@ import mock.MockPlayer
 import model.Players.Color.{Green, Orange}
 import model.effects.Target.Self
 import model.resource.*
+import model.utils.ResourceEffectModules
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -81,4 +82,19 @@ class EffectManagerTest extends AnyFlatSpec with Matchers:
     )
 
     effectManager.attemptSolve(effects, true)
+    players.head.board.gold.amount should be(goldAmount)
+
+  "Setting a module for a solve" should "only last for the first complete solve to follow" in:
+    val players = getPlayers
+    val goldAmount = 3
+    val effects = Seq(
+      (players.head, ResourceEffect(Gold(goldAmount), Self))
+    )
+
+    effectManager.attemptSolve(effects, true)
+    players.head.board.gold.amount should be(goldAmount)
+    effectManager.setModuleOnce(ResourceEffectModules.SubtractResource)
+    effectManager.attemptSolve(effects)
+    players.head.board.gold.amount should be(0)
+    effectManager.attemptSolve(effects)
     players.head.board.gold.amount should be(goldAmount)
