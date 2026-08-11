@@ -43,7 +43,7 @@ object MissionDTO:
         if EffectManager().effectsToSolve.isEmpty
         then activateMission()
         else playerMoved = true
-      case ModelPublisher.ModelContext.ResourceContext => if playerMoved then activateMission()
+      case ModelPublisher.ModelContext.DiceThrowEnd => if playerMoved then activateMission()
       case _ =>
 
   def apply(mission: Mission): MissionDTO =

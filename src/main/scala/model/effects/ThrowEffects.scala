@@ -1,6 +1,6 @@
 package model.effects
 
-import model.ModelPublisher.ModelContext.{DieChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{DiceThrowEnd, DieChoiceContext}
 import model.ModelPublisher.ModelSubscriber
 import model.Players.Player
 import model.effects.Target.Self
@@ -48,7 +48,7 @@ object ThrowEffects:
       rollDice()
 
     override def update(context: ModelPublisher.ModelContext): Unit = context match
-      case ResourceContext =>
+      case DiceThrowEnd =>
         if currentPlayers.nonEmpty && pendingCount > 0
         then
           pendingCount = pendingCount - 1

@@ -201,6 +201,7 @@ object GameController:
       case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
       case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
       case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
+      case ModelContext.DiceThrowEnd => ViewPublisher().notify(DiceThrowEnd)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)

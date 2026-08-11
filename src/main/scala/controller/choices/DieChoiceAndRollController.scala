@@ -2,7 +2,7 @@ package controller.choices
 
 import controller.dto.{DieDTO, PlayerDTO}
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.ResourceContext
+import model.ModelPublisher.ModelContext.{DiceThrowEnd}
 import model.ModelPublisher.ModelSubscriber
 import model.Players.Player
 import model.effects.EffectManager
@@ -23,7 +23,7 @@ class DieChoiceAndRollController(player: Player) extends ChoiceController[DieDTO
     rollDie()
 
   override def update(context: ModelPublisher.ModelContext): Unit = context match
-    case ResourceContext =>
+    case DiceThrowEnd =>
       if pendingCount > 0
       then
         pendingCount = pendingCount - 1

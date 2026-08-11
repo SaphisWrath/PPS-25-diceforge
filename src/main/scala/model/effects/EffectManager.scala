@@ -1,7 +1,7 @@
 package model.effects
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{DiceThrownContext, EffectChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{DiceThrownContext, EffectChoiceContext, ResourceContext, DiceThrowEnd}
 import model.Players.Player
 import model.effects.*
 import model.utils.ResourceEffectModule
@@ -94,6 +94,7 @@ object EffectManager:
           _module = AddResource
           _effectsToSolve = Seq.empty
           ModelPublisher().notify(ResourceContext)
+          ModelPublisher().notify(DiceThrowEnd)
 
     override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
 
