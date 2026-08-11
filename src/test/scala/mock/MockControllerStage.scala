@@ -1,12 +1,12 @@
 package mock
 
-import controller.{ControllerStage, ViewState}
+import controller.{ControllerStage, StandardViewState}
 
-class MockControllerStage(private var view: ViewState) extends ControllerStage:
+class MockControllerStage(private var view: StandardViewState) extends ControllerStage[StandardViewState]:
   override def init(): Unit = print("initialized")
 
-  override def changeScene(newState: ViewState): Unit =
+  override def changeScene(newState: StandardViewState): Unit =
     view = newState
     println(s"Changed Scene to: $view")
 
-  override def currentViewState: ViewState = view
+  override def currentViewState: StandardViewState = view

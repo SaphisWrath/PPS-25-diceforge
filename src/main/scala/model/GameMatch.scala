@@ -12,7 +12,7 @@ import model.shop.Shop
 import model.turn.TurnManagers.TurnStep.StartStep
 import model.turn.TurnManagers.{TurnAction, TurnManager, TurnStep}
 import model.utils.RandomModules.given_RandomModule_Int
-import _root_.utils.SeqUtils.*
+import general_utils.SeqUtils.*
 
 import scala.util.Random
 

@@ -1,17 +1,16 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.*
-import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.ViewState.MatchEnd
+import controller.StandardViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
-import controller.{ControllerStage, GameController, ViewPublisher}
+import controller.publishers.ViewPublisher
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.{ControllerStage, GameController, StandardViewState}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
-import scalafx.scene.input.KeyCode
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
 import scalafx.scene.{Group, Node}
-import scalafx.stage.{Popup, Stage, Window}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
@@ -33,7 +32,7 @@ object CentralPaneStates:
   val ObtainedMissions = MultiPaneState("ObtainedMissions")
   val Shop = MultiPaneState("Shop")
 
-class BoardScene(controller: GameController, controllerStage: ControllerStage) extends ViewScene[Node] with ViewSubscriber:
+class BoardScene(controller: GameController, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node] with ViewSubscriber:
   this.setPublisher(ViewPublisher())
 
   import CentralPaneStates.*
@@ -68,7 +67,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     Label(turnStep())
   }
 
-  private val missionPane: Redrawable = Redrawable{ () =>
+  private val missionPane: Redrawable = Redrawable { () =>
     MissionBoardPane(
       controller.missions,
       controller.playerPositions.map((i, p) => (i, playerFactories(p).onlyToken))
@@ -105,7 +104,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
   }
 
   private def nonActivePlayersPane: Node =
-    val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerFactories(_))
+    val nonActivePlayerDirectors = controller.nonActivePlayers.map(playerFactories(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
       .map(_.nonActivePlayerBox)
     val pane: HBox = new HBox {
@@ -206,7 +205,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
 
   private val mainPane = new BorderPane {
     top = topMainPane.component
-    center = centralPane.component
+    center = centralPane.pane
     bottom = activePlayerPane.component
   }
 

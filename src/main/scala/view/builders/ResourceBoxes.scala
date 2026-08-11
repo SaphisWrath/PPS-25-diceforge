@@ -1,19 +1,16 @@
 package view.builders
 
-import controller.ViewPublisher
-import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.ViewPublisher.ViewContext.*
-import utils.Publishers.Subscriber
+import controller.publishers.ViewPublisher
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
 import scalafx.beans.property.IntegerProperty
 import scalafx.scene.control.Label
 import scalafx.scene.layout.{HBox, Pane}
-import utils.Publishers
 
 object ResourceBoxes:
 
   trait ResourceBox:
     def component: Pane
-
 
   class BaseResourceBox(val resourceName: String, val amountProducer: () => Int) extends ResourceBox with ViewSubscriber:
     this.setPublisher(ViewPublisher())

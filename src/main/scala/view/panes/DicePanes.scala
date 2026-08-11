@@ -1,9 +1,9 @@
 package view.panes
 
-import controller.ViewPublisher
-import controller.ViewPublisher.ViewContext.*
-import controller.ViewPublisher.ViewSubscriber
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher.ViewSubscriber
 import controller.dto.{DieDTO, EffectDTO}
+import controller.publishers.ViewPublisher
 import scalafx.scene.layout.{GridPane, HBox}
 import scalafx.scene.paint.Color
 import view.panes.EffectPanes.{EffectGridPane, effectPane}

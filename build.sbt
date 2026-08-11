@@ -1,4 +1,4 @@
-import sbt.BuiltinCommands.tasks
+
 
 val scala3Version = "3.8.4"
 
@@ -10,7 +10,7 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
-    libraryDependencies++= {
+    libraryDependencies ++= {
       // Determine OS version of JavaFX binaries
       lazy val osName = System.getProperty("os.name") match {
         case n if n.startsWith("Linux") => "linux"
@@ -22,7 +22,7 @@ lazy val root = project
         .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
     },
 
-    libraryDependencies ++={
+    libraryDependencies ++= {
       Seq(
         "org.scalatest" %% "scalatest" % "3.2.19" % Test,
         "org.scalatestplus" %% "mockito-5-23" % "3.2.20.0" % "test",
@@ -34,6 +34,7 @@ lazy val root = project
       "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s",
     )
   )
+Test / parallelExecution := false
 
 assembly / assemblyMergeStrategy := {
   case PathList("module-info.class") => MergeStrategy.discard

@@ -1,15 +1,16 @@
 package controller
 
-import controller.ViewState.*
+import controller.StandardViewState.*
+import controller.publishers.ViewPublisher
 import model.ModelPublisher
 
-enum ViewState:
+enum StandardViewState extends ViewState:
   case MainMenu
   case MatchInit
   case Board
   case MatchEnd
 
-trait ControllerStage:
+trait ControllerStage[VS]:
   /** Initialize the Stage
    *
    * This method should be called before any use of this class.
@@ -23,33 +24,29 @@ trait ControllerStage:
    *
    * @param newState The state that should be set
    */
-  def changeScene(newState: ViewState): Unit
+  def changeScene(newState: VS): Unit
 
   /** Gives access to the current state
    *
-   * @return the current [[ViewState]]
+   * @return the current [[VS]]
    */
-  def currentViewState: ViewState
+  def currentViewState: VS
 
 object ControllerStage:
-  private class ControllerStageImpl(private val navigator: Navigator, startingState: ViewState) extends ControllerStage:
-    private var viewState: ViewState = startingState
+  private class ControllerStageImpl[VS <: ViewState](private val navigator: Navigator[VS], startingState: VS) extends ControllerStage[VS]:
+    private var viewState: VS = startingState
 
     override def init(): Unit = changeScene(viewState)
 
-    override def changeScene(newState: ViewState): Unit =
+    override def changeScene(newState: VS): Unit =
       resetPublishers()
-      newState match
-        case MainMenu => navigator.navigateToMainMenu()
-        case MatchInit => navigator.navigateToMatchInit()
-        case Board => navigator.navigateToBoard()
-        case MatchEnd => navigator.navigateToMatchEnd()
+      navigator.navigateTo(newState)
       viewState = newState
 
     private def resetPublishers(): Unit =
       ViewPublisher().reset()
       ModelPublisher().reset()
 
-    override def currentViewState: ViewState = viewState
+    override def currentViewState: VS = viewState
 
-  def apply(navigator: Navigator, startingState: ViewState): ControllerStage = ControllerStageImpl(navigator, startingState)
+  def apply[VS <: ViewState](navigator: Navigator[VS], startingState: VS): ControllerStage[VS] = ControllerStageImpl[VS](navigator, startingState)

@@ -1,7 +1,7 @@
 package view
 
 import _root_.mock.MockControllerStage
-import controller.ViewState.MatchInit
+import controller.StandardViewState.MatchInit
 import controller.ControllerMatchInit
 import scalafx.application.JFXApp3
 import view.TestStageSetup

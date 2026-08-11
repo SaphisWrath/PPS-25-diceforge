@@ -1,6 +1,6 @@
 package model
 
-import _root_.utils.Publishers.*
+import general_utils.Publishers.*
 
 object ModelPublisher:
   enum ModelContext extends Context:

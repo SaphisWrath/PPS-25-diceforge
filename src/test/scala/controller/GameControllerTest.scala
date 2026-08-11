@@ -35,7 +35,7 @@ class GameControllerTest extends AnyFlatSpec with should.Matchers:
   it should "let you check non active Players" in :
     val players = initGame(2)
     val nonActivePlayers = players.filter(!_.equals(gameController.activePlayer))
-    nonActivePlayers should be(gameController.nonActivePlayerList)
+    nonActivePlayers should be(gameController.nonActivePlayers)
 
   it should "let you go to the next after dice are thrown" in :
     val players = initGame(2)

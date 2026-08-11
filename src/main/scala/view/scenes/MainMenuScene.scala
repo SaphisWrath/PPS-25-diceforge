@@ -1,7 +1,7 @@
 package view.scenes
 
-import controller.ViewState.{MainMenu, MatchInit}
-import controller.{ControllerStage, Navigator}
+import controller.StandardViewState.{MainMenu, MatchInit}
+import controller.{ControllerStage, Navigator, StandardViewState}
 import javafx.event.ActionEvent
 import scalafx.geometry.Pos.Center
 import scalafx.scene.layout.*
@@ -14,7 +14,7 @@ import view.buttons.ButtonFactory
 import view.text.TextFactory
 import view.utils.FxPopup
 
-class MainMenuScene(controllerStage: ControllerStage) extends ViewScene[Node] {
+class MainMenuScene(controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node] {
   override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20

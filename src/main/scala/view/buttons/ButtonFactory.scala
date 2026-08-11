@@ -1,8 +1,8 @@
 package view.buttons
 
-import controller.ViewPublisher
-import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher
 import javafx.event.{ActionEvent, EventHandler}
 import scalafx.scene.Node
 import scalafx.scene.control.Button

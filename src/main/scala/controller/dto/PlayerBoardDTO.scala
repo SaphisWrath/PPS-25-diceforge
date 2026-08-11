@@ -35,3 +35,5 @@ object PlayerBoardDTO:
     )
 
   def apply(board: PlayerBoard): PlayerBoardDTO = PlayerBoardDTOImpl(board)
+  
+  def empty: PlayerBoardDTO = PlayerBoardDTO(PlayerBoard.emptyBoard)
