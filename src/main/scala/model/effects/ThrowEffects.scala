@@ -9,11 +9,28 @@ import model.utils.RandomModules.given_RandomModule_Int
 import model.utils.ResourceEffectModules.SubtractResource
 
 trait ThrowAction:
+  /**
+   * @return the (player, result, index of die) tuple of the most recent dice throw
+   */
   protected def results: Seq[(Player, Effect, Int)]
+
+  /**
+   * throw the dice of the selected player
+   * @param receiver the player
+   */
   def throwDice(receiver: Player): Unit
+
+  /**
+   * throw the dice of the selected players
+   * @param receivers the players
+   */
   def throwDice(receivers: Seq[Player]): Unit = receivers.foreach(throwDice)
 
 trait SubtractThrow extends ThrowAction:
+  /**
+   * Sets the resulting effects of the throw so they subtract resources instead of adding them
+   * @param receiver the player
+   */
   abstract override def throwDice(receiver: Player): Unit =
     super.throwDice(receiver)
     EffectManager().setModuleOnce(SubtractResource)
