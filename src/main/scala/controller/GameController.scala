@@ -4,11 +4,12 @@ import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
 import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
-import controller.FaceSwapController
+import controller.choices.{ChoiceController, DieChoiceAndRollController, EffectSolveController, FaceSwapController}
+import controller.dto.MissionDTO.MissionHandler
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.effects.{ResourceEffect, Target}
+import model.effects.{EffectManager, ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
 import model.resource.Gold
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
@@ -200,6 +201,7 @@ object GameController:
       case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
       case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
       case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
+      case ModelContext.DiceThrowEnd => ViewPublisher().notify(DiceThrowEnd)
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
@@ -211,11 +213,12 @@ object GameController:
       gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
         m,
         () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
-        () => {
+        () =>
+          new MissionHandler(() =>
+            m.get(extractTarget)
+            gameMatch.executeAction(StandardAction)
+          )
           gameMatch.movePlayer(gameMatch.activePlayer, i)
-          m.get(extractTarget)
-          gameMatch.executeAction(StandardAction)
-        }
       ))))
       
     override def playerMissions(playerName: String): Seq[MissionDTO] =

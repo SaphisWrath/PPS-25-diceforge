@@ -6,10 +6,22 @@ import model.GameMatch
 import model.resource.{GloryPoint, Resource}
 
 trait ControllerMatchEnd:
-  def gameMatch_=(controller: GameMatch): Unit
+  /**
+   * Sets the GameMatch this controller will use to determine the winner
+   * @param gameMatch the ended match
+   */
+  def gameMatch_=(gameMatch: GameMatch): Unit
 
+  /**
+   *
+   * @return the players sorted by best score, with said score attached
+   */
   def sortedPlayers: Seq[(PlayerDTO, Int)]
 
+  /**
+   *
+   * @return the image path for the GloryPoint resource
+   */
   def gloryPointPath: String
 
 object ControllerMatchEnd:

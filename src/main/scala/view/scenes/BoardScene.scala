@@ -1,6 +1,6 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
+import controller.ViewPublisher.ViewContext.*
 import controller.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.ViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}

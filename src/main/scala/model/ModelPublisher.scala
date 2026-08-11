@@ -13,6 +13,7 @@ object ModelPublisher:
     case DieChoiceContext
     case FaceObtainedContext
     case DiceThrownContext
+    case DiceThrowEnd
 
   trait ModelSubscriber extends Subscriber[ModelContext]
   

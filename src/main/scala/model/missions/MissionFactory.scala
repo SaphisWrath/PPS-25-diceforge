@@ -1,7 +1,7 @@
 package model.missions
 
 import model.effects.Target.{Others, Self}
-import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie, ThrowSubtractEffect}
+import model.effects.ThrowEffects.{CopyOtherThrowResults, PlainThrowEffect, ThrowAllDice, ThrowOneDie, ThrowSubtractEffect}
 import model.effects.*
 import model.resource.{GloryPoint, Gold, MoonCrystal, SunCrystal}
 
@@ -40,9 +40,13 @@ object MissionFactory:
       startCount = startCount
     )
 
-    def makeSatyr: Mission = new CopyOtherEffectsMission(
+    def makeSatyr: Mission = new InstantMission(
       cost = List(ResourceEffect(MoonCrystal(3), Self)),
-      reward = List(ResourceEffect(GloryPoint(6), Self)),
+      reward = List(
+        ResourceEffect(GloryPoint(6), Self),
+        PlainThrowEffect(Others),
+        CopyOtherThrowResults(Self)
+      ),
       id = "satyr",
       startCount = startCount
     )

@@ -1,11 +1,13 @@
 package model.effects
 
 import model.ModelPublisher
-import model.ModelPublisher.ModelContext.{DiceThrownContext, EffectChoiceContext, ResourceContext}
+import model.ModelPublisher.ModelContext.{DiceThrownContext, EffectChoiceContext, ResourceContext, DiceThrowEnd}
 import model.Players.Player
 import model.effects.*
 import model.utils.ResourceEffectModule
 import model.utils.ResourceEffectModules.AddResource
+
+import scala.annotation.tailrec
 
 /**
  * A manager that attempts to solve every effect given
@@ -90,16 +92,24 @@ object EffectManager:
           effectCache = Seq.empty
           resolveAll(nonOptionEffects)
           _module = AddResource
+          _effectsToSolve = Seq.empty
           ModelPublisher().notify(ResourceContext)
+          ModelPublisher().notify(DiceThrowEnd)
 
     override def setModuleOnce(module: ResourceEffectModule): Unit = _module = module
 
+    @tailrec
     private def flattenSumEffects(effects: Seq[(Player, Effect)]): Seq[(Player, Effect)] =
-      effects.flatMap((p, e) => e match
+      val currentRound = effects.flatMap((p, e) => e match
         case e: SumEffect => e.effects.map(e => (p, e))
         case _ => Seq((p, e))
       )
-    
+
+      if !currentRound.exists((_, e) => e match {
+        case effect: SumEffect => true
+        case _ => false
+      }) then currentRound else flattenSumEffects(currentRound)
+
     private def splitCopyEffects(effects: Seq[(Player, Effect)]):
       (Seq[(Player, CopyEffect)], Seq[(Player, Effect)]) =
       val (copyEffects, resourceEffects) = effects
@@ -128,14 +138,14 @@ object EffectManager:
       multiplyEffects
         .map((p, e) => (p, e.asInstanceOf[MultiplyEffect]))
         .foreach((p, e) =>
-          resourceEffects
-            .find((player, _) => player.name == p.name)
-            .map(_._2) match
-            case Some(effect) => e.currentEffect = effect
-            case _ =>
+          e.currentEffect = SumEffect(
+            resourceEffects
+              .filter((player, _) => player.name == p.name)
+              .map(_._2))
           e.resolve(p)
         )
 
   private val effectManager = EffectManagerImpl()    
-  
-  def apply(): EffectManager = effectManager
+
+  def apply(createNew: Boolean = false): EffectManager =
+    if createNew then EffectManagerImpl() else effectManager

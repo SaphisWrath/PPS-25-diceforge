@@ -1,6 +1,10 @@
 package controller.dto
 
+import model.ModelPublisher
+import model.ModelPublisher.{ModelContext, ModelSubscriber}
+import model.effects.EffectManager
 import model.missions.{InstantMission, LimitedPurchase, Mission, SupportMission}
+import model.turn.TurnManagers.TurnAction.StandardAction
 
 enum MissionType:
   case Instant
@@ -26,6 +30,22 @@ case class MissionDTO(
 )
 
 object MissionDTO:
+  class MissionHandler(action: () => Unit) extends ModelSubscriber:
+    setPublisher(ModelPublisher())
+    private var playerMoved = false
+
+    private def activateMission(): Unit =
+      action()
+      ModelPublisher().unsubscribe(this)
+
+    override def update(context: ModelPublisher.ModelContext): Unit = context match
+      case ModelPublisher.ModelContext.PlayerMovedContext =>
+        if EffectManager().effectsToSolve.isEmpty
+        then activateMission()
+        else playerMoved = true
+      case ModelPublisher.ModelContext.DiceThrowEnd => if playerMoved then activateMission()
+      case _ =>
+
   def apply(mission: Mission): MissionDTO =
     MissionDTO.apply(
       mission,
