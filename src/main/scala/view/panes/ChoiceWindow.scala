@@ -75,6 +75,13 @@ object ChoiceWindowChain:
     override def optionsAvailable: Boolean = playerChoice._2.nonEmpty
     override def forceNext(): Unit = buttonCallback(results, () => {})()
 
+  /**
+   * A helper function to handle user choices with ChoiceWindowChain
+   * @param choices the sequence of choices that require user input to solve
+   * @param orElse the consumer that takes every choice result and elaborates them
+   * @param mapper the function that turns the choice items into their visual representation
+   * @tparam A the type of element among which the user is choosing
+   */
   def manageChoices[A](choices: Seq[PlayerChoice[A]], orElse: Seq[Int] => Unit, mapper: A => Node): Unit =
     def nextChoiceWindow(results: Seq[Int], playerChoices: Seq[PlayerChoice[A]]): Unit =
       val popup = ChoiceWindowChain(playerChoices, results, nextChoiceWindow, orElse)
