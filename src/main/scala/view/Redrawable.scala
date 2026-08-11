@@ -21,7 +21,7 @@ trait Redrawable:
   /**An equivalent method to [[component]]
    * @return the same result as [[component]]
    */
-  private def apply(): Node = component
+  final def apply(): Node = component
 
 object Redrawable:
   private class RedrawableImpl[E <: Node](private val componentProducer: () => E) extends Redrawable:
