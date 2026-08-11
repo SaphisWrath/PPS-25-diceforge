@@ -11,6 +11,10 @@ import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.turn.TurnManagers.TurnAction.*
 
+
+/** Primary interface for managing the flow, state and user interactions of a game
+ *
+ */
 trait GameController:
 
   /** The final initialization of the game

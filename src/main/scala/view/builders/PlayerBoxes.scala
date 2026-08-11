@@ -104,7 +104,7 @@ object PlayerBoxes:
               ResourceWithCapBox(resource, amountProducer, resourceCapProducers(resource))
             else
               BaseResourceBox(resource, amountProducer)
-            resourceBox.setPublisher(Publisher())
+            resourceBox.subscribeTo(Publisher())
             resourceBox.component
           )
         }

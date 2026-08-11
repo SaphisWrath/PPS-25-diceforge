@@ -33,7 +33,7 @@ object CentralPaneStates:
   val Shop = MultiPaneState("Shop")
 
 class BoardScene(controller: GameController, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node] with ViewSubscriber:
-  this.setPublisher(ViewPublisher())
+  this.subscribeTo(ViewPublisher())
 
   import CentralPaneStates.*
 

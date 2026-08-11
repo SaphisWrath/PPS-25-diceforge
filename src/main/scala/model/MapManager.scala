@@ -2,8 +2,11 @@ package model
 
 import model.Players.Player
 
+/** Interface responsible for managing the positions of the players and their movement
+ *
+ */
 trait MapManager:
-  /**Map of the player positions
+  /** Map of the player positions
    *
    * The Map contains only the indexes where the players are
    *
@@ -11,15 +14,16 @@ trait MapManager:
    */
   def playerPositions: Map[Int, Player]
 
-  /**Return the player in the given position, if any
+  /** Return the player in the given position, if any
+   *
    * @param position the position we want to check
    * @return the Option of the [[Player]] or an empty Option if the position is empty
    */
   def playerInPosition(position: Int): Option[Player]
 
-  /**Move a player from his current position to the new position
+  /** Move a player from his current position to the new position
    *
-   * @param player The [[Player]] to move
+   * @param player      The [[Player]] to move
    * @param newPosition The destination of the player
    */
   def movePlayer(player: Player, newPosition: Int): Unit

@@ -10,7 +10,11 @@ enum StandardViewState extends ViewState:
   case Board
   case MatchEnd
 
-trait ControllerStage[VS]:
+/**Controller responsible for the changes in the view
+ * 
+ * @tparam VS The accepted type of [[ViewState]]
+ */
+trait ControllerStage[VS <: ViewState]:
   /** Initialize the Stage
    *
    * This method should be called before any use of this class.

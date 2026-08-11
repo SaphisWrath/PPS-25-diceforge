@@ -4,7 +4,11 @@ import view.ViewComponents.{MainStage, ViewSceneFactory}
 
 trait ViewState
 
-trait Navigator[VS]:
+/** Interface for handling the view transitions.
+ *
+ * @tparam VS The accepted type of [[ViewState]]
+ */
+trait Navigator[VS <: ViewState]:
   /** Set the View content to the new ViewState
    *
    * @param viewState The instance to set as the new viewState
