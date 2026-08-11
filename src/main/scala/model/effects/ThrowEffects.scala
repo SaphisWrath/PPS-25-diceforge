@@ -19,6 +19,7 @@ trait SubtractThrow extends ThrowAction:
     EffectManager().setModuleOnce(SubtractResource)
     results.foreach((_, e, _) => e match
       case r: ResourceEffect => r.setModule(SubtractResource)
+      case _ =>
     )
 
 object ThrowEffects:
