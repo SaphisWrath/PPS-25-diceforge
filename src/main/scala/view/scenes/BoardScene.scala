@@ -1,10 +1,11 @@
 package view.scenes
 
-import controller.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
-import controller.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.publishers.ViewPublisher.ViewContext.{ItemObtainedContext, MissionBoughtContext, PlayerChoiceContext, PlayerMovedContext, ResourceContext, SelectDieForThrowContext, TurnChangeContext, TurnStepChangeContext}
+import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.StandardViewState.MatchEnd
 import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
-import controller.{ControllerStage, GameController, StandardViewState, ViewPublisher}
+import controller.publishers.ViewPublisher
+import controller.{ControllerStage, GameController, StandardViewState}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always

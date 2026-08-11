@@ -1,5 +1,6 @@
-package controller.dto
+package controller.converters
 
+import controller.dto.*
 import model.GameMatch
 import model.Players.Player
 import model.effects.{ResourceEffect, Target}

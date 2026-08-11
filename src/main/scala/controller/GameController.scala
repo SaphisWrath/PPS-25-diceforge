@@ -1,9 +1,10 @@
 package controller
 
-import controller.ViewPublisher.ViewContext.*
-import controller.converters.TurnStepConverter
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.converters.{GameDTOConverter, TurnStepConverter}
 import controller.dto.*
-import controller.{FaceSwapController, ViewPublisher}
+import controller.FaceSwapController
+import controller.publishers.{ModelPublisherBridge, ViewPublisher}
 import model.GameMatch
 import model.Players.Player
 import model.effects.Target

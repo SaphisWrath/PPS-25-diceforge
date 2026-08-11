@@ -1,7 +1,8 @@
-package controller
+package controller.publishers
 
-import controller.ViewPublisher.ViewContext
-import controller.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher
+import controller.publishers.ViewPublisher.ViewContext
+import controller.publishers.ViewPublisher.ViewContext.*
 import model.ModelPublisher
 import model.ModelPublisher.{ModelContext, ModelSubscriber}
 

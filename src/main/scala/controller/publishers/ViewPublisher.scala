@@ -1,4 +1,4 @@
-package controller
+package controller.publishers
 
 import utils.Publishers.{Context, Publisher, Subscriber}
 

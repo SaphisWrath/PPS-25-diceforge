@@ -1,8 +1,8 @@
 package view.builders
 
-import controller.ViewPublisher
-import controller.ViewPublisher.{ViewContext, ViewSubscriber}
-import controller.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
+import controller.publishers.ViewPublisher.ViewContext.*
+import controller.publishers.ViewPublisher
 import utils.Publishers.Subscriber
 import scalafx.beans.property.IntegerProperty
 import scalafx.scene.control.Label
