@@ -39,24 +39,6 @@ class EffectTest extends AnyFlatSpec:
     assert(player.board.gold.amount == goldAmount)
     assert(player.board.moonCrystals.amount == moonCrystalAmount)
 
-//  "An OptionEffect" should "only update its current effect to one of its available options" in:
-//    val player = newPlayer
-//    val amount = 2
-//    val options = Seq(ResourceEffect(Gold(3), Self), ResourceEffect(SunCrystal(amount), Self))
-//    val optionEffect = OptionEffect(options)
-//    optionEffect.currentEffect = options(1)
-//    optionEffect.resolve(player)
-//    assert(player.board.sunCrystals.amount == amount)
-//
-//    optionEffect.currentEffect = ResourceEffect(MoonCrystal(2), Self)
-//    optionEffect.resolve(player)
-//    assert(player.board.sunCrystals.amount == amount * 2)
-//
-//  "An OptionEffect's default current effect" should "be its first option" in:
-//    val options = Seq(ResourceEffect(Gold(3), Self), ResourceEffect(SunCrystal(2), Self))
-//    val optionEffect = OptionEffect(options)
-//    assert(optionEffect.currentEffect == options.head)
-
   "A MultiplyEffect" should "increase or decrease the player's resources by the multiplied amount" in:
     val player = newPlayer
     val amount = 2
