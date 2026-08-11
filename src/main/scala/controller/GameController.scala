@@ -1,34 +1,33 @@
 package controller
 
-import controller.ViewPublisher
+import controller.{FaceSwapController, ViewPublisher}
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
-import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
-import controller.FaceSwapController
+import controller.dto.*
 import model.ModelPublisher.*
-import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.effects.{ResourceEffect, Target}
+import model.effects.Target
 import model.effects.Target.{All, Others, Self}
-import model.resource.Gold
-import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
+import model.turn.TurnManagers.TurnAction.*
+import model.{GameMatch, ModelPublisher}
 
 trait GameController:
 
-  /**The final initialization of the game
+  /** The final initialization of the game
    *
    * Should be called at the start of a game
    */
   def startGame(): Unit
 
-  /**The players participating at the game
+  /** The players participating at the game
    *
    * @return the sequence of current players
    */
   def players: Seq[PlayerDTO]
 
-  /**The results of the dices of the players
+  /** The results of the dices of the players
    * Returns most recent die throws of selected player
+   *
    * @param playerName the player's name
    * @return the most recent die throws
    */
@@ -40,81 +39,87 @@ trait GameController:
    */
   def playerPositions: Map[Int, PlayerDTO]
 
-  /**The map of the missions
+  /** The map of the missions
    *
    * @return the missions in play, already sorted into their respective cells
    */
   def missions: Map[Int, Seq[MissionDTO]]
 
-  /**The player currently playing his turn
+  /** The player currently playing his turn
    *
    * @return the currently active player
    */
   def activePlayer: PlayerDTO
 
-  /**The player waiting for their turn
+  /** The player waiting for their turn
    *
    * @return the sequence of all players that are not the active player
    */
-  def nonActivePlayerList: Seq[PlayerDTO]
+  def nonActivePlayers: Seq[PlayerDTO]
 
-  /**The board of a player
+  /** The board of a player
    *
    * Gives the board of a player corresponding to the DTO object
+   *
    * @param player the player proprietary of the board
    * @return the currentPlayerBoard of the given player, if it doesn't find a player it returns an empty board
    */
   def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
-  /**The board of a player
+  /** The board of a player
    *
    * Gives the board of a player with the corresponding name
+   *
    * @param playerName the name of the proprietary of the board
    * @return the currentPlayerBoard of the given player
    */
   def playerBoard(playerName: String): PlayerBoardDTO
 
-  /**The missions obtained by a player
+  /** The missions obtained by a player
    *
    * Gives the obtained missions of a player corresponding to the DTO object
+   *
    * @param player the player proprietary of the missions
    * @return the missions obtained by the given player
    */
   def playerMissions(player: PlayerDTO): Seq[MissionDTO] = playerMissions(player.name)
 
-  /**The missions obtained by a player
+  /** The missions obtained by a player
    *
    * Gives the obtained missions of a player with the corresponding name
+   *
    * @param playerName the name of the proprietary of the missions
    * @return the missions obtained by the given player
    */
   def playerMissions(playerName: String): Seq[MissionDTO]
 
-  /**Check if the player can go to next turn
+  /** Check if the player can go to next turn
    *
    * @return true if the player can go to next turn, false otherwise
    */
   def canGoToNextTurn: Boolean
 
-  /**Notify the game to go to next turn
+  /** Notify the game to go to next turn
    *
    * May do nothing if [[canGoToNextTurn]] is false
    *
    */
   def nextTurn(): Unit
 
-  /**The current round
+  /** The current round
+   *
    * @return the current round number
    */
   def currentRound: Int
 
-  /**Check if the game is ended
+  /** Check if the game is ended
    *
    * @return true if the game ended, false otherwise
    */
   def isGameEnded: Boolean
 
-  /**The total number of rounds that should be played
+  /** The total number of rounds that should be played
+   *
    * @return the maximum number of rounds of the currently initialized game
    */
   def maxNumberOfRounds: Int
@@ -125,11 +130,13 @@ trait GameController:
   def endDiceThrow(): Unit
 
   /** Controller used for complicate effect resolutions
+   *
    * @return A instance of [[ChoiceController]] of [[EffectDTO]]
    */
   def solveController: ChoiceController[EffectDTO]
 
   /** Check if the active player can take an Action
+   *
    * @return true if the player already took his action, false otherwise
    */
   def canTakeAction: Boolean
@@ -141,6 +148,7 @@ trait GameController:
   def canBuyExtraAction: Boolean
 
   /** Check if the current turn phase is the SupportPhase
+   *
    * @return true if the current turn phase is the SupportPhase, false otherwise
    */
   def isSupportPhase: Boolean
@@ -150,37 +158,38 @@ trait GameController:
    */
   def endSupportPhase(): Unit
 
-  /**Notify the game that the current player wants to buy an extra action
+  /** Notify the game that the current player wants to buy an extra action
    * May do nothing if [[canBuyExtraAction]] is false
    */
   def buyExtraAction(): Unit
 
-  /**Return the current turn step
+  /** Return the current turn step
+   *
    * @return A [[String]] representing the current turn step
    */
   def turnStep: String
 
-  /**All the items of the shop
+  /** All the items of the shop
    *
    * @return A sequence of the [[ItemDTO]] representing the items of the shop
    */
   def shopItems: Seq[ItemDTO]
 
-  /**The dices of the given player
+  /** The dices of the given player
    *
    * @param playerDTO The [[PlayerDTO]] instance corresponding to the player
    * @return The dices of the given player
    */
   def dice(playerDTO: PlayerDTO): Seq[DieDTO]
 
-  /**A controller used for changing the faces of a die
+  /** A controller used for changing the faces of a die
    *
    * @param dieIndex the index of the die to modify
    * @return A [[ChoiceController]] instance
    */
   def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO]
 
-  /**A controller used to choose a single dice to throw
+  /** A controller used to choose a single dice to throw
    *
    * @return A [[ChoiceController]] instance
    */
@@ -188,18 +197,10 @@ trait GameController:
 
 object GameController:
   private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
+    private val gameDTOConverter: GameDTOConverter = GameDTOConverter(gameMatch)
     this.setPublisher(ModelPublisher())
 
-    override def update(context: ModelContext): Unit = context match
-      case ModelContext.ResourceContext => ViewPublisher().notify(ResourceContext)
-      case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
-      case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
-      case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
-      case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
-      case ModelContext.EffectChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
-      case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
-      case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
-      case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
+    export gameMatch.{isGameEnded, maxNumberOfRounds}
 
     override def startGame(): Unit =
       ViewPublisher().notify(TurnChangeContext)
@@ -207,61 +208,36 @@ object GameController:
       gameMatch.startDiceThrow()
       endDiceThrow()
 
-    override def missions: Map[Int, Seq[MissionDTO]] =
-      gameMatch.missions.map((i, list) => (i, list.map(m => MissionDTO(
-        m,
-        () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
-        () => {
-          gameMatch.movePlayer(gameMatch.activePlayer, i)
-          m.get(extractTarget)
-          gameMatch.executeAction(StandardAction)
-        }
-      ))))
-      
-    override def playerMissions(playerName: String): Seq[MissionDTO] =
-      gameMatch.playerFrom(playerName) match
-        case Some(player) => player.missions.map(m => MissionDTO(
-          m,
-          () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(ActivateSupport),
-          () =>
-            m.get(extractTarget)
-            gameMatch.executeAction(ActivateSupport)
-        ))
-        case _ => Seq.empty
+    override def missions: Map[Int, Seq[MissionDTO]] = gameDTOConverter.missionDTOs(extractTarget)
+
+    override def playerMissions(playerName: String): Seq[MissionDTO] = gameDTOConverter.playerMissions(playerName, extractTarget)
 
     private def extractTarget(target: Target): Seq[Player] = target match
       case Self => Seq(gameMatch.activePlayer)
       case All => gameMatch.players
       case Others => gameMatch.nonActivePlayers
 
-    override def players: Seq[PlayerDTO] = gameMatch.players.map(PlayerDTO(_))
+    override def players: Seq[PlayerDTO] = gameDTOConverter.playersDTOs
 
-    override def recentDiceResults(playerName: String): Seq[Option[EffectDTO]] =
-      gameMatch.playerFrom(playerName).get.dice.map(d => 
-        if d.lastRolledEffect.isEmpty then None
-        else Some(EffectDTO(d.lastRolledEffect.get))
-      )
-    
-    override def playerPositions: Map[Int, PlayerDTO] = gameMatch.playerPositions.map((i, p) => (i, PlayerDTO(p)))
+    override def recentDiceResults(playerName: String): Seq[Option[EffectDTO]] = gameDTOConverter.recentDiceResultsDTO(playerName)
 
-    override def activePlayer: PlayerDTO = PlayerDTO(gameMatch.activePlayer)
+    override def playerPositions: Map[Int, PlayerDTO] = gameDTOConverter.playerPositionsDTO
 
-    override def nonActivePlayerList: Seq[PlayerDTO] = gameMatch.nonActivePlayers.map(PlayerDTO(_))
+    override def activePlayer: PlayerDTO = gameDTOConverter.activePlayerDTO
 
-    override def playerBoard(playerName: String): PlayerBoardDTO = gameMatch.playerFrom(playerName) match
-      case Some(player) => PlayerBoardDTO(player.board)
-      case _ => PlayerBoardDTO.empty
+    override def nonActivePlayers: Seq[PlayerDTO] = gameDTOConverter.nonActivePlayersDTOs
 
-    override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
+    override def playerBoard(playerName: String): PlayerBoardDTO = gameDTOConverter.playerBoardDTO(playerName)
 
-    override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
-    override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
+    override def shopItems: Seq[ItemDTO] = gameDTOConverter.shopItemsDTO
+
+    override def dice(playerDTO: PlayerDTO): Seq[DieDTO] = gameDTOConverter.diceDTO(playerDTO)
 
     override def currentRound: Int = gameMatch.currentRound + 1
 
-    override def isGameEnded: Boolean = gameMatch.isGameEnded
+    override def canGoToNextTurn: Boolean = gameMatch.isActionAvailable(EndTurn)
 
-    override def maxNumberOfRounds: Int = gameMatch.maxNumberOfRounds
+    override def nextTurn(): Unit = gameMatch.executeAction(EndTurn)
 
     override def isSupportPhase: Boolean = gameMatch.isActionAvailable(EndSupport)
 
@@ -279,25 +255,6 @@ object GameController:
 
     override def solveController: ChoiceController[EffectDTO] = EffectSolveController()
 
-    override def shopItems: Seq[ItemDTO] =
-      val shop = gameMatch.shop
-      shop.items
-        .map(i => (i, shop.getPrice(i)))
-        .sortBy(_._2.getOrElse(Gold(0)).amount)
-        .map((item, cost) => ItemDTO(
-          EffectDTO(item),
-          EffectDTO(ResourceEffect(cost.get, Target.Self)),
-          shop.getStocked(item).getOrElse(0),
-          () => {
-            shop.buy(item, gameMatch.activePlayer)
-            gameMatch.executeAction(StandardAction)
-          },
-          () => shop.getStocked(item).getOrElse(0) > 0 && gameMatch.activePlayer.board.canSpend(cost.get)
-        ))
-
-    override def dice(playerDTO: PlayerDTO): Seq[DieDTO] =
-      gameMatch.playerFrom(playerDTO.name).get.dice.map(DieDTO(_))
-
     override def faceSwapController(dieIndex: Int): ChoiceController[EffectDTO] =
       FaceSwapController(
         gameMatch.activePlayer,
@@ -306,6 +263,18 @@ object GameController:
 
     override def dieChoiceAndRollController: ChoiceController[DieDTO] =
       DieChoiceAndRollController(gameMatch.activePlayer)
+
+
+    override def update(context: ModelContext): Unit = context match
+      case ModelContext.ResourceContext => ViewPublisher().notify(ResourceContext)
+      case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
+      case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
+      case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
+      case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
+      case ModelContext.EffectChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
+      case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
+      case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
+      case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 

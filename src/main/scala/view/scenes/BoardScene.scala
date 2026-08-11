@@ -101,7 +101,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
   }
 
   private def nonActivePlayersPane: Node =
-    val nonActivePlayerDirectors = controller.nonActivePlayerList.map(playerFactories(_))
+    val nonActivePlayerDirectors = controller.nonActivePlayers.map(playerFactories(_))
     val playerBoxes: Seq[Node] = nonActivePlayerDirectors
       .map(_.nonActivePlayerBox)
     val pane: HBox = new HBox {
