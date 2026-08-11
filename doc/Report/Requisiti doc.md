@@ -105,7 +105,7 @@ Dice forge è un gioco dove i giocatori competono per ottenere il maggior numero
         - Scorpione: \[6 Cristalli lunari] => \[8 Punti vittoria, Il giocatore attivo tira entrambi i propri dadi due volte e ne ottiene i risultati]
     - Effetto di Rinforzo: Oltre al fornire punti vittoria non hanno altri effetti appena vengono acquistati, ma il giocatore le ottiene e può attivarne l'effetto durante la fase di rinforzo. 
     Vengono riportarte nel seguente modo \[Costo] => \[Punti Vittoria, \[Eventuale Costo di Rinforzo] => \[Ricompensa del Rinforzo]]
-        - Martello del fabbro: \[1 Cristallo lunare] => \[0 Punti Vittoria, \[12 Oro] => \[20 Punti vittoria]]
+        - Martello del fabbro: \[1 Cristallo lunare] => \[0 Punti Vittoria, \[12 Oro] => \[17 Punti vittoria]]
         - Cerva d'argento: \[2 Cristalli lunari] => \[2 Punti Vittoria, \[] => \[Il giocatore tira uno dei propri dadi e ne applica gli effetti]]
         - Anziano: \[1 Cristallo solare] => \[0 Punti Vittoria, \[3 Oro] => \[ 4 Punti Vittoria]]
         - Gufo del guardiano: \[2 Cristalli solari] => \[4 Punti Vittoria, \[] => \[Il giocatore ottiene 1 di una risorsa a scelta tra Oro, Cristalli solari e Cristalli lunari]]

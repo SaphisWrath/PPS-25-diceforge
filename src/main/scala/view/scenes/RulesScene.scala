@@ -5,6 +5,7 @@ import scalafx.scene.Node
 import scalafx.scene.control.{Label, ScrollPane}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.text.{Font, Text}
+import view.LanguageStrings
 import view.ViewComponents.ViewScene
 import view.buttons.ButtonFactory
 import view.text.TextFactory
@@ -33,6 +34,6 @@ class RulesScene(hideAction: () => Unit) extends ViewScene[Node]:
         maxHeight = parentHeight - 20
         content = TextFactory.makeRulesLabel(labelText, parentWidth, parentHeight)
       },
-      ButtonFactory.makeMenuButton("Chiudi", _ => hideAction())
+      ButtonFactory.makeMenuButton(LanguageStrings.GenericButtonStrings.close, _ => hideAction())
     )
   }
