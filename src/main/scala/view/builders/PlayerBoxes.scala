@@ -2,7 +2,7 @@ package view.builders
 
 import controller.dto.EffectDTO
 import scalafx.Includes.hex2sfxColor
-import utils.Publishers.Publisher
+import general_utils.Publishers.Publisher
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.layout.*

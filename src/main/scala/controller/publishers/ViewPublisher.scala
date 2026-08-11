@@ -1,6 +1,6 @@
 package controller.publishers
 
-import utils.Publishers.{Context, Publisher, Subscriber}
+import general_utils.Publishers.{Context, Publisher, Subscriber}
 
 object ViewPublisher:
   enum ViewContext extends Context:

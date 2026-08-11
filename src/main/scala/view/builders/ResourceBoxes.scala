@@ -3,11 +3,11 @@ package view.builders
 import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.publishers.ViewPublisher.ViewContext.*
 import controller.publishers.ViewPublisher
-import utils.Publishers.Subscriber
+import general_utils.Publishers.Subscriber
 import scalafx.beans.property.IntegerProperty
 import scalafx.scene.control.Label
 import scalafx.scene.layout.{HBox, Pane}
-import utils.Publishers
+import general_utils.Publishers
 
 object ResourceBoxes:
 
