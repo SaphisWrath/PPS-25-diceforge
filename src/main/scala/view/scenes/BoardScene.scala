@@ -196,7 +196,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
 
   private val mainPane = new BorderPane {
     top = topMainPane.component
-    center = centralPane.component
+    center = centralPane.pane
     bottom = activePlayerPane.component
   }
 
