@@ -62,7 +62,7 @@ trait GameController:
    *
    * Gives the board of a player corresponding to the DTO object
    * @param player the player proprietary of the board
-   * @return the currentPlayerBoard of the given player
+   * @return the currentPlayerBoard of the given player, if it doesn't find a player it returns an empty board
    */
   def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
@@ -250,7 +250,7 @@ object GameController:
 
     override def playerBoard(playerName: String): PlayerBoardDTO = gameMatch.playerFrom(playerName) match
       case Some(player) => PlayerBoardDTO(player.board)
-      case _ => throw IllegalArgumentException(s"$playerName does not correspond to any player") //TODO handle it better
+      case _ => PlayerBoardDTO.empty
 
     override def playerBoard(player: PlayerDTO): PlayerBoardDTO = playerBoard(player.name)
 
