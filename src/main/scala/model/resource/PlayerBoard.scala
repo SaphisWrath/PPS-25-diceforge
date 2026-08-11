@@ -1,7 +1,9 @@
 package model.resource
 
-import model.Players.Player
-
+/**
+ * A board to keep track of the player's resources
+ * Both writing and reading resources is allowed
+ */
 trait PlayerBoard:
   def gold: ResourceWithCap
 
@@ -60,6 +62,19 @@ object PlayerBoard:
       case GloryPoint(_) => fun(resource, board.gloryPoints)
       case _ => false
 
+    /**
+     * Updates the board by adding the given resource
+     * @param resource the resource to add to the board
+     */
     def addResource(resource: Resource): Unit = board.updateBoard(resource, _ + _)
+    /**
+     * Updates the board by subtracting the given resource
+     * @param resource the resource to subtract to the board
+     */
     def takeResource(resource: Resource): Unit = board.updateBoard(resource, _ - _)
+    /**
+     * Checks if the board has enough of a specific resource to spend it
+     * @param resource the resource to check
+     * @return true if the resource can be spent
+     */
     def canSpend(resource: Resource): Boolean = board.checkBoard(resource, (r, pr) => r.amount <= pr.amount)
