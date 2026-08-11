@@ -8,7 +8,7 @@ import scalafx.scene.{Node, Scene}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.stage.{Modality, Stage, StageStyle}
 import view.LanguageStrings
-import view.buttons.ButtonFactory.makeChoiceButton
+import view.buttons.FxButtonFactory.makeChoiceButton
 
 /**
  * A window with different options a user can choose from

@@ -7,7 +7,7 @@ import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.text.{Font, Text}
 import view.LanguageStrings
 import view.ViewComponents.ViewScene
-import view.buttons.ButtonFactory
+import view.buttons.FxButtonFactory
 import view.text.TextFactory
 import view.theme.JfxTheme
 import view.utils.ViewUtils
@@ -34,6 +34,6 @@ class RulesScene(hideAction: () => Unit) extends ViewScene[Node]:
         maxHeight = parentHeight - 20
         content = TextFactory.makeRulesLabel(labelText, parentWidth, parentHeight)
       },
-      ButtonFactory.makeMenuButton(LanguageStrings.GenericButtonStrings.close, _ => hideAction())
+      FxButtonFactory.makeMenuButton(LanguageStrings.GenericButtonStrings.close, () => hideAction())
     )
   }

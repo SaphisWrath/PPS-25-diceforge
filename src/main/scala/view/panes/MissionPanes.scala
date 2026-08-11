@@ -8,7 +8,7 @@ import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.text.{Font, Text}
 import view.{LanguageStrings, MissionDescriptions}
-import view.buttons.ButtonFactory
+import view.buttons.FxButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
 import view.text.TextFactory
 import view.theme.JfxTheme
@@ -53,7 +53,7 @@ object MissionPanes:
     ))
 
     protected def button: Button =
-      ButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
+      FxButtonFactory.makeBoardButton(LanguageStrings.MissionPaneStrings.get, missionDTO.onClick, missionDTO.clickable)
 
     protected def rewards =
       EffectWrapperPane(LanguageStrings.MissionPaneStrings.reward, missionDTO.rewards, borderColor)
@@ -64,7 +64,7 @@ object MissionPanes:
     protected def name: Text = TextFactory.makeMissionName(MissionDescriptions.getTitle(missionDTO))
 
   class ObtainedMissionPane(missionDTO: MissionDTO) extends MissionPane(missionDTO):
-    override protected def button: Button = ButtonFactory.makeBoardButton(
+    override protected def button: Button = FxButtonFactory.makeBoardButton(
       LanguageStrings.MissionPaneStrings.supportGet,
       missionDTO.onClick,
       missionDTO.clickable

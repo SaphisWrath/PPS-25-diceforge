@@ -14,7 +14,7 @@ import scalafx.scene.{Group, Node}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
-import view.buttons.ButtonFactory
+import view.buttons.FxButtonFactory
 import view.panes.ChoiceWindowChain.manageChoices
 import view.panes.DicePanes.DiePane
 import view.panes.EffectPanes.effectPane
@@ -89,7 +89,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
   )
 
   private def startPane: Node = new BorderPane {
-    center = ButtonFactory.makeBoardButton(BSStrings.startButtonText, () => controller.startGame())
+    center = FxButtonFactory.makeBoardButton(BSStrings.startButtonText, () => controller.startGame())
   }
 
   private val activePlayerPane: Redrawable = Redrawable { () =>
@@ -128,13 +128,13 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
     obtainedMissionsButton()
   )
 
-  private val nextTurnButton: Node = ButtonFactory.makeBoardButton(
+  private val nextTurnButton: Node = FxButtonFactory.makeBoardButton(
     BSStrings.nextTurnButtonText,
     () => controller.nextTurn(),
     () => !controller.canGoToNextTurn || centralPane.currentState == Start
   )
 
-  private val buyExtraActionButton: Node = ButtonFactory.makeBoardButton(
+  private val buyExtraActionButton: Node = FxButtonFactory.makeBoardButton(
     BSStrings.buyExtraActionButton,
     () => controller.buyExtraAction(),
     () => !controller.canBuyExtraAction
@@ -143,14 +143,14 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
   private val visitShopButton: Redrawable = Redrawable { () =>
     new FlowPane {
       children = centralPane.currentState match
-        case Shop => ButtonFactory.makeBoardButton(
+        case Shop => FxButtonFactory.makeBoardButton(
           BSStrings.leaveShopButton,
           () =>
             centralPane.setState(Missions)
             visitShopButton.redraw(),
           () => controller.canTakeAction
         )
-        case _ => ButtonFactory.makeBoardButton(
+        case _ => FxButtonFactory.makeBoardButton(
           BSStrings.visitShopButton,
           () =>
             centralPane.setState(Shop)
@@ -167,7 +167,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
           children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
         },
         if controller.isSupportPhase then
-          ButtonFactory.makeBoardButton(BSStrings.endSupportPhaseButton, () => controller.endSupportPhase())
+          FxButtonFactory.makeBoardButton(BSStrings.endSupportPhaseButton, () => controller.endSupportPhase())
         else
           Group()
       )
@@ -177,13 +177,13 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
   private val obtainedMissionsButton: Redrawable = Redrawable { () =>
     new FlowPane {
       children = centralPane.currentState match
-        case ObtainedMissions => ButtonFactory.makeBoardButton(
+        case ObtainedMissions => FxButtonFactory.makeBoardButton(
           BSStrings.hideObtainedMissionsButton,
           () =>
             centralPane.setState(Missions)
             obtainedMissionsButton.redraw()
         )
-        case _ => ButtonFactory.makeBoardButton(
+        case _ => FxButtonFactory.makeBoardButton(
           BSStrings.showObtainedMissionsButton,
           () =>
             centralPane.setState(ObtainedMissions)
@@ -198,7 +198,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
     new HBox {
       children ++= Seq(
         TextFactory.makeTurnCounterText(s"${controller.currentRound}/${controller.maxNumberOfRounds}"),
-        ButtonFactory.makeBoardButton(LanguageStrings.TitleScreenStrings.ruleButtonText, () => FxPopup.showPopUp())
+        FxButtonFactory.makeBoardButton(LanguageStrings.TitleScreenStrings.ruleButtonText, () => FxPopup.showPopUp())
       )
       spacing = 5
     }

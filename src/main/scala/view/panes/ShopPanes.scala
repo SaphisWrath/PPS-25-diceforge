@@ -7,7 +7,7 @@ import scalafx.scene.control.Button
 import scalafx.scene.layout.{BorderPane, HBox, VBox}
 import scalafx.scene.text.Text
 import view.LanguageStrings
-import view.buttons.ButtonFactory.makeBoardButton
+import view.buttons.FxButtonFactory.makeBoardButton
 import view.panes.EffectPanes.*
 import view.theme.JfxTheme.*
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
