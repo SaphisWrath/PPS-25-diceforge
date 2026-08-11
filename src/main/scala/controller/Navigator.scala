@@ -3,12 +3,24 @@ package controller
 import view.ViewComponents.{MainStage, ViewSceneFactory}
 
 trait Navigator:
+  /**Set the View to show the main menu
+   *
+   */
   def navigateToMainMenu(): Unit
 
+  /**Set the View to show the match init screen
+   *
+   */
   def navigateToMatchInit(): Unit
 
+  /**Set the View to show the gameboard
+   *
+   */
   def navigateToBoard(): Unit
 
+  /**Set the View to show the match end screen
+   *
+   */
   def navigateToMatchEnd(): Unit
 
 object Navigator:
