@@ -1,15 +1,14 @@
 package controller
 
-import controller.{FaceSwapController, ViewPublisher}
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
 import controller.dto.*
-import model.ModelPublisher.*
+import controller.{FaceSwapController, ViewPublisher}
+import model.GameMatch
 import model.Players.Player
 import model.effects.Target
 import model.effects.Target.{All, Others, Self}
 import model.turn.TurnManagers.TurnAction.*
-import model.{GameMatch, ModelPublisher}
 
 trait GameController:
 
@@ -196,9 +195,9 @@ trait GameController:
   def dieChoiceAndRollController: ChoiceController[DieDTO]
 
 object GameController:
-  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController with ModelSubscriber:
+  private class GameControllerImpl(private val gameMatch: GameMatch) extends GameController:
     private val gameDTOConverter: GameDTOConverter = GameDTOConverter(gameMatch)
-    this.setPublisher(ModelPublisher())
+    private val modelPublisherBridge: ModelPublisherBridge = ModelPublisherBridge()
 
     export gameMatch.{isGameEnded, maxNumberOfRounds}
 
@@ -263,18 +262,6 @@ object GameController:
 
     override def dieChoiceAndRollController: ChoiceController[DieDTO] =
       DieChoiceAndRollController(gameMatch.activePlayer)
-
-
-    override def update(context: ModelContext): Unit = context match
-      case ModelContext.ResourceContext => ViewPublisher().notify(ResourceContext)
-      case ModelContext.MissionContext => ViewPublisher().notify(MissionBoughtContext)
-      case ModelContext.TurnEndContext => ViewPublisher().notify(TurnChangeContext)
-      case ModelContext.TurnStepContext => ViewPublisher().notify(TurnStepChangeContext)
-      case ModelContext.PlayerMovedContext => ViewPublisher().notify(PlayerMovedContext)
-      case ModelContext.EffectChoiceContext => ViewPublisher().notify(PlayerChoiceContext)
-      case ModelContext.FaceObtainedContext => ViewPublisher().notify(ItemObtainedContext)
-      case ModelContext.DieChoiceContext => ViewPublisher().notify(SelectDieForThrowContext)
-      case ModelContext.DiceThrownContext => ViewPublisher().notify(DiceThrownContext)
 
   def apply(gameMatch: GameMatch): GameController = GameControllerImpl(gameMatch)
 
