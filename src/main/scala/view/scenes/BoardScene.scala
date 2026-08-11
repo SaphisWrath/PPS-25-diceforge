@@ -7,9 +7,11 @@ import controller.dto.{DieDTO, EffectDTO, PlayerDTO}
 import controller.{ControllerStage, GameController, ViewPublisher}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.scene.control.Label
+import scalafx.scene.input.KeyCode
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
 import scalafx.scene.{Group, Node}
+import scalafx.stage.{Popup, Stage, Window}
 import view.LanguageStrings.BoardScreenStrings as BSStrings
 import view.ViewComponents.ViewScene
 import view.builders.PlayerGUIComponentFactory
@@ -21,7 +23,9 @@ import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.panes.ShopPanes.ShopPane
 import view.scenes.CentralPaneStates.ObtainedMissions
-import view.{Redrawable, scenes}
+import view.text.TextFactory
+import view.utils.FxPopup
+import view.{LanguageStrings, Redrawable, scenes}
 
 object CentralPaneStates:
   val Start = MultiPaneState("Start")
@@ -191,7 +195,14 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage) e
     }
   }
 
-  private def roundCounter: Node = HBox(Label(s"${controller.currentRound}/${controller.maxNumberOfRounds}"))
+  private def roundCounter: Node =
+    new HBox {
+      children ++= Seq(
+        TextFactory.makeTurnCounterText(s"${controller.currentRound}/${controller.maxNumberOfRounds}"),
+        ButtonFactory.makeBoardButton(LanguageStrings.TitleScreenStrings.ruleButtonText, () => FxPopup.showPopUp())
+      )
+      spacing = 5
+    }
 
   private val mainPane = new BorderPane {
     top = topMainPane.component

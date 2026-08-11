@@ -7,10 +7,12 @@ import scalafx.geometry.Pos.Center
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import scalafx.scene.{Node, Scene}
+import scalafx.stage.{Popup, Stage}
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.ViewComponents.ViewScene
 import view.buttons.ButtonFactory
 import view.text.TextFactory
+import view.utils.FxPopup
 
 class MainMenuScene(controllerStage: ControllerStage) extends ViewScene[Node] {
   override def scene: Node = new VBox {
@@ -27,7 +29,10 @@ class MainMenuScene(controllerStage: ControllerStage) extends ViewScene[Node] {
     children = Seq(
       TextFactory.makeMenuTitle,
       ButtonFactory.makeMenuButton(TSStrings.startButtonText, _ => controllerStage.changeScene(MatchInit)),
-      ButtonFactory.makeMenuButton(TSStrings.ruleButtonText, _ => controllerStage.changeScene(MainMenu))
+      ButtonFactory.makeMenuButton(
+        TSStrings.ruleButtonText,
+        _ => FxPopup.showPopUp()
+      )
     )
   }
 }
