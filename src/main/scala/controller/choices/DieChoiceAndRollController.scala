@@ -1,4 +1,4 @@
-package controller
+package controller.choices
 
 import controller.dto.{DieDTO, PlayerDTO}
 import model.ModelPublisher

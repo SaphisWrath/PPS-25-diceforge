@@ -1,6 +1,6 @@
 package view.panes
 
-import controller.PlayerChoice
+import controller.choices.PlayerChoice
 import controller.dto.PlayerDTO
 import scalafx.scene.control.Label
 import scalafx.geometry.Pos.Center

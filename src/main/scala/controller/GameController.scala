@@ -4,7 +4,7 @@ import controller.ViewPublisher
 import controller.ViewPublisher.ViewContext.*
 import controller.converters.TurnStepConverter
 import controller.dto.{DieDTO, EffectDTO, ItemDTO, MissionDTO, PlayerBoardDTO, PlayerDTO}
-import controller.FaceSwapController
+import controller.choices.{ChoiceController, DieChoiceAndRollController, EffectSolveController, FaceSwapController}
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
