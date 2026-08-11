@@ -8,7 +8,7 @@ import controller.choices.{ChoiceController, DieChoiceAndRollController, EffectS
 import model.ModelPublisher.*
 import model.{GameMatch, ModelPublisher}
 import model.Players.Player
-import model.effects.{ResourceEffect, Target}
+import model.effects.{EffectManager, ResourceEffect, Target}
 import model.effects.Target.{All, Others, Self}
 import model.resource.Gold
 import model.turn.TurnManagers.TurnAction.{ActivateSupport, BuyExtraAction, CompleteDiceThrow, EndSupport, EndTurn, StandardAction}
@@ -212,9 +212,27 @@ object GameController:
         m,
         () => !m.canGet(extractTarget) || !gameMatch.isActionAvailable(StandardAction),
         () => {
+          new ModelSubscriber {
+            setPublisher(ModelPublisher())
+            private var playerMoved = false
+            private var missionGot = false
+            private def activateMission(): Unit =
+              m.get(extractTarget)
+              gameMatch.executeAction(StandardAction)
+              missionGot = true
+
+            override def update(context: ModelContext): Unit = {
+              if !missionGot
+              then context match
+                case ModelPublisher.ModelContext.PlayerMovedContext =>
+                  if EffectManager().effectsToSolve.isEmpty
+                  then activateMission()
+                  else playerMoved = true
+                case ModelPublisher.ModelContext.ResourceContext => if playerMoved then activateMission()
+                case _ =>
+            }
+          }
           gameMatch.movePlayer(gameMatch.activePlayer, i)
-          m.get(extractTarget)
-          gameMatch.executeAction(StandardAction)
         }
       ))))
       
