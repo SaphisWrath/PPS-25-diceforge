@@ -45,14 +45,45 @@ object PlayerBoxes:
       backgroundColor = Color.Transparent)
     val None = PlayerBoxStyle()
 
-  def circleTokenComponent(color: Color, radius: Double): Node = Circle(radius, color)
+  private def borderContainer(boxStyle: PlayerBoxStyle,
+                              nameSection: Node,
+                              tokenSection: Node,
+                              resourceSection: Node,
+                              diceSection: Node
+                             ): Node = new BorderPane {
+    border = boxStyle.fxBorder
+    background = boxStyle.fxBackground
+    padding = boxStyle.fxPadding
+    top = nameSection
+    center = resourceSection
+    left = tokenSection
+    right = diceSection
+  }
+
+  private def stackContainer(boxStyle: PlayerBoxStyle,
+                              nameSection: Node,
+                              tokenSection: Node,
+                              resourceSection: Node,
+                              diceSection: Node
+                             ): Node = new StackPane{
+    border = boxStyle.fxBorder
+    background = boxStyle.fxBackground
+    padding = boxStyle.fxPadding
+    children = Seq(nameSection, tokenSection, resourceSection, diceSection)
+  }
 
   case class PlayerBoxBuilder(
                                private val boxStyle: PlayerBoxStyle,
                                private val nameSection: Node = Group(),
                                private val tokenSection: Node = Group(),
                                private val resourceSection: Node = Group(),
-                               private val diceSection: Node = Group()
+                               private val diceSection: Node = Group(),
+                               private val container: (boxStyle: PlayerBoxStyle,
+                                                       nameSection: Node,
+                                                       tokenSection: Node,
+                                                       resourceSection: Node,
+                                                       diceSection: Node
+                                  ) => Node = borderContainer
                              ):
     def withNameSection(playerName: String): PlayerBoxBuilder =
       this.copy(nameSection = Label(playerName))
@@ -86,12 +117,14 @@ object PlayerBoxes:
       diceSection = FacePane(dieRollsProducer, colorHex)
     )
 
-    def build: Node = new BorderPane {
-      border = boxStyle.fxBorder
-      background = boxStyle.fxBackground
-      padding = boxStyle.fxPadding
-      top = nameSection
-      center = resourceSection
-      left = tokenSection
-      right = diceSection
-    }
+    def withBorderContainer: PlayerBoxBuilder = this.copy(container = borderContainer)
+
+    def withStackContainer: PlayerBoxBuilder = this.copy(container = stackContainer)
+
+    def build: Node = container(
+      boxStyle,
+      nameSection,
+      tokenSection,
+      resourceSection,
+      diceSection
+    )

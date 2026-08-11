@@ -16,6 +16,7 @@ case class PlayerGUIComponentFactory(
 
   def activePlayerBox: Node =
     PlayerBoxBuilder(PlayerBoxStyle.Standard)
+      .withBorderContainer
       .withNameSection(playerName)
       .withCircleTokenSection(playerColor, 25)
       .withResourceSection(resourceProducers, resourceCapProducers)
@@ -24,13 +25,17 @@ case class PlayerGUIComponentFactory(
 
   def nonActivePlayerBox: Node =
     PlayerBoxBuilder(PlayerBoxStyle.Small)
+      .withBorderContainer
       .withNameSection(playerName)
       .withCircleTokenSection(playerColor, 10)
       .withResourceSection(resourceProducers, resourceCapProducers)
       .withDiceSection(recentRollsProducer, playerColorHex)
       .build
 
-  def onlyToken: Node = circleTokenComponent(playerColor, 10)
+  def onlyToken: Node = PlayerBoxBuilder(PlayerBoxStyle.None)
+    .withStackContainer
+    .withCircleTokenSection(playerColor, 8)
+    .build
 
 object PlayerGUIComponentFactory:
   def apply(player: PlayerDTO, playerBoard: PlayerBoardDTO, rollsProducer: () => Seq[Option[EffectDTO]]): PlayerGUIComponentFactory =
