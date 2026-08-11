@@ -11,7 +11,7 @@ import scalafx.stage.{Popup, Stage}
 import view.LanguageStrings.TitleScreenStrings as TSStrings
 import view.ViewComponents.ViewScene
 import view.buttons.FxButtonFactory
-import view.text.TextFactory
+import view.text.FxTextFactory
 import view.utils.FxPopup
 
 class MainMenuScene(controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node] {
@@ -27,7 +27,7 @@ class MainMenuScene(controllerStage: ControllerStage[StandardViewState]) extends
     alignment = Center
     alignmentInParent = Center
     children = Seq(
-      TextFactory.makeMenuTitle,
+      FxTextFactory.makeMenuTitle,
       FxButtonFactory.makeMenuButton(TSStrings.startButtonText, () => controllerStage.changeScene(MatchInit)),
       FxButtonFactory.makeMenuButton(
         TSStrings.ruleButtonText,

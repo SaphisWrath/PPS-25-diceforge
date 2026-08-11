@@ -10,7 +10,7 @@ import scalafx.scene.text.{Font, Text}
 import view.{LanguageStrings, MissionDescriptions}
 import view.buttons.FxButtonFactory
 import view.panes.EffectPanes.EffectWrapperPane
-import view.text.TextFactory
+import view.text.FxTextFactory
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
@@ -61,7 +61,7 @@ object MissionPanes:
     protected def cost =
       EffectWrapperPane(LanguageStrings.MissionPaneStrings.cost, missionDTO.cost, borderColor)
 
-    protected def name: Text = TextFactory.makeMissionName(MissionDescriptions.getTitle(missionDTO))
+    protected def name: Text = FxTextFactory.makeMissionName(MissionDescriptions.getTitle(missionDTO))
 
   class ObtainedMissionPane(missionDTO: MissionDTO) extends MissionPane(missionDTO):
     override protected def button: Button = FxButtonFactory.makeBoardButton(

@@ -22,7 +22,7 @@ import view.panes.MissionPanes.{MissionBoardPane, ObtainedMissionPane}
 import view.panes.MultiPanes.{MultiPane, MultiPaneState}
 import view.panes.ShopPanes.ShopPane
 import view.scenes.CentralPaneStates.ObtainedMissions
-import view.text.TextFactory
+import view.text.FxTextFactory
 import view.utils.FxPopup
 import view.{LanguageStrings, Redrawable, scenes}
 
@@ -197,7 +197,7 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
   private def roundCounter: Node =
     new HBox {
       children ++= Seq(
-        TextFactory.makeTurnCounterText(s"${controller.currentRound}/${controller.maxNumberOfRounds}"),
+        FxTextFactory.makeTurnCounterText(s"${controller.currentRound}/${controller.maxNumberOfRounds}"),
         FxButtonFactory.makeBoardButton(LanguageStrings.TitleScreenStrings.ruleButtonText, () => FxPopup.showPopUp())
       )
       spacing = 5
