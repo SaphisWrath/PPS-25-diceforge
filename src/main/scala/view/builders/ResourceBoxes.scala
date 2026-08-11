@@ -13,7 +13,7 @@ object ResourceBoxes:
     def component: Pane
 
   class BaseResourceBox(val resourceName: String, val amountProducer: () => Int) extends ResourceBox with ViewSubscriber:
-    this.setPublisher(ViewPublisher())
+    this.subscribeTo(ViewPublisher())
     private val amount = IntegerProperty(amountProducer())
     private val amountLabel = Label(s"${amount()}")
     amount.onChange((_, _, _) => amountLabel.text = s"${amount()}")
@@ -25,7 +25,7 @@ object ResourceBoxes:
       case _ =>
 
   class ResourceWithCapBox(val resourceName: String, val amountProducer: () => Int, val capProducer: () => Int) extends ResourceBox with ViewSubscriber:
-    this.setPublisher(ViewPublisher())
+    this.subscribeTo(ViewPublisher())
     private val baseResourceBox = BaseResourceBox(resourceName, amountProducer)
     private val cap = IntegerProperty(capProducer())
 

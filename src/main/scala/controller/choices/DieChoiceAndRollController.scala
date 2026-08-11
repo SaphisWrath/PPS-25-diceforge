@@ -9,7 +9,7 @@ import model.effects.EffectManager
 import model.utils.RandomModules.given_RandomModule_Int
 
 class DieChoiceAndRollController(player: Player) extends ChoiceController[DieDTO] with ModelSubscriber:
-  this.setPublisher(ModelPublisher())
+  this.subscribeTo(ModelPublisher())
   private var pendingCount = player.pendingRolls - 1
   private var dieIndex: Int = 0
 

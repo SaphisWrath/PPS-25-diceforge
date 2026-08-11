@@ -31,7 +31,7 @@ case class MissionDTO(
 
 object MissionDTO:
   class MissionHandler(action: () => Unit) extends ModelSubscriber:
-    setPublisher(ModelPublisher())
+    subscribeTo(ModelPublisher())
     private var playerMoved = false
 
     private def activateMission(): Unit =

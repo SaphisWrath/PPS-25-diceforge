@@ -7,7 +7,7 @@ import model.ModelPublisher
 import model.ModelPublisher.{ModelContext, ModelSubscriber}
 
 class ModelPublisherBridge extends ModelSubscriber:
-  this.setPublisher(ModelPublisher())
+  this.subscribeTo(ModelPublisher())
 
   override def update(context: ModelContext): Unit = ViewPublisher().notify(translateContext(context))
 

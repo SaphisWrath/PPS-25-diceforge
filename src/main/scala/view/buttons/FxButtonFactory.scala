@@ -46,7 +46,7 @@ object FxButtonFactory extends ButtonFactory[Button, Node]:
         case _ => this.disable = isDisabled()
 
     val button = ButtonSubscriber()
-    button.setPublisher(ViewPublisher())
+    button.subscribeTo(ViewPublisher())
     button
 
   override def makeChoiceButton(icon: Node, onClick: () => Unit): Button =
