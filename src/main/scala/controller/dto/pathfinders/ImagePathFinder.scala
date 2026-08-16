@@ -1,6 +1,6 @@
 package controller.dto.pathfinders
 
-import model.effects.ThrowEffects.{ThrowAllDice, ThrowOneDie}
+import model.effects.ThrowEffects.{CopyOtherThrowResults, PlainThrowEffect, ThrowAllDice, ThrowOneDie}
 import model.effects.{CopyEffect, Effect, GrantFaceEffect, MultiplyEffect, ResourceEffect, SubtractThrow, UpdateCapacityEffect}
 import model.resource.*
 import scalafx.scene.layout.BackgroundImage
@@ -42,5 +42,7 @@ object ImagePathFinders:
       case t: ThrowOneDie => spritePath + "throw_one.png"
       case t: ThrowAllDice => spritePath  + "throw_all.png"
       case t: GrantFaceEffect => summon[ImagePathFinder[Effect]].getPath(t.newFace)
-      case _ =>  spritePath + "placeholder.png"
+      case t: PlainThrowEffect => spritePath + "plain_throw.png"
+      case t: CopyOtherThrowResults => spritePath + "copy_throw.png"
+      case _ => spritePath + "placeholder.png"
   
