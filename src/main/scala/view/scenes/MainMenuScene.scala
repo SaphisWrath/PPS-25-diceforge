@@ -18,12 +18,6 @@ class MainMenuScene(controllerStage: ControllerStage[StandardViewState]) extends
   override def scene: Node = new VBox {
     fillWidth = true
     spacing = 20
-    border = new Border(new BorderStroke(
-      Color.Black,
-      BorderStrokeStyle.Solid,
-      CornerRadii.Empty,
-      BorderWidths.Default)
-    )
     alignment = Center
     alignmentInParent = Center
     children = Seq(
