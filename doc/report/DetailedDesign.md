@@ -1,4 +1,168 @@
-# Design di dettaglio
+# 4. Design di dettaglio
+
+## Elementi principali
+Si effettua ora una breve descrizione degli elementi alla base del funzionamento del programma, che verranno descritti più
+approfonditamente in seguito.
+
+### Model
+Analizzando i requisiti, ci si è resi conto che le ricompense delle missioni e le facce dei dadi operavano secondo principi
+simili; è stato dunque deciso di riassumere entrambi i funzionamenti nel concetto di `Effect`, le istanze delle cui implementazioni
+sarebbero state ricompense e costi delle missioni e facce dei dadi. Di conseguenza, lo `Shop` del gioco vende `Effect`. `GameManager` incapsula tutti gli elementi
+che compongono una partita a Dice Forge, incluso il `TurnManager` per la gestione dei turni e il `MapManager` per l'individuazione della
+posizione del giocatore sul tabellone delle missioni. Contiene anche una mappa di `Mission`, divise per casella, e la lista di `Player` della partita.
+Ciascun `Player` ha al proprio interno un riferimento alla propria `PlayerBoard`, che contiene il conteggio delle `Resource`
+a lui disponibili, ai propri due `Die`, e alle missioni che ha ottenuto.
+
+### Controller
+Ad ogni schermata della View corrisponde un Controller, che si occupa di fornire tutte le informazioni necessarie alla UI e di raccogliere
+gli input degli utenti e trasmetterli al Model. A questi Controller accoppiati, se ne aggiungono due, `ControllerManager` che controlla lo Stage (ed ha quindi
+il compito di cambiare la scena visualizzata), e `ControllerStage` per restituire il Controller necessario a quest'ultima. Una serie di DTO
+è stata preparata per tradurre gli oggetti del Model in pacchetti di informazioni per la View, oscurandone l'implementazione. Il pattern Navigator, descritto
+in seguito, è stato utilizzato per la navigazione di schermata in schermata. Il package `choices`, inoltre, contiene i Controller dedicati alle finestre di popup per le
+varie scelte necessarie nel corso della partita.
+
+### View
+La view, scritta in _ScalaFX_, è composta da quattro schermate, ciascuna rappresentata da una `Scene`, un popup delle regole, e all'occorrenza un popup per le scelte. Il popup delle regole è
+visualizzabile in qualsiasi momento nel menù principale o nel corso della partita, premendo il tasto "Regole". Il tema che l'applicazione doveva seguire è stato stabilito nel trait `Theme` e nella sua implementazione
+`JfxTheme` per evitare che troppi colori rendessero l'interfaccia poco coesa e per permettere di cambiarli senza sostituirli manualmente in ogni elemento. Le `Factory` di `Button` e `Text` hanno la stessa funzione, riferita allo stile degli elementi che costruiscono.
+L'object `LanguageStrings` contiene tutte le stringhe necessarie alla UI, eccetto quelle della rappresentazione delle missioni, che abbiamo scorporato per agevolarne l'eventuale cambiamento.
+
+## Effect
+```mermaid
+classDiagram
+  class Effect  {
+  <<trait>>
+    +Unit resolve(Seq[Player] receivers)
+    +Unit resolve(Player receiver)
+    +Target target = Target.Self
+  }
+  class EffectWrapper  {
+  <<trait>>
+    +Effect currentEffect
+    +Unit currentEffect_=(Effect effect)
+  }
+  class CompoundEffect  {
+  <<abstract>>
+    +Seq[Effect] effects
+  }
+  EffectWrapper <|-- CopyEffect
+  Effect <|-- CopyEffect
+  EffectWrapper <|-- MultiplyEffect
+  Effect <|-- ResourceEffect
+  Effect <|-- MultiplyEffect
+  Effect <|-- UpdateCapacityEffect
+  Effect <|-- CompoundEffect
+  Effect <|-- EffectWrapper
+  Effect <|--GrantFaceEffect
+  CompoundEffect <|-- OptionEffect
+  CompoundEffect <|-- SumEffect
+```
+L'effetto è stato uno dei primi concetti implementati. Il trait ha un metodo `resolve` che viene chiamato quando l'effetto va, appunto, risolto, ovvero quando avviene il completamento di una missione o quando vengono lanciati i dadi. Ciascun effetto eredita da Effect, ma per semplificare la fruizione dei diagrammi sono stati separati quelli che includono il lancio dei dadi da quelli che non lo prevedono.
+`EffectWrapper` viene utilizzato dagli effetti che necessitano di un altro effetto su cui operare per essere risolti, mentre `CompoundEffect` è una sequenza di effetti su cui va effettuato uno stesso procedimento prima della risoluzione.
+
+Ciascun effetto ha un `Target`, il cui valore può essere:
+- `Self` se l'effetto viene applicato solo su chi lo attiva;
+- `Others` se l'effetto viene applicato su tutti tranne chi lo attiva;
+- `All` se l'effetto viene applicato su tutti.
+```mermaid
+classDiagram
+  class Effect {
+    <<trait>>
+    +Unit resolve(Seq[Player] receivers)
+    +Unit resolve(Player receiver)
+    +Target target = Target.Self
+  }
+  class ThrowAction {
+    <<trait>>
+    +Unit throwDice(Seq[Player] receivers)
+    +Unit throwDice(Player receiver)
+    #Seq[[Player, Effect, Int]] results
+  }
+  class ThrowAllDice {
+    +Int times
+    -Unit rollDice()
+  }
+  class PartialThrowEffect {
+    <<abstract>>
+  }
+  Effect <|-- PartialThrowEffect
+  ThrowAction <|-- PartialThrowEffect
+  Effect <|-- ThrowOneDie
+  ThrowAllDice <|-- ThrowSubtractEffect
+  ThrowAllDice <|-- ThrowTimesEffect
+  ThrowAction <|-- SubtractThrow
+  SubtractThrow <|-- ThrowSubtractEffect
+  PartialThrowEffect <|-- ThrowAllDice
+  ModelSubscriber <|-- ThrowAllDice
+  PartialThrowEffect <|-- PlainThrowEffect
+  Effect <|-- CopyOtherThrowResults
+```
+## Mission
+```mermaid
+classDiagram
+  class Mission {
+    <<trait>>
+    +List[ResourceEffect] cost
+    +List[Effect] reward
+    +String id
+    +Unit canGet(receiverProducer: Target => Seq[Player])
+    +Unit get(receiverProducer: Target => Seq[Player])
+    +Unit payCost(receiverProducer: Target => Seq[Player])
+    #Unit applyEffects(receiverProducer: Target => Seq[Player])
+  }
+  class Notification {
+    <<mixin>>
+  }
+  class InstantRewards {
+    <<mixin>>
+  }
+  class LimitedPurchase {
+    <<mixin>>
+    +Int purchaseCount
+    +Int startingPurchaseCount
+
+  }
+  class SupportRewards {
+    <<mixin>>
+    +List[ResourceEffect] supportCost
+    +List[Effect] supportRewards
+  }
+  class Obtained {
+    <<mixin>>
+  }
+  Mission <|-- BaseMission
+  Mission <|-- InstantRewards
+  Mission <|-- LimitedPurchase
+  Mission <|-- Notification
+  Mission <|-- SupportRewards
+  Mission <|-- Obtained
+```
+I tipi di missione principali individuati sono:
+- `SupportMission`, l'implementazione delle missioni di rinforzo;
+- `InstantMission`, l'implementazione delle missioni istantanee;
+- `ObtainedMission`, la missione di supporto ottenuta che si trova nell'inventario del giocatore.
+
+Questi tre tipi di missione sono stati creati per mezzo dei mixin nel diagramma sopra. Si è deciso di evitare di includere le classi stesse delle missioni per evitare la confusione data dalle frecce delle estensioni, ma se ne ritratterà nella sezione implementazione degli autori.
+
+## Shop
+```mermaid
+classDiagram
+  class Shop~T~ {
+    <<trait>>
+    + Option[Resource] getPrice(T item)
+    + Option[Int] getStocked(T item)
+    + Boolean buy(T item, Player player)
+    + Seq[T] items
+  }
+  Shop <|-- EffectShop
+  class ShopFactory~T~ {
+    <<interface>>
+    + Shop~T~ makeStandardShop()
+  }
+ ShopFactory <|-- EffectShopFactory
+```
+Si è scelto di implementare `Shop` come generico sul tipo degli elementi nel proprio inventario, ma si è vincolato il prezzo degli item a `Resource` poiché si è ritenuto inverosimile, dopo aver analizzato i requisiti e le regole del gioco, che si potesse richiedere un pagamento in altra valuta.
+La `ShopFactory` è stata implementata di conseguenza, e contiene solo la configurazione delle regole base del gioco.
 
 ## Publisher
 
