@@ -1,3 +1,11 @@
+## Lorenzo Dalmonte
+In questo progetto ho contribuito individualmente all'implementazione delle risorse,
+alla risoluzione in massa degli effetti dei dadi, e alla gestione di scelte da parte
+del giocatore tramite popup nel gioco. Inoltre ho contribuito ad alcune parti
+dei miei colleghi, spesso solo piccole modifiche per mitigare problemi trovati
+in fase di testing o per aggiungere funzionalità utili scoperte in fase di sviluppo.
+Di seguito sono riportati i dettagli implementativi più degni di nota nel mio codice.
+
 ### Implementazione di Resource
 Tutti i tipi di risorsa specifici nel gioco sono implementati con record immutabili
 che implementano il trait `Resource`. Tale trait tiene traccia della quantità
@@ -122,10 +130,10 @@ classDiagram
     DieChoiceAndRollController o-- GameController
     FaceSwapController o-- GameController
 ```
-Tale trait è generico sul tipo di scelte che l'utente deve eseguire, il che lo rende facilmente adattabile
-a diverse implementazioni, per esempio `EffectSolveController`, il quale è collegato
-a `EffectManager`. Esso ha quindi accesso agli effetti non risolti e può richiamare `EffectManager`
-con i nuovi risultati dall'utente per concludere la risoluzione.
+Tale trait è generico sul tipo degli elementi fra cui l'utente deve scegliere,
+il che lo rende facilmente adattabile a diverse implementazioni, per esempio `EffectSolveController`,
+il quale è collegato a `EffectManager`. Esso ha quindi accesso agli effetti non risolti
+e può richiamare `EffectManager` con i nuovi risultati dall'utente per concludere la risoluzione.
 ```scala
 object EffectSolveController:
   private class EffectSolveControllerImpl extends ChoiceController[EffectDTO]:
