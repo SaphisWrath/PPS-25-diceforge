@@ -10,6 +10,7 @@ import scalafx.scene.control.{ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.paint.Color
 import view.LanguageStrings.{separator, GameInitScreenStrings as GISStrings}
+import view.LanguageStrings.Colors.*
 import view.Redrawable
 import view.ViewComponents.ViewScene
 import view.builders.PlayerBoxes.{PlayerBoxBuilder, PlayerBoxStyle}
@@ -17,8 +18,8 @@ import view.buttons.FxButtonFactory.makeMenuButton
 
 class MatchInitScene(controller: ControllerMatchInit, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node]:
   private val playerNameField = new TextField()
-  private val playerColorChoice = new ChoiceBox[String](ObservableBuffer[String]("Orange", "Green", "Blue", "Black"))
-  playerColorChoice.value = "Orange"
+  private val playerColorChoice = new ChoiceBox[String](ObservableBuffer[String](orange, green, blue, black))
+  playerColorChoice.value = orange
   private val feedbackLabel = new Label()
   private var playerList: Seq[Node] = Seq.empty
   private val playerQueue = Redrawable { () => makeRowWith(playerList) }
@@ -56,7 +57,7 @@ class MatchInitScene(controller: ControllerMatchInit, controllerStage: Controlle
   }
 
   private def addPlayerButtonAction(): () => Unit = () =>
-    controller.updateMatchInfo(playerNameField.getText, playerColorChoice.getValue)
+    controller.updateMatchInfo(playerNameField.getText, mapToEnglish(playerColorChoice.getValue))
     if controller.isLastPlayerValid
     then
       addPlayerBox(controller.currentPlayers.takeRight(1).head)

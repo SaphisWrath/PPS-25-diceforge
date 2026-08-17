@@ -57,7 +57,7 @@ classDiagram
   CompoundEffect <|-- OptionEffect
   CompoundEffect <|-- SumEffect
 ```
-L'effetto è stato uno dei primi concetti implementati. Il trait ha un metodo `resolve` che viene chiamato quando l'effetto va, appunto, risolto, ovvero quando avviene il completamento di una missione o quando vengono lanciati i dadi. Ciascun effetto eredita da Effect, ma per semplificare la fruizione dei diagrammi sono stati separati quelli che includono il lancio dei dadi da quelli che non lo prevedono.
+L'effetto è stato uno dei primi concetti implementati. Il trait ha un metodo `resolve` che viene chiamato quando l'effetto va, appunto, risolto, ovvero quando avviene il completamento di una missione o quando vengono lanciati i dadi. Ciascun effetto eredita da `Effect`, ma per semplificare la fruizione dei diagrammi sono stati separati quelli che includono il lancio dei dadi da quelli che non lo prevedono.
 `EffectWrapper` viene utilizzato dagli effetti che necessitano di un altro effetto su cui operare per essere risolti, mentre `CompoundEffect` è una sequenza di effetti su cui va effettuato uno stesso procedimento prima della risoluzione.
 
 Ciascun effetto ha un `Target`, il cui valore può essere:
@@ -334,3 +334,112 @@ Per gestire al meglio quali azioni si possono eseguire nelle varie fasi del turn
 - `TurnAction`: Definisce quali tipi di azioni sono presenti nel gioco, quando queste sono disponibili e a quali transizioni portano.
 - `TurnStep`: Le fasi del turno, ovvero gli stati della macchina a stati.
   In questo modo abbiamo delegato il controllo dei permessi riguardanti le azioni al `TurnManager`.
+
+## EffectManager
+Quando vengono lanciati i dadi gli effetti ottenuti vanno risolti seguendo un ordine specifico che dipende dagli effetti stessi.
+Inoltre alcuni effetti cambiano risultato a seconda degli altri effetti in gioco.
+Per gestire la logica di risoluzione di più effetti abbiamo creato `EffectManager`,
+che usa il pattern Singleton per essere facilmente accessibile da tutti i punti del codice
+senza passarlo esplicitamente a tutti i componenti che ne hanno bisogno.
+Inoltre `EffectManager` si appoggia a `Publisher` per avvisare della parziale risoluzione
+nel caso in cui l'utente debba scegliere quale effetto attivare.
+```mermaid
+stateDiagram-v2
+    [*] --> attempt
+    interrupted --> attempt : new info gathered
+    state solveSuccess <<choice>>
+    attempt : attemptSolve
+    interrupted: Not enough info
+    complete: Solve complete
+    attempt --> solveSuccess
+    solveSuccess --> interrupted
+    solveSuccess --> complete
+    complete --> [*]
+```
+Nel diagramma è raffigurato il flusso semplificato della risoluzione degli effetti.
+Ci sono più fasi interne in cui `EffectManager` può chiedere nuove informazioni,
+e una volta ottenute riprova a risolvere gli effetti.
+## ChoiceWindow
+Nel gioco presentato esistono molte situazioni in cui per risolvere un'operazione è richiesto
+l'intervento dell'utente nella forma di una scelta che cambierà il corso dell'operazione a seguire.
+Per risolvere questo problema abbiamo creato `ChoiceWindow`, una finestra popup chiamata dalla view
+per presentare agli utenti le scelte da eseguire e collezionare i risultati per la fase successiva dell'operazione.
+```mermaid
+classDiagram
+    class ChoiceController~A~ {
+        <<trait>>
+        +pendingChoices: Seq~PlayerChoice~A~~
+        +resumeAfterChoices(results: Seq~Int~) Unit
+    }
+    class ChoiceWindow~A~ {
+        <<trait>>
+        +show(mapper: A => Node) Unit
+        +optionsAvailable: Boolean
+        +forceNext() Unit
+    }
+    class ChoiceWindowChain {
+        <<helper>>
+        +manageChoices~A~(
+            choices: Seq~PlayerChoice~A~~,
+            orElse: Seq~Int~ => Unit,
+            mapper: A => Node
+        ) : Unit
+    }
+    class ViewScene {
+        <<trait>>
+        /* ...  */
+    }
+    ChoiceWindow <.. ChoiceWindowChain
+    ChoiceController <-- ViewScene : gets
+    ChoiceWindowChain <-- ViewScene : calls
+```
+## Schermate principali
+### MainMenu
+![Schermata del menù principale di Dice Forge.](/doc/report/resources/menu.png)
+Nella schermata iniziale, si può scegliere di iniziare la partita o di consultare le regole, che compariranno come un popup.
+
+### MatchInitScene
+![Schermata delle impostazioni di inizio partita.](/doc/report/resources/start.png)
+
+Nella schermata di configurazione della partita, si possono aggiungere fino a quattro giocatori, ciascuno con un colore diverso e un nome unico.
+
+### BoardScene
+#### Visione complessiva
+![Tabellone di gioco.](/doc/report/resources/game_board_start.png)
+
+Nell'immagine precedente, viene mostrato il tabellone di gioco con tutte le informazioni che contiene. In particolare vengono segnalate:
+1. In alto a destra, troviamo il contatore dei turni e il tasto per consultare le regole, che attiva lo stesso popup del menu principale;
+2. In basso troviamo le informazioni del giocatore attivo: a destra il risultato dell'ultimo tiro dei suoi due dadi (nel caso del giocatore Paolo, ha ottenuto Oro(1) da entrambi i dadi), a sinistra le risorse. Fuori dalla card del giocatore si trovano quattro tasti, che in ordine dall'alto al basso servono a: acquistare un'azione extra, visualizzare il negozio, passare il turno e mostrare le missioni di rinforzo possedute.
+3. In alto a sinistra si trovano le card degli altri giocatori, contenenti le stesse informazioni di quella del giocatore attivo.
+4. Le zone delimitate da un bordo arancione, che racchiudono due o tre missioni, sono le caselle del tabellone, descritte in seguito nel dettaglio.
+
+#### Casella
+![Una casella del tabellone.](/doc/report/resources/mission_cell.png)
+
+Qui si vede da vicino una casella del tabellone, contenente una missione istantanea, "Spiriti Selvaggi," e una missione di rinforzo, "Anziano," differenziate per colore. L'immagine presenta i seguenti punti di interesse:
+1. Il costo rappresentato è quello istantaneo della missione, ovvero quello che viene applicato al primo completamento: nel caso di entrambe queste missioni, il costo è di Cristalli Solari(1).
+2. La ricompensa rappresentata è anch'essa quella del primo completamento, che può anche essere vuota, come mostrato nella missione "Anziano";
+3. La descrizione delle missioni, necessaria per leggere gli effetti di rinforzo delle missioni di rinforzo, compare posizionando il puntatore sopra alla card della missione: nel caso della missione "Anziano," l'effetto di rinforzo consiste nello spendere Oro(3) per ottenere Punti Gloria(4);
+4. Il contatore delle missioni ancora disponibili è visibile in basso nella card della missione;
+5. Nella casella, qualora fosse presente, viene visualizzato un giocatore sotto forma di un pallino del colore associato ad esso. In questo esempio, il giocatore di colore blu si trova nella casella.
+
+#### Negozio
+![Il negozio durante la partita.](/doc/report/resources/shop.png)
+
+Nel negozio, si possono acquistare facce a seconda della disponibilità. Ciascuna faccia costa una quantità di Oro. Le facce con un "+" permettono di ottenere tutti gli effetti mostrati insieme quando vengono ottenute come risultato sul dado, mentre le facce con un "?" richiedono di scegliere tra le opzioni raffigurate.
+
+#### Effetti di rinforzo
+![Gli effetti di rinforzo ottenuti dal giocatore attivo.](/doc/report/resources/supporto.png)
+
+All'inizio di ogni turno del giocatore, qualora egli avesse completato missioni di rinforzo, gli viene presentata questa schermata per permettergli di scegliere quali effetti di rinforzo attivare. Può anche rifiutare di attivarli premendo il tasto "Termina fase di rinforzo".
+
+#### Popup di scelta
+![Un popup di scelta; in questo caso, la scelta è in quale dado mettere la faccia appena acquistata.](/doc/report/resources/choice.png)
+
+In alcuni casi, come quando il risultato del dado è un effetto Copia, Moltiplica o Opzione, oppure quando si compra una faccia del dado, verrà presentata una scelta al giocatore che ha attivato l'effetto. Il giocatore interpellato è scritto nel popup (in questo caso, Bruno). 
+
+Nell'esempio, Bruno deve scegliere su quale dado posizionare la faccia appena acquistata. Si noti che questo è l'unico caso in cui la scelta viene effettuata tra i dadi: in tutti gli altri casi, la scelta è tra effetti.
+
+### MatchEndScene
+![Schermata di fine partita.](/doc/report/resources/fine.png)
+Nella schermata di fine partita, si visualizza la classifica finale e si può scegliere tra giocare ancora (e venire riportati alla configurazione) o uscire (ed andare al menù principale).
