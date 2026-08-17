@@ -165,3 +165,62 @@ Si riporta una breve spiegazione:
     - `ControllerStage[VS]`: Wrapper per la navigazione che permette di aggiungere altre operazioni al cambio di scena. Si tratta della classe che viene utilizzata dalla view per richiedere il cambio di scena.
 
 Grazie a questa struttura possiamo gestire la View nascondendo il tipo concreto di T dal resto del controller.
+
+## EffectManager
+Quando vengono lanciati i dadi gli effetti ottenuti vanno risolti seguendo un ordine specifico che dipende dagli effetti stessi.
+Inoltre alcuni effetti cambiano risultato a seconda degli altri effetti in gioco.
+Per gestire la logica di risoluzione di più effetti abbiamo creato `EffectManager`,
+che usa il pattern Singleton per essere facilmente accessibile da tutti i punti del codice
+senza passarlo esplicitamente a tutti i componenti che ne hanno bisogno.
+Inoltre `EffectManager` si appoggia a `Publisher` per avvisare della parziale risoluzione
+nel caso in cui l'utente debba scegliere quale effetto attivare.
+```mermaid
+stateDiagram-v2
+    [*] --> attempt
+    interrupted --> attempt : new info gathered
+    state solveSuccess <<choice>>
+    attempt : attemptSolve
+    interrupted: Not enough info
+    complete: Solve complete
+    attempt --> solveSuccess
+    solveSuccess --> interrupted
+    solveSuccess --> complete
+    complete --> [*]
+```
+Nel diagramma è raffigurato il flusso semplificato della risoluzione degli effetti.
+Ci sono più fasi interne in cui `EffectManager` può chiedere nuove informazioni,
+e una volta ottenute riprova a risolvere gli effetti.
+## ChoiceWindow
+Nel gioco presentato esistono molte situazioni in cui per risolvere un'operazione è richiesto
+l'intervento dell'utente nella forma di una scelta che cambierà il corso dell'operazione a seguire.
+Per risolvere questo problema abbiamo creato `ChoiceWindow`, una finestra popup chiamata dalla view
+per presentare agli utenti le scelte da eseguire e collezionare i risultati per la fase successiva dell'operazione.
+```mermaid
+classDiagram
+    class ChoiceController~A~ {
+        <<trait>>
+        +pendingChoices: Seq~PlayerChoice~A~~
+        +resumeAfterChoices(results: Seq~Int~) Unit
+    }
+    class ChoiceWindow~A~ {
+        <<trait>>
+        +show(mapper: A => Node) Unit
+        +optionsAvailable: Boolean
+        +forceNext() Unit
+    }
+    class ChoiceWindowChain {
+        <<helper>>
+        +manageChoices~A~(
+            choices: Seq~PlayerChoice~A~~,
+            orElse: Seq~Int~ => Unit,
+            mapper: A => Node
+        ) : Unit
+    }
+    class ViewScene {
+        <<trait>>
+        /* ...  */
+    }
+    ChoiceWindow <.. ChoiceWindowChain
+    ChoiceController <-- ViewScene : gets
+    ChoiceWindowChain <-- ViewScene : calls
+```

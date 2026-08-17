@@ -31,7 +31,7 @@ object Resource:
 ```
 Il concetto di limite massimo di una risorsa è separato dal concetto di risorsa base
 e catturato dal trait `ResourceWithCap`. L'implementazione effettiva sfrutta
-il pattern _decorator_, quindi estende `Resource` e si appoggia a un'altra risorsa data
+il pattern Decorator, quindi estende `Resource` e si appoggia a un'altra risorsa data
 a costruzione per calcolare la quantità della risorsa tenendo conto del limite massimo stabilito.
 ```scala
 trait ResourceWithCap extends Resource:
@@ -105,9 +105,9 @@ classDiagram
         +resumeAfterChoices(results: Seq~Int~) Unit
     }
     <<trait>> ChoiceController
-    ChoiceController~A~ <|-- EffectSolveController
-    ChoiceController~A~ <|-- DieChoiceAndRollController
-    ChoiceController~A~ <|-- FaceSwapController
+    ChoiceController~A~ <|.. EffectSolveController
+    ChoiceController~A~ <|.. DieChoiceAndRollController
+    ChoiceController~A~ <|.. FaceSwapController
     class EffectSolveController{
         +pendingChoices: Seq~PlayerChoice~EffectDTO~~
         +resumeAfterChoices(results: Seq~Int~) Unit
