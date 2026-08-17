@@ -39,6 +39,6 @@ object ResourceBoxes:
       box.children ++= Seq(capLabel)
       box
 
-    override def update(context: ViewContext): Unit = context match
-      case ResourceContext => cap() = capProducer()
-      case _ => baseResourceBox.update(context)
+    override def update(context: ViewContext): Unit =
+      if context == ResourceContext then cap() = capProducer()
+      baseResourceBox.update(context)

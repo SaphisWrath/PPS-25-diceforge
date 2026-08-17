@@ -38,12 +38,12 @@ trait ControllerManager:
 
 object ControllerManager:
   private class ControllerManagerImpl[T](
-                                          mainStageProducer: () => MainStage[T],
-                                          viewSceneFactoryProducer: ControllerManager => ViewSceneFactory[T, StandardViewState]
+                                          mainStageProvider: () => MainStage[T],
+                                          viewSceneFactoryProvider: ControllerManager => ViewSceneFactory[T, StandardViewState]
                                         ) extends ControllerManager:
     private var gameMatch: Option[GameMatch] = Option.empty
     override val stageController: ControllerStage[StandardViewState] =
-      ControllerStage(Navigator(mainStageProducer(), viewSceneFactoryProducer(this)), StandardViewState.MainMenu)
+      ControllerStage(Navigator(mainStageProvider(), viewSceneFactoryProvider(this)), StandardViewState.MainMenu)
 
     override val matchInitController: ControllerMatchInit = ControllerMatchInit()
 
