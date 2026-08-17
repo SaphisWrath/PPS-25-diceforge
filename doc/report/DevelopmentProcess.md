@@ -1,4 +1,4 @@
-# 2. Processo di sviluppo
+# 1. Processo di sviluppo
 Per questo progetto, è stato scelto di lavorare seguendo le modalità previste dalla programmazione _Agile_, in particolare nella modalità _SCRUM-inspired_ descritta nelle regole di progetto. Nelle seguente sezioni verranno descritti i documenti prodotti nel corso dello sviluppo, le fasi in cui è stato diviso il lavoro, e la metodologia adottata per dividersi i task.
 
 Galileo Foschini ha svolto il ruolo di committente, mentre Giulia Bonifazi quello di product owner, durante tutto il corso del progetto, mentre tutti i tre membri hanno svolto il ruolo di programmatori.
