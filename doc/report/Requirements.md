@@ -164,3 +164,6 @@ Nel corso della partita tireranno i loro dadi per ottenere varie risorse che pot
 ### Implementazione
 
 - Utilizzo di Scala 3.x
+
+Di seguito riportiamo lo schema dei casi d'uso:
+![Schema dei casi d'uso](resources/UseCases.png)
