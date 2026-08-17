@@ -1,7 +1,11 @@
 # Galileo Foschini - Implementazione
 
-Oltre che da programmatore il mio ruolo nel progetto è stato quello di esperto di dominio, in quanto ero la persona più familiare con il gioco proposto.
-Dal punto di vista implementativo ho collaborato con i mie colleghi in tutte le fasi del progetto, come spiegato di seguito, ma mi sono anche occupato di alcune parti in autonomia.
+Oltre che da programmatore il mio ruolo nel progetto è stato quello di esperto di dominio, in quanto ero la persona più familiare con il gioco proposto, il mio compito è stato quello di definire i requisiti funzionali del prodotto e assicurarmi che venissero rispettati.
+Dal punto di vista implementativo mi sono occupato di varie parti del progetto anche in collaborazione con i miei colleghi.
+Di seguito riporto alcune tra le più interessanti, ma prima elencherò alcune parti che non vengono citate nel resto della sezione:
+- L'implementazione base di `GameMatch`, `GameController` e `Player`.
+- L'implementazione di `Publisher` e le sue componenti
+- La creazione di alcune classi converter
 
 ## Navigator
 
@@ -247,4 +251,6 @@ class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: 
 
 ## View
 
-Mi sono occupato anche della creazione di varie componenti della GUI. In particolare ho definito la struttura base di `BoardScene` e delle parti relative alla visualizzazione del player. Ho definito delle classi di supporto utili per la creazione della view come `MultiPane` che definisce un pane con più stati possibili e `Redrawable` che permette di creare componenti che possono essere ridisegnate.
+Mi sono occupato anche della creazione di varie componenti della GUI. In particolare ho definito la struttura base di `BoardScene` e delle parti relative alla visualizzazione del player. 
+Per quest'ultimo ho deciso di utilizzare un Builder, in quanto necessitava di essere visualizzato in più di un contesto, nei quali aveva qualche variazione rispetto agli altri contesti.
+Ho definito delle classi di supporto utili per la creazione della view come `MultiPane` che definisce un pane con più stati possibili e `Redrawable` che permette di creare componenti che possono essere ridisegnate.
