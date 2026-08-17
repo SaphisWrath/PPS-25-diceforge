@@ -206,3 +206,6 @@ given ImagePathFinder[Resource] with
     case MoonCrystal(_) => spritePath + "moon.png"  
     case _ => spritePath + "placeholder.png"
 ```
+
+
+[Torna a Implementazione](../Implementation.md) | [Indice](Index.md)

@@ -251,3 +251,6 @@ class ObtainedMission(rewards: List[Effect], cost: List[ResourceEffect], owner: 
 Mi sono occupato anche della creazione di varie componenti della GUI. In particolare ho definito la struttura base di `BoardScene` e delle parti relative alla visualizzazione del player. 
 Per quest'ultimo ho deciso di utilizzare un Builder, in quanto necessitava di essere visualizzato in più di un contesto, nei quali aveva qualche variazione rispetto agli altri contesti.
 Ho definito delle classi di supporto utili per la creazione della view come `MultiPane` che definisce un pane con più stati possibili e `Redrawable` che permette di creare componenti che possono essere ridisegnate.
+
+
+[Torna a Implementazione](../Implementation.md) | [Indice](Index.md)

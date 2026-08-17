@@ -8,3 +8,6 @@ Ciascuna schermata della View è controllata da un proprio controller. A ciascun
 
 ## Utilizzo del pattern Publisher-Subscriber
 Nel corso del gioco, come esposto in precedenza, vi è spesso la necessità che l'utente scelga tra una serie di opzioni disponibili; a tale scopo, è stato implementato il pattern Publisher-Subscriber, dove il Controller è subscriber del Model e publisher della View. Per reagire alla scelta dell'utente, una serie di listener viene inserita nei DTO delle classi del Model tra cui viene effettuata la scelta. 
+
+
+[Capitolo Precedente](Requirements.md) | [Indice](Index.md) | [Prossimo Capitolo](DetailedDesign.md)
