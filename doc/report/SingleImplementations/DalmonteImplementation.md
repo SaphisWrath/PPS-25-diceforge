@@ -1,4 +1,4 @@
-## Lorenzo Dalmonte
+# Lorenzo Dalmonte - Implementazione
 In questo progetto ho contribuito individualmente all'implementazione delle risorse,
 alla risoluzione in massa degli effetti dei dadi, e alla gestione di scelte da parte
 del giocatore tramite popup nel gioco. Inoltre ho contribuito ad alcune parti
@@ -6,7 +6,7 @@ dei miei colleghi, spesso solo piccole modifiche per mitigare problemi trovati
 in fase di testing o per aggiungere funzionalità utili scoperte in fase di sviluppo.
 Di seguito sono riportati i dettagli implementativi più degni di nota nel mio codice.
 
-### Implementazione di Resource
+## Resource
 Tutti i tipi di risorsa specifici nel gioco sono implementati con record immutabili
 che implementano il trait `Resource`. Tale trait tiene traccia della quantità
 di una risorsa e fornisce un metodo `copy` per creare una nuova risorsa dello stesso tipo.
@@ -79,7 +79,7 @@ object ResourceWithCap:
     def -(r2: Resource): ResourceWithCap = ResourceWithCap(r1.resource - r2, r1.maxCapacity)
 ```
 
-### Implementazione di EffectManager
+## EffectManager
 `EffectManager` è l'oggetto che si occupa della risoluzione di un insieme di effetti
 a volte legati fra loro. Questo oggetto è un singleton per renderlo facilmente accessibile
 da tutti i punti del codice, fra cui `Effect` e `GameController`.
@@ -92,7 +92,7 @@ e sono accessibili tramite `effectsToSolve`. Infine `EffectManager` fornisce il 
 per aggiornare gli effetti correnti senza attivarli, e il metodo `setModuleOnce` per specificare un modulo
 di risoluzione dei `ResourceEffects` da applicare per la prossima risoluzione.
 
-### Implementazione dei ChoiceController
+## ChoiceController
 Uno dei problemi riscontrati nel progetto è stato la gestione di scelte da parte dell'utente
 che devono interrompere un'operazione e riprenderla una volta ottenuti i risultati.
 Il trait `ChoiceController` è stato pensato per risolvere tale problema insieme a `ChoiceWindow` nella view.
