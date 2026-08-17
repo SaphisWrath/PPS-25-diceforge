@@ -63,5 +63,17 @@ object LanguageStrings:
     val stockCount = "Oggetti rimasti:"
     val soldOut = "Esaurito"
 
+  object Colors:
+    val orange = "Arancione"
+    val blue = "Blu"
+    val green = "Verde"
+    val black = "Nero"
+    val mapToEnglish: Map[String, String] = Seq(
+      (orange, "Orange"),
+      (blue, "Blue"),
+      (green, "Green"),
+      (black, "Black")
+    ).toMap
+
   object Miscellaneous:
     val choiceDialog = "scegli fra le seguenti opzioni"
