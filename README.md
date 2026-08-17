@@ -9,4 +9,4 @@ PPS project for the academic year 2025/2026
 
 ## Documentation
 
-[Report](doc/report/Index.md)
+[Report](/doc/report/Index.md)
