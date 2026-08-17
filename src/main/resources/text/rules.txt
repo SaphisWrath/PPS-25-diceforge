@@ -26,3 +26,9 @@ Un turno del giocatore si svolge in questo modo:
 - Terza fase: ogni giocatore ha un'Azione Standard da compiere. Tale Azione Standard può essere spesa comprando una faccia dal negozio, oppure completando una sola missione tra quelle disponibili sulla plancia.
 - Quarta fase: ogni giocatore può comprare un'Azione Standard in più al costo di 2 Cristalli Solari. Questo acquisto può essere effettuato solo una volta ogni turno del giocatore.
 
+Le tipologie di facce disponibili per il dado del giocatore sono le seguenti:
+- Risorsa -> Aggiunge il numero specificato di unità della risorsa alla plancia del giocatore;
+- Moltiplica -> Moltiplica la faccia risultante sull'altro dado il numero di volte specificato;
+- Copia -> Copia una faccia a scelta tra quelle nei risultati degli altri giocatori;
+- Opzione -> Si presenta come una griglia di effetti sormontata da un "?": offre una scelta tra gli effetti mostrati.
+- Somma -> Si presenta come una griglia di effetti sormontata da un "+": applica tutti gli effetti mostrati.
