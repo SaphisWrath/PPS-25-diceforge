@@ -3,9 +3,9 @@ PPS project for the academic year 2025/2026
 
 ## Authors
 
-- @SaphisWrath
-- @GaliFosch
-- @Dalmont-code
+- [@SaphisWrath](https://github.com/SaphisWrath)
+- [@GaliFosch](https://github.com/GaliFosch)
+- [@Dalmont-code](https://github.com/Dalmont-code)
 
 ## Documentation
 
