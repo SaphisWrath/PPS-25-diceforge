@@ -1,3 +1,4 @@
+# 2. Requisiti
 ## Introduzione
 
 Creare un porting del gioco da tavolo Dice forge basato sul linguaggio Scala.
