@@ -9,3 +9,6 @@ Per lo sviluppo si è scelto di procedere secondo i dogmi del TDD. Ciò ha signi
 
 ## Tecnologie utilizzate
 La libreria **scalatest** è stata scelta per la scrittura della maggior parte dei test, utilizzando come **sbt** come build tool, unito al plugin **sbt-assembly** per la creazione del fat JAR. Il comando "sbt assembly" del plugin prevede come impostazione predefinita l'esecuzione di tutti i test prima della generazione del jar.
+
+
+[Capitolo Precedente](Implementation.md) | [Indice](Index.md) | [Prossimo Capitolo](Retrospective.md)

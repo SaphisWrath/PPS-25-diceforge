@@ -19,3 +19,6 @@ Si è scelto di indire meeting giornalieri secondo necessità; ogni membro potev
 
 ## Gestione della repository e continuous integration
 Il product owner ha detenuto il controllo della repository su GitHub, mentre gli altri due membri hanno effettuato delle fork della repo principale e hanno contribuito per mezzo di pull request. La code review sulle suddette pull request veniva effettuata in autonomia dal product owner, la quale provvedeva all'approvazione a meno di dubbi o richieste di cambiamento relative al codice ricevuto, i quali venivano esplicitati in commenti lasciati nella code review su GitHub o nel corso di uno dei meeting giornalieri.
+
+
+[Indice](Index.md) | [Prossimo Capitolo](Requirements.md)

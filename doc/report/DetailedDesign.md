@@ -443,3 +443,5 @@ Nell'esempio, Bruno deve scegliere su quale dado posizionare la faccia appena ac
 ### MatchEndScene
 ![Schermata di fine partita.](/doc/report/resources/fine.png)
 Nella schermata di fine partita, si visualizza la classifica finale e si può scegliere tra giocare ancora (e venire riportati alla configurazione) o uscire (ed andare al menù principale).
+
+[Capitolo Precedente](ArchitecturalDesign.md) | [Indice](Index.md) | [Prossimo Capitolo](Implementation.md)

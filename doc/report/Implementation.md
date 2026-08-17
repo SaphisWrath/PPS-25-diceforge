@@ -5,3 +5,6 @@ Ogni componente del gruppo riporta di seguito il proprio lavoro svolto, concentr
 - [Giulia Bonifazi](SingleImplementations/BonifaziImplementation.md)
 - [Lorenzo Dalmonte](SingleImplementations/DalmonteImplementation.md)
 - [Galileo Foschini](SingleImplementations/FoschiniImplementation.md)
+
+
+[Capitolo Precedente](DetailedDesign.md) | [Indice](Index.md) | [Prossimo Capitolo](Testing.md)

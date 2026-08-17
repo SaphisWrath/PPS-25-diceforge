@@ -149,3 +149,6 @@ object EffectSolveController:
 
   def apply(): ChoiceController[EffectDTO] = EffectSolveControllerImpl()
 ```
+
+
+[Torna a Implementazione](../Implementation.md) | [Indice](Index.md)

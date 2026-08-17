@@ -34,3 +34,6 @@ L'obiettivo era ottenere il prodotto completo.
 Nonostante le difficoltà riscontrate ci riteniamo soddisfatti del progetto ottenuto.
 
 Considerando sviluppi futuri prendiamo in considerazione l'aggiunta di ulteriori Missioni e Facce dei dadi, la possibilità di giocare fino a sei giocatori o modalità di gioco alternative, per esempio l'utilizzo di dadi a più o meno di sei Facce.
+
+
+[Capitolo Precedente](Testing.md) | [Indice](Index.md)

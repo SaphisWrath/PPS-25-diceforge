@@ -167,3 +167,6 @@ Nel corso della partita tireranno i loro dadi per ottenere varie risorse che pot
 
 Di seguito riportiamo lo schema dei casi d'uso:
 ![Schema dei casi d'uso](resources/UseCases.png)
+
+
+[Capitolo Precedente](DevelopmentProcess.md) | [Indice](Index.md) | [Prossimo Capitolo](ArchitecturalDesign.md)
