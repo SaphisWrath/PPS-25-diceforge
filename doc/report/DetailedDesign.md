@@ -166,8 +166,9 @@ La `ShopFactory` è stata implementata di conseguenza, e contiene solo la config
 
 ## Publisher
 
-Problema: Molte parti del sistema hanno bisogno di comunicare tra di loro, ma senza un collegamento diretto. Per esempio quando vengono modificate delle risorse bisogna avvisare la view in modo che si aggiorni di conseguenza.
-Soluzione: Questo è il caso perfetto per utilizzare il pattern Observer.
+Molte parti del sistema necessitano di scambiarsi messaggi l'una con l'altra, per esempio se dovessero cambiare le risorse di un giocatore bisognerebbe avvisare la view affinché mostri il valore corretto, ma bisogna anche fare in modo che si aggiornino le missioni disponibili all'acquisto a seconda del nuovo valore.
+Per questo motivo si è optato per l'utilizzo del pattern Observer, con la struttura riportata di seguito
+
 ```mermaid
 ---
 config:
@@ -200,7 +201,7 @@ Publisher <.. Context
 Subscriber <.. Context
 Publisher o-- Subscriber
 
-ViewContext --|> Context
+ViewContext ..|> Context
 ViewSubscriber ..> ViewContext
 ViewSubscriber --|> Subscriber
 ViewPublisher ..> ViewContext
@@ -213,7 +214,7 @@ class ModelSubscriber
 class ModelPublisher
 }
 
-ModelContext --|> Context
+ModelContext ..|> Context
 ModelSubscriber --|> Subscriber
 ModelSubscriber ..> ModelContext
 ModelPublisher --|> Publisher
@@ -221,13 +222,10 @@ ModelPublisher ..> ModelContext
 ModelPublisher o-- ModelSubscriber
 ```
 
-Di seguito una breve spiegazione del grafico.
+Il tipo C rappresenta il tipo di `Context` che viene gestito da `Publisher` e `Subscriber`.
+Le varie parti del codice pubblicano eventi per mezzo del `Publisher`, il quale lo invia in modalità broadcast a tutti i suoi `Subscriber`, a questi ultimi definiscono le azioni da compiere per il dato `Context`.
 
-Tipi generici:
-- **C**: Rappresenta il sottotipo di `Context` accettato da `Subscriber` e `Publisher`
-  Struttura:
-  Si tratta di una implementazione del pattern Observer dove i `Subscriber` si possono mettere in ascolto in uno o più `Publisher` e i `Publisher` quando richiesto mandano in broadcast il dato contesto lasciando che siano i `Subscriber` a elaborare l'informazione.
-  Dato che nel sistema ci sono molte entità che possono generare eventi che interessano molti subscriber e che questi eventi si sovrappongono, rimanendo sul cambio di risorse questo può avvenire in vari contesti e in ognuno di questi casi va ad interessare varie componenti della view che si devono aggiornare di conseguenza. Per questo motivo si è optato per l'utilizzo del pattern Singleton per il `Publisher`, in particolare si sono implementati `ModelPublisher` e `ViewPublisher` per la pubblicazione di tutti gli eventi del programma, si è optato per l'utilizzo di due `Publisher` per mantenere la separazione dettata dal MVC.
+Dato che nel sistema ci sono molte entità che possono generare eventi che interessano molti subscriber e che questi eventi si sovrappongono, rimanendo sul cambio di risorse questo può avvenire in vari contesti e in ognuno dei quali va ad interessare varie componenti della view, che si devono aggiornare di conseguenza. Per questo motivo si è optato per l'utilizzo del pattern Singleton per le implementazioni di `Publisher`, in particolare sono stati utilizzati `ModelPublisher` e `ViewPublisher` per la pubblicazione di tutti gli eventi del programma, si è optato per l'utilizzo di due `Publisher` per mantenere la separazione dettata da MVC.
 
 ## Navigator
 
@@ -328,7 +326,14 @@ Si riporta una breve spiegazione:
     - `ControllerManager`: Fornisce alla `ViewFactory` le dipendenze necessarie per creare le `ViewScene`
     - `ControllerStage[VS]`: Wrapper per la navigazione che permette di aggiungere altre operazioni al cambio di scena. Si tratta della classe che viene utilizzata dalla view per richiedere il cambio di scena.
 
-Grazie a questa struttura possiamo gestire la View nascondendo il tipo concreto di T dal resto del controller.
+Grazie a questa struttura possiamo gestire la View nascondendo il tipo concreto di T dal resto del controller, mantenendo il codice abbastanza flessibile da permettere l'aggiunta di nuove pagine se fosse necessario.
+
+## Turn Manager
+
+Per gestire al meglio quali azioni si possono eseguire nelle varie fasi del turno si è creato un `TurnManager` che permette di definire la macchina a stati del turno. A `TurnManager` si affiancano `TurnAction` e `TurnStep`:
+- `TurnAction`: Definisce quali tipi di azioni sono presenti nel gioco, quando queste sono disponibili e a quali transizioni portano.
+- `TurnStep`: Le fasi del turno, ovvero gli stati della macchina a stati.
+  In questo modo abbiamo delegato il controllo dei permessi riguardanti le azioni al `TurnManager`.
 
 ## EffectManager
 Quando vengono lanciati i dadi gli effetti ottenuti vanno risolti seguendo un ordine specifico che dipende dagli effetti stessi.
