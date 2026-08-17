@@ -8,7 +8,7 @@ import scalafx.scene.Node
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color
 import view.sprites.Sprite
-import view.text.TextFactory
+import view.text.FxTextFactory
 import view.theme.JfxTheme
 import view.utils.ViewUtils.makeBorder
 
@@ -27,7 +27,7 @@ object EffectPanes:
     width <= height
     children = sprite
     effectDTO.label match
-      case Some(s) => children ++= Seq(TextFactory.makeEffectText(s))
+      case Some(s) => children ++= Seq(FxTextFactory.makeEffectText(s))
       case _ =>
 
   class CompoundEffectPane(compoundEffectDTO: CompoundEffectDTO, color: Color) extends StackPane:
@@ -36,7 +36,7 @@ object EffectPanes:
     )
     border = makeBorder(color)
     compoundEffectDTO.label match
-      case Some(s) => children ++= Seq(TextFactory.makeCompoundEffectText(s))
+      case Some(s) => children ++= Seq(FxTextFactory.makeCompoundEffectText(s))
       case _ =>
   
   class EffectGridPane(
@@ -61,7 +61,7 @@ object EffectPanes:
     padding = Insets(10)
     alignment = CenterLeft
     children = Seq(
-      TextFactory.makeMissionLabel(title),
+      FxTextFactory.makeMissionLabel(title),
       EffectGridPane(effectDTOs, color),
     )
 

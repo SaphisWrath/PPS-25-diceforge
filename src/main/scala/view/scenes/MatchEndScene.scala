@@ -12,17 +12,17 @@ import scalafx.scene.text.Font
 import scalafx.scene.Node
 import view.LanguageStrings.{EndScreenStrings as ESStrings, ResourceStrings as RStrings}
 import view.ViewComponents.ViewScene
-import view.buttons.ButtonFactory.makeMenuButton
+import view.buttons.FxButtonFactory.makeMenuButton
 import view.sprites.Sprite
 
 class MatchEndScene(controller: ControllerMatchEnd, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node]:
   private val newMatchButton = makeMenuButton(
     ESStrings.playAgainButtonText,
-    _ => controllerStage.changeScene(MatchInit)
+    () => controllerStage.changeScene(MatchInit)
   )
   private val endGameButton = makeMenuButton(
     ESStrings.exitButtonText,
-    _ => controllerStage.changeScene(MainMenu)
+    () => controllerStage.changeScene(MainMenu)
   )
 
   private def makeRowWith(nodes: Iterable[Node]): HBox =

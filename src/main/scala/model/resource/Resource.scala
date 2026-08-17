@@ -1,8 +1,16 @@
 package model.resource
 
 trait Resource:
+  /**
+   *  The current amount of this resource
+   */
   def amount: Int
 
+  /**
+   * Makes a copy of this resource
+   * @param amount the amount to override
+   * @return the copy of the resource
+   */
   def copy(amount: Int): Resource
 
 case class Gold(amount: Int) extends Resource
@@ -30,10 +38,22 @@ object Resource:
       if multiplier > 1 then r1 + (r1 * (multiplier - 1)) else r1
 
 trait ResourceWithCap extends Resource:
+  /**
+   *
+   * @return the max amount allowed for this resource
+   */
   def maxCapacity: Int
 
+  /**
+   * Sets the capacity of this resource
+   * @param newCapacity the new cap for this resource
+   */
   def maxCapacity_=(newCapacity: Int): Unit
 
+  /**
+   *
+   * @return the capped resource
+   */
   def resource: Resource
 
 object ResourceWithCap:

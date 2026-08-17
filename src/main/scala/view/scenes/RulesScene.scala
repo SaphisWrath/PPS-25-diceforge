@@ -7,8 +7,8 @@ import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.text.{Font, Text}
 import view.LanguageStrings
 import view.ViewComponents.ViewScene
-import view.buttons.ButtonFactory
-import view.text.TextFactory
+import view.buttons.FxButtonFactory
+import view.text.FxTextFactory
 import view.theme.JfxTheme
 import view.utils.ViewUtils
 import view.utils.ViewUtils.{makeBackgroundFill, makeBorder}
@@ -32,8 +32,8 @@ class RulesScene(hideAction: () => Unit) extends ViewScene[Node]:
         vbarPolicy = ScrollPane.ScrollBarPolicy.AsNeeded
         prefHeight = parentHeight - 20
         maxHeight = parentHeight - 20
-        content = TextFactory.makeRulesLabel(labelText, parentWidth, parentHeight)
+        content = FxTextFactory.makeRulesLabel(labelText, parentWidth, parentHeight)
       },
-      ButtonFactory.makeMenuButton(LanguageStrings.GenericButtonStrings.close, _ => hideAction())
+      FxButtonFactory.makeMenuButton(LanguageStrings.GenericButtonStrings.close, () => hideAction())
     )
   }

@@ -3,18 +3,17 @@ package view.scenes
 import controller.StandardViewState.Board
 import controller.dto.PlayerDTO
 import controller.{ControllerMatchInit, ControllerStage, StandardViewState}
-import javafx.event.ActionEvent
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Pos.Center
+import scalafx.scene.Node
 import scalafx.scene.control.{ChoiceBox, Label, TextField}
 import scalafx.scene.layout.{HBox, VBox}
-import scalafx.scene.Node
 import scalafx.scene.paint.Color
 import view.LanguageStrings.{separator, GameInitScreenStrings as GISStrings}
 import view.Redrawable
 import view.ViewComponents.ViewScene
 import view.builders.PlayerBoxes.{PlayerBoxBuilder, PlayerBoxStyle}
-import view.buttons.ButtonFactory.makeMenuButton
+import view.buttons.FxButtonFactory.makeMenuButton
 
 class MatchInitScene(controller: ControllerMatchInit, controllerStage: ControllerStage[StandardViewState]) extends ViewScene[Node]:
   private val playerNameField = new TextField()
@@ -24,7 +23,7 @@ class MatchInitScene(controller: ControllerMatchInit, controllerStage: Controlle
   private var playerList: Seq[Node] = Seq.empty
   private val playerQueue = Redrawable { () => makeRowWith(playerList) }
   private val addPlayerButton = makeMenuButton(GISStrings.addPlayerButtonText, addPlayerButtonAction())
-  private val startMatchButton = makeMenuButton(GISStrings.startButtonText, _ => controllerStage.changeScene(Board))
+  private val startMatchButton = makeMenuButton(GISStrings.startButtonText, () => controllerStage.changeScene(Board))
   startMatchButton.disable = true
 
   private def addPlayerBox(playerDTO: PlayerDTO): Unit =
@@ -56,7 +55,7 @@ class MatchInitScene(controller: ControllerMatchInit, controllerStage: Controlle
     )
   }
 
-  private def addPlayerButtonAction(): ActionEvent => Unit = _ =>
+  private def addPlayerButtonAction(): () => Unit = () =>
     controller.updateMatchInfo(playerNameField.getText, playerColorChoice.getValue)
     if controller.isLastPlayerValid
     then
