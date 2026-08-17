@@ -7,6 +7,7 @@ import controller.publishers.ViewPublisher.ViewContext.*
 import controller.publishers.ViewPublisher.{ViewContext, ViewSubscriber}
 import controller.{ControllerStage, GameController, StandardViewState}
 import scalafx.beans.property.{ObjectProperty, StringProperty}
+import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.layout.Priority.Always
 import scalafx.scene.layout.{BorderPane, FlowPane, HBox, VBox}
@@ -162,8 +163,11 @@ class BoardScene(controller: GameController, controllerStage: ControllerStage[St
 
   private val obtainedMissionsPane: Redrawable = Redrawable { () =>
     new VBox {
+      padding = Insets(5)
       children = Seq(
         new FlowPane {
+          hgap = 5
+          vgap = 5
           children = controller.playerMissions(activePlayer()).map(ObtainedMissionPane(_))
         },
         if controller.isSupportPhase then
