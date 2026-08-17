@@ -5,7 +5,7 @@ Ciascun giocatore ha una plancia di risorse, alcune con un limite di capacità m
 - Cristalli Solari, limitati a 6;
 - Cristalli Lunari, limitati a 6;
 - Punti Gloria, nessun limite.
-Il primo giocatore inizia la partita con 3 Oro, il secondo con  2 Oro, il terzo con 1 Oro. L'Oro dell'eventuale quarto giocatore è sempre 0 all'inizio, così come tutte le altre risorse di tutti i giocatori.
+Il primo giocatore inizia la partita con 3 Oro, il secondo con 2 Oro, il terzo con 1 Oro. L'Oro dell'eventuale quarto giocatore è sempre 0 all'inizio, così come tutte le altre risorse di tutti i giocatori.
 
 All'inizio della partita, ciascun giocatore possiede due dadi a sei facce, con le seguenti configurazioni:
 - Primo dado: faccia Ottieni Cristalli Solari(1) x1, faccia Ottieni Oro(1) x5;
@@ -21,7 +21,7 @@ La partita ha un limite massimo di turni, che cambia a seconda del numero di gio
 Ciascun turno è composto da un turno del giocatore per ogni giocatore in partita.
 
 Un turno del giocatore si svolge in questo modo:
-- Prima fase: tutti  i giocatori tirano i dadi e ne applicano gli effetti;
+- Prima fase: tutti i giocatori tirano i dadi e ne applicano gli effetti;
 - Seconda fase: fase di rinforzo, in cui il giocatore può attivare gli effetti di rinforzo di ciascuna delle missioni di rinforzo acquistate. Ogni effetto di rinforzo può essere attivato una volta sola per fase di rinforzo, ma il giocatore ne può attivare quanti ne vuole, nell'ordine che preferisce;
 - Terza fase: ogni giocatore ha un'Azione Standard da compiere. Tale Azione Standard può essere spesa comprando una faccia dal negozio, oppure completando una sola missione tra quelle disponibili sulla plancia.
 - Quarta fase: ogni giocatore può comprare un'Azione Standard in più al costo di 2 Cristalli Solari. Questo acquisto può essere effettuato solo una volta ogni turno del giocatore.
