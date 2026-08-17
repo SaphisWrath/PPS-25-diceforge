@@ -37,7 +37,7 @@ Publisher <.. Context
 Subscriber <.. Context
 Publisher o-- Subscriber
 
-ViewContext --|> Context
+ViewContext ..|> Context
 ViewSubscriber ..> ViewContext
 ViewSubscriber --|> Subscriber
 ViewPublisher ..> ViewContext
@@ -50,7 +50,7 @@ class ModelSubscriber
 class ModelPublisher
 }
 
-ModelContext --|> Context
+ModelContext ..|> Context
 ModelSubscriber --|> Subscriber
 ModelSubscriber ..> ModelContext
 ModelPublisher --|> Publisher

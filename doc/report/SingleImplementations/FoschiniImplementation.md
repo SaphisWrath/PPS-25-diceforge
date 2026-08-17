@@ -2,10 +2,7 @@
 
 Oltre che da programmatore il mio ruolo nel progetto è stato quello di esperto di dominio, in quanto ero la persona più familiare con il gioco proposto, il mio compito è stato quello di definire i requisiti funzionali del prodotto e assicurarmi che venissero rispettati.
 Dal punto di vista implementativo mi sono occupato di varie parti del progetto anche in collaborazione con i miei colleghi.
-Di seguito riporto alcune tra le più interessanti, ma prima elencherò alcune parti che non vengono citate nel resto della sezione:
-- L'implementazione base di `GameMatch`, `GameController` e `Player`.
-- L'implementazione di `Publisher` e le sue componenti
-- La creazione di alcune classi converter
+Di seguito riporto alcune tra le più interessanti.
 
 ## Navigator
 
